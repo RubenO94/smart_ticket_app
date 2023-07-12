@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/services/secure_storage.dart';
 import 'package:smart_ticket/utils/environments.dart';
+import 'package:smart_ticket/widgets/register/about_app.dart';
+
 
 import '../services/api.dart';
 
@@ -16,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _secureStorage = SecureStorageService();
   final _apiService = ApiService();
-  TextEditingController? _codeController;
+  final _codeController = TextEditingController();
   var _enteredNIF = '';
   var _enteredEmail = '';
   var _activationCode = '';
@@ -36,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _registerDevice() async {
     final deviceID = await generateDeviceId();
     final token = await _apiService.getToken(username, generatePassword());
-
+  
     final result = await _apiService.registerDevice(
         _enteredNIF, _enteredEmail, deviceID, token);
       setState(() {
@@ -232,75 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(
                 height: 64,
               ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.info_outline),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            'Informações sobre a aplicação',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium!
-                                .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onBackground),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        'Esta aplicação só disponibiliza as suas funções quando está licenciada.',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(
-                        height: 12,
-                      ),
-                      Text(
-                        'Para mais informações contacte-nos:',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.phone, size: 12),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            '+351 252 860 090',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          const Icon(Icons.email, size: 12),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            'info@smartstep.pt ',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              )
+              const AboutApp(),
             ],
           ),
         ),

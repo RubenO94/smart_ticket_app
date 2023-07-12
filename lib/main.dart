@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smart_ticket/screens/home.dart';
-import 'package:smart_ticket/screens/register.dart';
+
 import 'package:smart_ticket/screens/splash.dart';
-import 'package:smart_ticket/screens/start.dart';
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
