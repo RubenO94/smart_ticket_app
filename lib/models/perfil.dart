@@ -9,7 +9,7 @@ class Perfil {
   final List<Janela> janelas;
 
   String get nameToTitleCase {
-    if (name == null || name.isEmpty) {
+    if (name.isEmpty) {
       return '';
     }
 

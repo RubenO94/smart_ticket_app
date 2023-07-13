@@ -10,8 +10,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  bool _isLoading = true;
-  bool _isDeviceActivated = false;
+  final bool _isLoading = true;
+  final bool _isDeviceActivated = false;
 
   void auth() {
     if (_isDeviceActivated) {

@@ -13,7 +13,7 @@ class JanelaItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => AvaliacoesScreen(),
+            builder: (ctx) => const AvaliacoesScreen(),
           ),
         );
       },
