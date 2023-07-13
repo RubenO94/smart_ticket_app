@@ -1,8 +1,6 @@
 import 'package:android_id/android_id.dart';
 
-const username = 'SmartTicketWSApp';
-const baseUrl =
-    'https://cloud.smartstep.pt:9003/WSSmartTicketApp/restsmartticketapp.svc';
+const _username = 'SmartTicketWSApp';
 
 String generatePassword() {
   DateTime now = DateTime.now();
@@ -10,7 +8,7 @@ String generatePassword() {
       now.month.toString().padLeft(2, '0') +
       now.day.toString().padLeft(2, '0');
 
-  String reversedUsername = username.split('').reversed.join();
+  String reversedUsername = _username.split('').reversed.join();
 
   String reversedDate = formattedDate.split('').reversed.join();
 
@@ -18,7 +16,7 @@ String generatePassword() {
 }
 
 String generateUsername() {
-  return username;
+  return _username;
 }
 
 Future<String> generateDeviceId() async {

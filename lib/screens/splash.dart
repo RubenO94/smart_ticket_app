@@ -1,34 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/screens/register.dart';
 
-class SplashScreen extends StatefulWidget {
+import '../providers/perfil_provider.dart';
+import '../services/api.dart';
+import '../providers/http_headers_provider.dart';
+
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _isLoading = true;
   bool _isDeviceActivated = false;
+  final ApiService _apiService = ApiService();
 
-  void auth() {
-    if (_isDeviceActivated) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
-      );
-      return;
+  void auth() async {
+    try {
+      final headers = await ref.watch(headersProvider.notifier).getHeaders();
+      _isDeviceActivated = await _apiService.isDeviceActivated(
+          headers['Token']!, headers['DeviceID']!);
+      //DEBUG:
+      print(headers['DeviceID']);
+
+      if (_isDeviceActivated) {
+        final perfilResponse = await ref
+            .read(perfilNotifierProvider.notifier)
+            .getPerfil(headers['DeviceID']!, headers['Token']!);
+        if (perfilResponse && mounted) {
+          final perfil =
+              ref.read(perfilNotifierProvider.notifier).generatePerfil();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomeScreen(perfil: perfil),
+            ),
+          );
+        }
+
+        return;
+      }
+
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RegisterScreen(),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ),
-    );
   }
 
   @override

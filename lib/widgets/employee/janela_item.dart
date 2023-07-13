@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
-import 'package:smart_ticket/screens/avaliacoes.dart';
+import 'package:smart_ticket/screens/employee/avaliacoes.dart';
 
-class JanelaItem extends StatelessWidget {
+class JanelaItem extends StatefulWidget {
   const JanelaItem({super.key, required this.janela});
-
   final Janela janela;
+
+  @override
+  State<JanelaItem> createState() => _JanelaItemState();
+}
+
+class _JanelaItemState extends State<JanelaItem> {
+
+  
+  Widget _onScreenChange(){
+    switch (widget.janela.id) {
+      case 100: return const AvaliacoesScreen();
+      default: return Container(); // TODO: implement error screen
+  }}
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +25,7 @@ class JanelaItem extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (ctx) => AvaliacoesScreen(),
+            builder: (ctx) => _onScreenChange(),
           ),
         );
       },
@@ -35,9 +47,9 @@ class JanelaItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(janela.icon, size: 32),
+            Icon(widget.janela.icon, size: 32),
             Text(
-              janela.name,
+              widget.janela.name,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),

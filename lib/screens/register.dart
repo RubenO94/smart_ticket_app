@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/screens/home.dart';
-import 'package:smart_ticket/services/secure_storage.dart';
 import 'package:smart_ticket/utils/environments.dart';
 import 'package:smart_ticket/widgets/register/about_app.dart';
 
-
+import '../providers/http_headers_provider.dart';
+import '../providers/perfil_provider.dart';
 import '../services/api.dart';
+import '../utils/dialogs/dialogs.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _secureStorage = SecureStorageService();
   final _apiService = ApiService();
   final _codeController = TextEditingController();
   var _enteredNIF = '';
@@ -36,111 +37,88 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _registerDevice() async {
-    final deviceID = await generateDeviceId();
-    final token = await _apiService.getToken(username, generatePassword());
-  
-    final result = await _apiService.registerDevice(
-        _enteredNIF, _enteredEmail, deviceID, token);
+    final isNifValid = await _apiService.getWSApp(_enteredNIF);
+    if (isNifValid) {
+      final headers = await ref.read(headersProvider.notifier).getHeaders();
+
+      final result = await _apiService.registerDevice(
+          _enteredNIF, _enteredEmail, headers['DeviceID']!, headers['Token']!);
       setState(() {
         _isSending = false;
       });
 
-    if (result && mounted) {
-      final status = await showDialog(
-        context: context,
-        builder: (ctx) {
-          return AlertDialog(
-            title: const Text('Confirmar Registo'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                    'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
-                const SizedBox(
-                  height: 20,
-                ),
-                TextField(
-                  controller: _codeController,
-                  decoration: const InputDecoration(
-                    hintText: 'Insira o código aqui',
+      if (result && mounted) {
+        final dialog = await showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Confirmar Registo'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                      'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
+                  const SizedBox(
+                    height: 20,
                   ),
+                  TextField(
+                    controller: _codeController,
+                    decoration: const InputDecoration(
+                      hintText: 'Insira o código aqui',
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: const Text('Cancelar'),
+                  onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: const Text('Confirmar'),
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus();
+
+                    setState(() {
+                      _activationCode = _codeController.text;
+                    });
+
+                    final result = await _onActivateDevice(_activationCode);
+
+                    if (result && mounted) {
+                      showToast(
+                          context,
+                          'Codigo aceite. Dispositivo registado com sucesso!',
+                          'success');
+                      Navigator.of(context).pop(result);
+                    } else {
+                      showToast(
+                          context, 'O código inserido é inválido', 'error');
+                      Navigator.of(context).pop(result);
+                    }
+                  },
                 ),
               ],
-            ),
-            actions: [
-              TextButton(
-                child: const Text('Cancelar'),
-                onPressed: () {
-                  FocusScope.of(context).unfocus();
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Confirmar'),
-                onPressed: () async {
-                  FocusScope.of(context).unfocus();
-                  if (_codeController?.text != null) {
-                    setState(() {
-                      _activationCode = _codeController!.text;
-                    });
-                    
-                  }
-
-                  final result = await _onActivateDevice(_activationCode);
-
-                  if (result && mounted) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Codigo aceite. Dispositivo registado com sucesso!',
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSecondaryContainer),
-                        ),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                      ),
-                    );
-                    Navigator.of(context).pop(result);
-                  } else {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'O código inserido é inválido',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onError),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                    );
-                    Navigator.of(context).pop(result);
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      );
-      if (status && mounted) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (ctx) => const HomeScreen(),
-        ));
+            );
+          },
+        );
+        if (dialog && mounted) {
+          final perfilStatus = await ref
+              .read(perfilNotifierProvider.notifier)
+              .getPerfil(headers['DeviceID']!, headers['Token']!);
+          if (perfilStatus && mounted) {
+            final perfil =
+                ref.read(perfilNotifierProvider.notifier).generatePerfil();
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (ctx) => HomeScreen(perfil: perfil)));
+          }
+        }
+      } else {
+        showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
       }
-    }else {
-       ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Houve um erro ao registar o dispositivo',
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onError),
-                        ),
-                        backgroundColor: Theme.of(context).colorScheme.error,
-                      ),
-                    );
     }
   }
 
@@ -193,8 +171,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           onSaved: (newValue) async {
                             _enteredNIF = newValue!;
-                            await _secureStorage.writeSecureData(
-                                _enteredNIF, _enteredNIF);
                           },
                         ),
                         const SizedBox(
@@ -228,8 +204,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               ElevatedButton(
                 onPressed: _isSending ? null : _saveCredentials,
-                child: _isSending ? const CircularProgressIndicator() : const Text('Registar'),
-                
+                child: _isSending
+                    ? const CircularProgressIndicator()
+                    : const Text('Registar'),
               ),
               const SizedBox(
                 height: 64,

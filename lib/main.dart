@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:smart_ticket/screens/splash.dart';
+import 'package:smart_ticket/screens/start.dart';
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
@@ -12,9 +14,8 @@ final darkColorScheme = ColorScheme.fromSeed(
 final lightColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
   seedColor: const Color(0xFF00E676),
-  background: const Color(0xF5F5F5F5), 
+  background: const Color(0xF5F5F5F5),
 );
-
 
 final lightTheme = ThemeData().copyWith(
   useMaterial3: true,
@@ -34,7 +35,11 @@ final lightTheme = ThemeData().copyWith(
 );
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

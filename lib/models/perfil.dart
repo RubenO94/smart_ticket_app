@@ -2,10 +2,11 @@ import 'package:smart_ticket/models/janela.dart';
 
 class Perfil {
   const Perfil(
-      {required this.name, required this.photo, required this.janelas});
-
+      {required this.id, required this.name, required this.photo, required this.userType, required this.janelas});
+  final String id;
   final String name;
   final String photo;
+  final int userType;
   final List<Janela> janelas;
 
   String get nameToTitleCase {

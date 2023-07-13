@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/data/dummy_data.dart';
-import 'package:smart_ticket/widgets/aluno_item.dart';
+import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
 class TurmaDetails extends StatelessWidget {
   const TurmaDetails({super.key});

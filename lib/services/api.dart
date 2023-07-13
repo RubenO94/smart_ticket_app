@@ -1,86 +1,138 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-
-const baseUrl =
-    'https://cloud.smartstep.pt:9003/WSSmartTicketApp/restsmartticketapp.svc';
+import 'package:smart_ticket/models/perfil.dart';
+import 'package:smart_ticket/services/secure_storage.dart';
 
 class ApiService {
-  Future<String> getToken(String username, String password) async {
-    final url = Uri.parse(
-        '$baseUrl/GetToken?strUsername=$username&strPassword=$password');
+  final SecureStorageService storage = SecureStorageService();
 
-    final response = await http.get(url);
-    if (response.body.isEmpty) {
-      return '';
-    }
-    if (response.statusCode >= 400) {
-      throw Exception(
-          'Houve um erro ao conectar com o servidor. Por favor tente novamente mais tarde.');
-    }
+  Future<bool> getWSApp(String nif) async {
+    final url =
+        'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc/GetWSApp?strNIF=$nif&strSoftware=08';
 
-    final Map<String, dynamic> data = json.decode(response.body);
-    final String? token = data['strToken'];
-    if (token != null) {
-      return token;
-    }
-    return '';
-  }
-
-  Future<bool> isDeviceActivated(String token, String deviceID) async {
-    final url = Uri.parse('$baseUrl/IsDeviceActivated');
-
-    final response = await http.get(url,
-        headers: {'DeviceID': deviceID, 'Token': token, 'Idioma': 'pt-PT'});
-
-    if (response.statusCode >= 400) {
-      throw Exception(
-          'Houve um erro ao conectar com o servidor. Por favor tente novamente mais tarde.');
-    }
-
-    final Map<String, dynamic> data = json.decode(response.body);
-
-    if (data['nResultado'] == 1) {
-      return true;
+    if (nif.isNotEmpty) {
+      final uriUrl = Uri.parse(url);
+      try {
+        final response = await http.get(uriUrl);
+        if (response.statusCode != 200) {
+          return false;
+        }
+        final Map<String, dynamic> data = json.decode(response.body);
+        final String? baseUrl = data['strDescricao'];
+        if (baseUrl != null) {
+          await storage.writeSecureData('WSApp', baseUrl);
+          return true;
+        }
+      } catch (error) {
+        return false;
+      }
     }
     return false;
   }
 
-  Future<bool> registerDevice(String nif, String email, String deviceID, String token) async {
-  final url = Uri.parse('$baseUrl/RegisterDevice?strNif=$nif&strEmail=$email');
-  final response = await http.get(
-    url,
-    headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token},
-  );
-  if (response.statusCode >= 400) {
-    throw Exception(
-        'Houve um erro ao conectar com o servidor. Por favor tente novamente mais tarde.');
-  }
-  final Map<String, dynamic> data = json.decode(response.body);
-  if (data['nResultado'] == 1) {
-    return true;
-  }
-  return false;
-}
+  Future<String> getToken(String username, String password) async {
+    final wasp = await storage.readSecureData('WSApp');
+    if (wasp.isEmpty) {
+      return '';
+    }
+    final url =
+        Uri.parse('$wasp/GetToken?strUsername=$username&strPassword=$password');
 
-Future<bool> activateDevice(String deviceID, String token, String activationCode) async {
-  final url =
-      Uri.parse('$baseUrl/ActivateDevice?strCodigoAtivacao=$activationCode');
-  final response = await http.get(
-    url,
-    headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token},
-  );
-  if (response.statusCode >= 400) {
-    throw Exception(
-        'Houve um erro ao conectar com o servidor. Por favor tente novamente mais tarde.');
-  }
-  final Map<String, dynamic> data = json.decode(response.body);
+    try {
+      final response = await http.get(url);
+      if (response.body.isEmpty || response.statusCode != 200) {
+        return '';
+      }
 
-  if (data['nResultado'] == 1) {
-    return true;
+      final Map<String, dynamic> data = json.decode(response.body);
+      final String? token = data['strToken'];
+      if (token != null) {
+        return token;
+      }
+      return '';
+    } catch (error) {
+      return '';
+    }
   }
-  
-  return false;
-}
-}
 
+  Future<bool> isDeviceActivated(String token, String deviceID) async {
+    final wasp = await storage.readSecureData('WSApp');
+    if (wasp.isEmpty) {
+      return false;
+    }
+    final url = Uri.parse('$wasp/IsDeviceActivated');
+
+    try {
+      final response = await http.get(url,
+          headers: {'DeviceID': deviceID, 'Token': token, 'Idioma': 'pt-PT'});
+
+      if (response.statusCode != 200) {
+        return false;
+      }
+
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      if (data['nResultado'] == 1) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> registerDevice(
+      String nif, String email, String deviceID, String token) async {
+    final wasp = await storage.readSecureData('WSApp');
+    if (wasp.isEmpty) {
+      return false;
+    }
+    final url = Uri.parse('$wasp/RegisterDevice?strNif=$nif&strEmail=$email');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token},
+      );
+      if (response.statusCode != 200) {
+        return false;
+      }
+      final Map<String, dynamic> data = json.decode(response.body);
+      if (data['nResultado'] == 1) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> activateDevice(
+      String deviceID, String token, String activationCode) async {
+    final wasp = await storage.readSecureData('WSApp');
+    if (wasp.isEmpty) {
+      return false;
+    }
+    final url =
+        Uri.parse('$wasp/ActivateDevice?strCodigoAtivacao=$activationCode');
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token},
+      );
+      if (response.statusCode != 200) {
+        return false;
+      }
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      if (data['nResultado'] == 1) {
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+}

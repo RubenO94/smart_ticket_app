@@ -1,17 +1,20 @@
 import 'dart:convert';
-import 'package:smart_ticket/widgets/janela_item.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/widgets/employee/janela_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/data/dummy_data.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import '../models/perfil.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key, required this.perfil});
+  final Perfil perfil;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       drawer: Drawer(
-          //TODO: custom widget...
+          //TODO: Barra lateral...
           ),
       appBar: AppBar(
         title: const Text('Menu Principal'),
@@ -30,7 +33,7 @@ class HomeScreen extends StatelessWidget {
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
                 image: MemoryImage(
-                  base64Decode(user.photo),
+                  base64Decode(perfil.photo),
                 ),
                 fit: BoxFit.cover,
               ),
@@ -44,7 +47,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Olá, ${user.nameToTitleCase}',
+              'Olá, ${perfil.nameToTitleCase}',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
@@ -61,7 +64,7 @@ class HomeScreen extends StatelessWidget {
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 20),
                 children: [
-                  for(final janela in user.janelas)
+                  for(final janela in perfil.janelas)
                   JanelaItem(janela: janela,)
                 ],
               ),
