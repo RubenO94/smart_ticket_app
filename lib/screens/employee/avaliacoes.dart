@@ -16,6 +16,7 @@ class AvaliacoesScreen extends ConsumerStatefulWidget {
 class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
   List<Turma> _turmas = [];
   bool _isLoading = false;
+  final _searchController = TextEditingController();
 
   void _getTurmas() async {
     setState(() {
@@ -49,24 +50,33 @@ class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Escolher Turma'),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: _turmas.length,
-                      itemBuilder: (context, index) =>
-                          TurmaItem(turma: _turmas[index]),
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+                  color: Theme.of(context).colorScheme.background,
+                  height: 100,
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                      labelText: 'Pesquisar',
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _turmas.length,
+                    itemBuilder: (context, index) =>
+                        TurmaItem(turma: _turmas[index]),
+                  ),
+                )
+              ],
             ),
     );
   }

@@ -27,7 +27,7 @@ class TurmasProvider extends StateNotifier<List<Turma>> {
               (e) => Turma(
                   id: e['nIDAula'],
                   descricao: e['strDescricao'],
-                  color: Colors.yellow),
+                  color: Colors.green.shade600,),
             )
             .toList();
         state = turmas;

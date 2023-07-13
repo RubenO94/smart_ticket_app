@@ -4,7 +4,7 @@ import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
 class TurmaDetails extends StatelessWidget {
   const TurmaDetails({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
