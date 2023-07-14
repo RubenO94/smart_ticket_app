@@ -46,38 +46,38 @@ class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
       appBar: AppBar(
         title: const Text('Turmas'),
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
-                  color: Theme.of(context).colorScheme.background,
-                  height: 100,
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
-                      labelText: 'Pesquisar',
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Expanded(
-                  child: ListView.builder(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 16),
+            color: Theme.of(context).colorScheme.background,
+            child: TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+                labelText: 'Pesquisar',
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView.builder(
                     itemCount: _turmas.length,
                     itemBuilder: (context, index) =>
                         TurmaItem(turma: _turmas[index]),
                   ),
-                )
-              ],
-            ),
+          )
+        ],
+      ),
     );
   }
 }

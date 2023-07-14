@@ -13,8 +13,11 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      drawer: Drawer(
+      drawer: const Drawer(
           //TODO: Barra lateral...
+          child: Center(
+            child: Text('TODO: Barra lateral...'),
+          ),
           ),
       appBar: AppBar(
         title: const Text('Menu Principal'),
@@ -49,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
             Text(
               'Olá, ${perfil.nameToTitleCase}',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
             ),
             const SizedBox(
