@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/models/resposta.dart';
 import 'package:smart_ticket/utils/environments.dart';
+import 'package:smart_ticket/widgets/employee/resposta_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/aluno.dart';
@@ -54,7 +55,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
     }
   }
 
-  void _anserQuestion(String selectedAnswer) {
+  int _anserQuestion(String selectedAnswer) {
     var classificacao = 0;
     switch (selectedAnswer.trimLeft()) {
       case '3 - Muito Bom':
@@ -77,13 +78,20 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
     );
     if (index != -1) {
       respostas[index].classificacao = classificacao;
-      return;
+      return classificacao;
     }
     if (respostas.length != perguntas.length) {
       respostas.add(Resposta(
           idDesempenhoLinha: perguntas[_currentQuestionIndex].idDesempenhoLinha,
           classificacao: classificacao));
     }
+    setState(() {
+      if (_currentQuestionIndex >= 0 &&
+          _currentQuestionIndex < perguntas.length - 1) {
+        _currentQuestionIndex++;
+      }
+    });
+    return classificacao;
   }
 
   @override
@@ -159,19 +167,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                     height: 30,
                   ),
                   ...answers.map((answer) {
-                    return ElevatedButton(
-                        onPressed: () {
-                          _anserQuestion(answer.toString());
-                          setState(() {
-                            if (_currentQuestionIndex >= 0 &&
-                                _currentQuestionIndex < perguntas.length - 1) {
-                              _currentQuestionIndex++;
-                            }
-                          });
-                        },
-                        child: Text(answer,
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.bodyLarge));
+                    return RespostaItem(resposta: answer, currentQuestionIndex: _currentQuestionIndex, onTap: _anserQuestion);
                   }),
                   const SizedBox(
                     height: 60,
