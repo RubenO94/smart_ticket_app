@@ -11,13 +11,14 @@ class JanelaItem extends StatefulWidget {
 }
 
 class _JanelaItemState extends State<JanelaItem> {
-
-  
-  Widget _onScreenChange(){
+  Widget _onScreenChange() {
     switch (widget.janela.id) {
-      case 100: return const AvaliacoesScreen();
-      default: return Container(); // TODO: implement error screen
-  }}
+      case 100:
+        return const AvaliacoesScreen();
+      default:
+        return Container(); // TODO: implement error screen
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +37,8 @@ class _JanelaItemState extends State<JanelaItem> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.9),
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+              Theme.of(context).colorScheme.primaryContainer.withOpacity(1.0),
+              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -51,7 +52,7 @@ class _JanelaItemState extends State<JanelaItem> {
             Text(
               widget.janela.name,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
             ),
           ],

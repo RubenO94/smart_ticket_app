@@ -29,3 +29,10 @@ Future<String> generateDeviceId() async {
   }
   return deviceId;
 }
+
+const List<String> answers = [
+  ' 3 - Muito Bom',
+  ' 2 - Bom',
+  ' 1 - A Melhorar',
+  ' 0 - Matéria não lecionada'
+];

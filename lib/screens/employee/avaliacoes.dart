@@ -14,7 +14,8 @@ class AvaliacoesScreen extends ConsumerStatefulWidget {
 }
 
 class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
-  List<Turma> _turmas = [];
+  late final List<Turma> _turmas;
+  List<Turma> _items = [];
   bool _isLoading = false;
   final _searchController = TextEditingController();
 
@@ -29,9 +30,26 @@ class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
     if (result.isNotEmpty) {
       setState(() {
         _turmas = result;
+        _items = result;
         _isLoading = false;
       });
     }
+  }
+
+  void _filterSearchResults(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _items = _turmas;
+      });
+      return;
+    }
+    setState(() {
+      final resultList = _turmas
+          .where((turma) =>
+              turma.descricao.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+     _items = resultList;
+    });
   }
 
   @override
@@ -60,6 +78,9 @@ class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
                 border: OutlineInputBorder(),
                 labelText: 'Pesquisar',
               ),
+              onChanged: (value) {
+                _filterSearchResults(value);
+              },
             ),
           ),
           const SizedBox(
@@ -71,11 +92,12 @@ class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
                     child: CircularProgressIndicator(),
                   )
                 : ListView.builder(
-                    itemCount: _turmas.length,
+                    shrinkWrap: true,
+                    itemCount: _items.length,
                     itemBuilder: (context, index) =>
-                        TurmaItem(turma: _turmas[index]),
+                        TurmaItem(turma: _items[index]),
                   ),
-          )
+          ),
         ],
       ),
     );

@@ -57,10 +57,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       setState(() {
         _isLoading = false;
       });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -74,6 +70,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       color: Theme.of(context).colorScheme.background,
       child: Center(
@@ -81,26 +79,34 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/logo.png',
+              isDarkMode
+                  ? 'assets/images/logo-darkTheme.png'
+                  : 'assets/images/logo.png',
               height: 100,
             ),
             const SizedBox(
               height: 48,
             ),
-            CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.onBackground,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Theme.of(context).colorScheme.primary,
-              ),
-              strokeWidth: 2,
-            ),
+            _isLoading
+                ? CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.primary,
+                    ),
+                    strokeWidth: 2,
+                  )
+                : Text(
+                    'Houve um problema ao carregar os dados. Tente novamente mais tarde.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
             const SizedBox(
               height: 24,
             ),
-            Text(
-              'A Carregar...',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
+            if (_isLoading)
+              Text(
+                'A Carregar...',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
           ],
         ),
       ),

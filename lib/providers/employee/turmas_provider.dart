@@ -22,8 +22,6 @@ class TurmasProvider extends StateNotifier<List<Turma>> {
         headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token});
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      final List<Map<String, dynamic>> convertedList =
-          List<Map<String, dynamic>>.from(data);
       if (data.isNotEmpty) {
         final turmas = data
             .map(

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:smart_ticket/models/perfil.dart';
 import 'package:smart_ticket/services/secure_storage.dart';
 
 class ApiService {

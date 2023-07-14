@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:smart_ticket/services/api.dart';
-import 'package:smart_ticket/services/secure_storage.dart';
-import 'package:smart_ticket/utils/environments.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});

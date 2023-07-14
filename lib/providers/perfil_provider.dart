@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/services/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_ticket/services/secure_storage.dart';
 

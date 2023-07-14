@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
-import 'package:smart_ticket/widgets/loading.dart';
 
 import '../../providers/employee/alunos_provider.dart';
 import '../../providers/http_headers_provider.dart';
@@ -16,21 +15,41 @@ class TurmaDetails extends ConsumerStatefulWidget {
 }
 
 class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
-  List<Aluno> alunosList = [];
+  late final List<Aluno> _alunosList;
+  List<Aluno> _items = [];
   bool _isLoading = true;
   final _searchController = TextEditingController();
 
   void _getList() async {
     final headers = await ref.read(headersProvider.notifier).getHeaders();
-    alunosList = await ref.read(alunosNotifierProvider.notifier).getAlunos(
+    final results = await ref.read(alunosNotifierProvider.notifier).getAlunos(
         headers['DeviceID']!, headers['Token']!, widget.idAula.toString());
 
-    if (alunosList.isNotEmpty && mounted) {
+    if (results.isNotEmpty && mounted) {
       setState(() {
+        _alunosList = results;
+        _items = results;
         _isLoading = false;
       });
     }
   }
+
+  void _filterSearchResults(String value) {
+    if (value.isEmpty) {
+      setState(() {
+        _items = _alunosList;
+      });
+      return;
+    }
+    setState(() {
+      final resultList = _alunosList
+          .where((aluno) =>
+              aluno.nome.toLowerCase().contains(value.toLowerCase()))
+          .toList();
+     _items = resultList;
+    });
+  }
+
 
   @override
   void initState() {
@@ -53,6 +72,9 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
             color: Theme.of(context).colorScheme.background,
             child: TextField(
               controller: _searchController,
+              onChanged: (value) {
+                _filterSearchResults(value);
+              },
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(),
@@ -69,9 +91,9 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
                     child: CircularProgressIndicator(),
                   )
                 : ListView.builder(
-                    itemCount: alunosList.length,
+                    itemCount: _items.length,
                     itemBuilder: (context, index) =>
-                        AlunoItem(aluno: alunosList[index]),
+                        AlunoItem(aluno: _items[index]),
                   ),
           )
         ],

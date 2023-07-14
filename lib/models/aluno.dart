@@ -19,7 +19,7 @@ class Aluno {
   final List<Resposta> respostas;
 
   String get nameToTitleCase {
-    if (nome == null || nome.isEmpty) {
+    if (nome.isEmpty) {
       return '';
     }
 

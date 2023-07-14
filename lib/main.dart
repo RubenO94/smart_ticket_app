@@ -1,19 +1,20 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:smart_ticket/screens/offline.dart';
 
 import 'package:smart_ticket/screens/splash.dart';
-import 'package:smart_ticket/screens/start.dart';
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  seedColor: const Color(0xFF64FFDA),
+  seedColor: const Color(0xFF7BC67E),
   background: const Color(0xFF212121),
 );
 
 final lightColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
-  seedColor: const Color(0xFF00E676),
+  seedColor: const Color(0xFF4CAF50),
   background: const Color(0xF5F5F5F5),
 );
 
@@ -33,6 +34,20 @@ final lightTheme = ThemeData().copyWith(
     ),
   ),
 );
+
+
+Future<bool> checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi){
+      print(result.toString());
+      print('Connected');
+      return true;
+    }
+    print(result.toString());
+    print('Offline');
+    return false;
+    
+}
 
 void main() {
   runApp(

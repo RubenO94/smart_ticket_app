@@ -31,7 +31,7 @@ const turmas = [
       color: Colors.deepPurple),
 ];
 
-const alunos = [
+ final alunos = [
   Aluno(
     idCliente: 2518,
     idDesempenhoNivel: 4,
@@ -469,3 +469,4 @@ const perguntas = [
       descricao:
           'Espírito de sociabilização e desportivo. Respeita as regras da aula, os colegas e o Professor. É participante na aula'),
 ];
+
