@@ -1,4 +1,5 @@
 import 'package:android_id/android_id.dart';
+import 'package:smart_ticket/models/quiz_answer.dart';
 
 const _username = 'SmartTicketWSApp';
 
@@ -30,9 +31,16 @@ Future<String> generateDeviceId() async {
   return deviceId;
 }
 
-const List<String> answers = [
-  ' 3 - Muito Bom',
-  ' 2 - Bom',
-  ' 1 - A Melhorar',
-  ' 0 - Matéria não lecionada'
+enum Classificacao {
+  MuitoBom,
+  Bom,
+  AMelhorar,
+  MateriaNaoLecionada,
+}
+
+List<QuizAnswer> answers = [
+  QuizAnswer(classificacao: Classificacao.MuitoBom),
+  QuizAnswer(classificacao: Classificacao.Bom),
+  QuizAnswer(classificacao: Classificacao.AMelhorar),
+  QuizAnswer(classificacao: Classificacao.MateriaNaoLecionada),
 ];

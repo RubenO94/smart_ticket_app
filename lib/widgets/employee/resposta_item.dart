@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/models/quiz_answer.dart';
+import 'package:smart_ticket/utils/environments.dart';
 
 class RespostaItem extends StatefulWidget {
   const RespostaItem(
       {super.key,
       required this.resposta,
+      required this.selectedAnswers,
       required this.currentQuestionIndex,
       required this.onTap});
 
-  final String resposta;
-  final int Function(String answer) onTap;
+  final QuizAnswer resposta;
+  final Map<int , QuizAnswer> selectedAnswers;
+  final int Function(Classificacao classificacao) onTap;
   final int currentQuestionIndex;
 
   @override
@@ -16,31 +20,27 @@ class RespostaItem extends StatefulWidget {
 }
 
 class _RespostaItemState extends State<RespostaItem> {
-  bool _selected = false;
+  var isSelected = false;
 
-  void _checkAnswer(int classificacao) {
-    final String classificacaoString = classificacao.toString();
-    if (widget.resposta.contains(classificacaoString)) {
-      setState(() {
-        _selected = true;
-      });
-    }
-    // TODO: Adicionar a função de verificação de acerto
-  }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        final result = widget.onTap(widget.resposta);
-        _checkAnswer(result);
+        setState(() {
+          isSelected = widget.resposta.isSelected ||
+        (widget.selectedAnswers.containsKey(widget.currentQuestionIndex) &&
+            widget.selectedAnswers[widget.currentQuestionIndex]?.classificacao == widget.resposta.classificacao);
+        });
+
+        widget.onTap(widget.resposta.classificacao);
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-        foregroundColor: _selected
+        foregroundColor: isSelected
             ? Theme.of(context).colorScheme.onTertiary
             : Theme.of(context).colorScheme.onBackground,
-        backgroundColor: _selected
+        backgroundColor: isSelected
             ? Theme.of(context).colorScheme.tertiary
             : Theme.of(context).colorScheme.background,
         shape: RoundedRectangleBorder(
@@ -48,7 +48,7 @@ class _RespostaItemState extends State<RespostaItem> {
         ),
       ),
       child: Text(
-        widget.resposta,
+        widget.resposta.classificacao.toString().split('.').last,
         textAlign: TextAlign.center,
       ),
     );
