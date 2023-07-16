@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/screens/resultados_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/resultados_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/turma_details.dart';
+import 'package:smart_ticket/utils/dialogs/dialogs.dart';
 
 import '../../data/dummy_data.dart';
 import '../../models/aluno.dart';
 import '../../models/nivel.dart';
 import '../../models/resposta.dart';
 
-class QuizConclusionScreen extends StatefulWidget {
+class AvaliacaoConclusionScreen extends StatefulWidget {
   final List<Resposta> respostas;
   final VoidCallback reiniciarQuiz;
   final Aluno aluno;
 
-  const QuizConclusionScreen({
+  const AvaliacaoConclusionScreen({
     super.key,
     required this.respostas,
     required this.reiniciarQuiz,
@@ -19,10 +21,11 @@ class QuizConclusionScreen extends StatefulWidget {
   });
 
   @override
-  State<QuizConclusionScreen> createState() => _QuizConclusionScreenState();
+  State<AvaliacaoConclusionScreen> createState() =>
+      _AvaliacaoConclusionScreenState();
 }
 
-class _QuizConclusionScreenState extends State<QuizConclusionScreen> {
+class _AvaliacaoConclusionScreenState extends State<AvaliacaoConclusionScreen> {
   Nivel? _selectedNivel;
   final List<Nivel> niveis = [
     Nivel(
@@ -48,6 +51,8 @@ class _QuizConclusionScreenState extends State<QuizConclusionScreen> {
     });
   }
 
+  void _postAvaliacao() async {}
+
   void enviarAvaliacao() {
     showDialog(
       context: context,
@@ -64,7 +69,13 @@ class _QuizConclusionScreenState extends State<QuizConclusionScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Fechar o diálogo
+                showToast(context, 'Avaliação enviada com sucesso!', 'success');
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const TurmaDetails(idAula: 60),
+                  ),
+                ); // Fechar o diálogo
               },
               child: const Text('Enviar'),
             ),
@@ -103,7 +114,6 @@ class _QuizConclusionScreenState extends State<QuizConclusionScreen> {
                   onPressed: () {
                     selecionarNivel(nivel);
                   },
-                  child: Text(nivel.strDescricao),
                   style: ElevatedButton.styleFrom(
                     foregroundColor: _selectedNivel == nivel
                         ? Theme.of(context).colorScheme.onTertiary
@@ -112,6 +122,7 @@ class _QuizConclusionScreenState extends State<QuizConclusionScreen> {
                         ? Theme.of(context).colorScheme.tertiary
                         : null,
                   ),
+                  child: Text(nivel.strDescricao),
                 );
               }).toList(),
             ),

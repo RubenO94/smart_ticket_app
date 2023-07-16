@@ -6,7 +6,7 @@ import 'package:smart_ticket/models/resposta.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../models/aluno.dart';
-import 'conclusao_quiz.dart';
+import 'conclusao_avaliacao.dart';
 
 class NovaAvaliacaoScreen extends StatefulWidget {
   const NovaAvaliacaoScreen({super.key, required this.aluno});
@@ -113,8 +113,8 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: respostas.length == perguntas.length
-          ? QuizConclusionScreen(
+      child: _quizCompleted
+          ? AvaliacaoConclusionScreen(
               reiniciarQuiz: reiniciarQuiz,
               respostas: respostas,
               aluno: widget.aluno,
@@ -147,108 +147,107 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                   ),
                 ],
               ),
-              body: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: perguntas.length,
-                  onPageChanged: (index) {
-                    setState(() {
-                      _currentPageIndex = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    final pergunta = perguntas[index];
-                    final resposta = respostas.firstWhere(
-                      (resposta) =>
-                          resposta.idDesempenhoLinha ==
-                          pergunta.idDesempenhoLinha,
-                      orElse: () => Resposta(
-                          idDesempenhoLinha: pergunta.idDesempenhoLinha,
-                          classificacao: -1),
-                    );
+              body: Column(
+                children: [
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: perguntas.length,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPageIndex = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        final pergunta = perguntas[index];
+                        final resposta = respostas.firstWhere(
+                          (resposta) =>
+                              resposta.idDesempenhoLinha ==
+                              pergunta.idDesempenhoLinha,
+                          orElse: () => Resposta(
+                              idDesempenhoLinha: pergunta.idDesempenhoLinha,
+                              classificacao: -1),
+                        );
 
-                    return SingleChildScrollView(
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height -
-                            kToolbarHeight -
-                            kBottomNavigationBarHeight,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: Text(pergunta.descricao),
-                              subtitle:
-                                  Text('Categoria: ${pergunta.categoria}'),
-                            ),
-                            RadioListTile<int>(
-                              title: const Text('Muito bom'),
-                              value: 3,
-                              groupValue: resposta.classificacao,
-                              onChanged: (value) {
-                                responderPergunta(value!);
-                              },
-                            ),
-                            RadioListTile<int>(
-                              title: const Text('Bom'),
-                              value: 2,
-                              groupValue: resposta.classificacao,
-                              onChanged: (value) {
-                                responderPergunta(value!);
-                              },
-                            ),
-                            RadioListTile<int>(
-                              title: const Text('A Melhorar'),
-                              value: 1,
-                              groupValue: resposta.classificacao,
-                              onChanged: (value) {
-                                responderPergunta(value!);
-                              },
-                            ),
-                            RadioListTile<int>(
-                              title: const Text('Matéria não lecionada'),
-                              value: 0,
-                              groupValue: resposta.classificacao,
-                              onChanged: (value) {
-                                responderPergunta(value!);
-                              },
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            const Divider(),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        return SingleChildScrollView(
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height -
+                                kToolbarHeight -
+                                kBottomNavigationBarHeight,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_back),
-                                  onPressed: voltarPergunta,
+                                ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  title: Text(pergunta.descricao, style: Theme.of(context).textTheme.labelLarge,),
+                                  subtitle:
+                                      Text('Categoria: ${pergunta.categoria}', style: Theme.of(context).textTheme.labelSmall,),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.arrow_forward),
-                                  onPressed: avancarPergunta,
+                                RadioListTile<int>(
+                                  title: const Text('Muito bom'),
+                                  value: 3,
+                                  groupValue: resposta.classificacao,
+                                  onChanged: (value) {
+                                    responderPergunta(value!);
+                                  },
                                 ),
+                                RadioListTile<int>(
+                                  title: const Text('Bom'),
+                                  value: 2,
+                                  groupValue: resposta.classificacao,
+                                  onChanged: (value) {
+                                    responderPergunta(value!);
+                                  },
+                                ),
+                                RadioListTile<int>(
+                                  title: const Text('A Melhorar'),
+                                  value: 1,
+                                  groupValue: resposta.classificacao,
+                                  onChanged: (value) {
+                                    responderPergunta(value!);
+                                  },
+                                ),
+                                RadioListTile<int>(
+                                  title: const Text('Matéria não lecionada'),
+                                  value: 0,
+                                  groupValue: resposta.classificacao,
+                                  onChanged: (value) {
+                                    responderPergunta(value!);
+                                  },
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                const Divider(),
                               ],
                             ),
-                          ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        TextButton.icon(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: voltarPergunta,
+                          label: const Text('Voltar'),
                         ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
-                  // Enviar as respostas
-                  for (final resposta in respostas) {
-                    print(
-                        'ID: ${resposta.idDesempenhoLinha} Classificacao: ${resposta.classificacao}');
-                  }
-                },
-                label: const Text('Enviar Respostas'),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextButton.icon(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: avancarPergunta,
+                            label:const Text('Avançar')
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               bottomNavigationBar: BottomAppBar(
                 color: Theme.of(context).colorScheme.background,

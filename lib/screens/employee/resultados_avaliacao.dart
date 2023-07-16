@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/pergunta.dart';
-import '../models/resposta.dart';
+import '../../models/pergunta.dart';
+import '../../models/resposta.dart';
 
 class ResultadosAvaliacaoScreen extends StatelessWidget {
   const ResultadosAvaliacaoScreen({
@@ -33,8 +33,10 @@ class ResultadosAvaliacaoScreen extends StatelessWidget {
             ),
           );
           return ListTile(
+            minVerticalPadding: 8.0,
             title: Text(pergunta.descricao),
             subtitle: Text('Resposta selecionada: ${resposta.classificacao}'),
+            trailing: Icon(Icons.abc),
           );
         },
       ),
