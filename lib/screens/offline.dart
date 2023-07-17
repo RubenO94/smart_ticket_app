@@ -31,7 +31,7 @@ class OfflineScreen extends StatelessWidget {
             ),
              const SizedBox(height: 48),
             TextButton.icon(
-              icon: Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh),
               onPressed: refresh,
               label: const Text('Tentar novamente'),
             ),

@@ -15,8 +15,19 @@ class _JanelaItemState extends State<JanelaItem> {
     switch (widget.janela.id) {
       case 100:
         return const AvaliacoesScreen();
+      case 200: return Container(
+        color: Colors.amber
+      );
+      case 300: return Container(
+        color: Colors.red,
+      );
+      case 400: return Container(
+        color: Colors.green,
+      );
       default:
-        return Container(); // TODO: implement error screen
+        return Container(
+          color: Colors.blue,
+        ); // TODO: implement error screen
     }
   }
 
@@ -47,6 +58,7 @@ class _JanelaItemState extends State<JanelaItem> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(widget.janela.icon, size: 32),
             Text(
@@ -54,6 +66,7 @@ class _JanelaItemState extends State<JanelaItem> {
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
+                  textAlign: TextAlign.center,
             ),
           ],
         ),

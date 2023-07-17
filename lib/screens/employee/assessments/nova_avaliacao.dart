@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/models/pergunta.dart';
 import 'package:smart_ticket/models/resposta.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -23,7 +22,7 @@ class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
 
 class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
-  List<Resposta> _respostas = [];
+  final List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
   int? _idAula;
   int? _actividadeLetiva;
