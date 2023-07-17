@@ -29,7 +29,7 @@ class PerfilNotifier extends StateNotifier<Perfil> {
       //converte data['lJanelas'] para List<Janela>
       List<Janela> lJanelas = [];
       data['lJanelas'].forEach((element) {
-        lJanelas.add(Janela(id: element['nIDMenuPrincipal'], name: element['strMenuPrincipal'], icon: Icons.assignment_add ));
+        lJanelas.add(Janela(id: element['nIDMenuPrincipal'], name: element['strMenuPrincipal'], icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil']) ));
       });
       state = Perfil(
           id: data['strID'],
