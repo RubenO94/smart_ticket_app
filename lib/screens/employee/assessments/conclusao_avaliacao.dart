@@ -12,7 +12,7 @@ import '../../../models/aluno.dart';
 import '../../../models/nivel.dart';
 import '../../../models/resposta.dart';
 import '../../../providers/employee/alunos_provider.dart';
-import '../../../providers/http_headers_provider.dart';
+import '../../../providers/headers_provider.dart';
 
 class AvaliacaoConclusionScreen extends ConsumerStatefulWidget {
   final List<Pergunta> perguntas;
@@ -221,14 +221,13 @@ class _AvaliacaoConclusionScreenState
                           ),
                           const SizedBox(height: 48),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               TextButton.icon(
                                 icon: const Icon(Icons.refresh),
                                 onPressed: widget.reiniciarAvaliacao,
                                 label: const Text('Reiniciar Avaliação'),
                               ),
-                              const SizedBox(width: 20),
                               Directionality(
                                 textDirection: TextDirection.rtl,
                                 child: TextButton.icon(
@@ -238,8 +237,8 @@ class _AvaliacaoConclusionScreenState
                                       ? null
                                       : () {
                                           setState(() {
-                                              _showResults = true;
-                                            });
+                                            _showResults = true;
+                                          });
                                         },
                                   label: const Text('Concluir Avaliação'),
                                 ),

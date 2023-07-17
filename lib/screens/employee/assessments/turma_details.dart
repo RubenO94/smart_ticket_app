@@ -5,7 +5,7 @@ import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
 import '../../../providers/employee/alunos_provider.dart';
-import '../../../providers/http_headers_provider.dart';
+import '../../../providers/headers_provider.dart';
 
 class TurmaDetails extends ConsumerStatefulWidget {
   const TurmaDetails({super.key, required this.idAula});

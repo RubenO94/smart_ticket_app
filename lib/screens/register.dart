@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/screens/home.dart';
-import 'package:smart_ticket/utils/environments.dart';
 import 'package:smart_ticket/widgets/register/about_app.dart';
 
-import '../providers/http_headers_provider.dart';
+import '../providers/headers_provider.dart';
 import '../providers/perfil_provider.dart';
 import '../services/api.dart';
 import '../utils/dialogs/dialogs.dart';

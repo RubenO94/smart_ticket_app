@@ -6,7 +6,7 @@ import 'package:smart_ticket/screens/register.dart';
 
 import '../providers/perfil_provider.dart';
 import '../services/api.dart';
-import '../providers/http_headers_provider.dart';
+import '../providers/headers_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -24,6 +24,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void auth() async {
     try {
       final headers = await ref.watch(headersProvider.notifier).getHeaders();
+      if (headers['Error'] == 'notRegistered' && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const RegisterScreen(),
+          ),
+        );
+      }
       if (headers.isEmpty) {
         setState(() {
           _isOffline = true;
@@ -54,15 +62,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         }
 
         return;
-      }
-
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RegisterScreen(),
-          ),
-        );
       }
     } catch (e) {
       setState(() {
