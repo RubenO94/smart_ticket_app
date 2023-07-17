@@ -16,27 +16,31 @@ class TurmasProvider extends StateNotifier<List<Turma>> {
     }
     final SecureStorageService storage = SecureStorageService();
     final wasp = await storage.readSecureData('WSApp');
-
     final url = Uri.parse('$wasp/GetTurmas');
-    final response = await http.get(url,
-        headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token});
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final turmas = data
-            .map(
-              (e) => Turma(
-                id: e['nIDAula'],
-                descricao: e['strDescricao'],
-                color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-                    .withOpacity(1.0),
-              ),
-            )
-            .toList();
+    try {
+      final response = await http.get(url,
+          headers: {'Idioma': 'pt-PT', 'DeviceID': deviceID, 'Token': token});
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final turmas = data
+              .map(
+                (e) => Turma(
+                  id: e['nIDAula'],
+                  descricao: e['strDescricao'],
+                  color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
+                      .withOpacity(1.0),
+                ),
+              )
+              .toList();
 
-        state = turmas;
+          state = turmas;
+        }
       }
+    } catch (e) {
+      print(e);
     }
+
     return state;
   }
 }

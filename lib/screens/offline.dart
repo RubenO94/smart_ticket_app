@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class OfflineScreen extends StatelessWidget {
   const OfflineScreen({super.key, required this.refresh});
-  final Future<bool> Function() refresh;
+  final void Function() refresh;
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +22,18 @@ class OfflineScreen extends StatelessWidget {
             ),
             Text(
               'Sem conexão com o servidor',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onBackground),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Text(
               'Verifique a sua conexão à internet e tente novamente',
               style: Theme.of(context).textTheme.labelMedium,
             ),
              const SizedBox(height: 48),
-            ElevatedButton(
-              onPressed: () async {
-                await refresh();
-              },
-              child: const Text('Tentar novamente'),
+            TextButton.icon(
+              icon: Icon(Icons.refresh),
+              onPressed: refresh,
+              label: const Text('Tentar novamente'),
             ),
           ],
         ),

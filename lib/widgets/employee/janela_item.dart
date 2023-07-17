@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
-import 'package:smart_ticket/screens/employee/avaliacoes.dart';
+import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
 
 class JanelaItem extends StatefulWidget {
   const JanelaItem({super.key, required this.janela});

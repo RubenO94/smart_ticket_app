@@ -1,30 +1,45 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/data/dummy_data.dart';
+import 'package:smart_ticket/models/pergunta.dart';
 import 'package:smart_ticket/models/resposta.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../models/aluno.dart';
+import '../../../models/aluno.dart';
+import '../../../providers/employee/alunos_provider.dart';
 import 'conclusao_avaliacao.dart';
 
-class NovaAvaliacaoScreen extends StatefulWidget {
+class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
   const NovaAvaliacaoScreen({super.key, required this.aluno});
+
   final Aluno aluno;
 
   @override
-  State<NovaAvaliacaoScreen> createState() => _NovaAvaliacaoScreenState();
+  ConsumerState<NovaAvaliacaoScreen> createState() =>
+      _NovaAvaliacaoScreenState();
 }
 
-class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
+class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
-  List<Resposta> respostas = [];
+  List<Resposta> _respostas = [];
+  List<Pergunta> _perguntasList = [];
+  int? _idAula;
+  int? _actividadeLetiva;
   final PageController _pageController = PageController(initialPage: 0);
-  bool _quizCompleted = false;
-  int _selectedNivel = 1; // Nível selecionado inicialmente
+  bool _avaliacaoCompleted = false;
+  int _selectedNivel = 1;
+
+  void setData() {
+    _idAula = ref.read(alunosNotifierProvider.notifier).idAula;
+    _actividadeLetiva =
+        ref.read(alunosNotifierProvider.notifier).actividadeLetiva;
+    _perguntasList = ref.read(alunosNotifierProvider.notifier).preguntasList;
+  }
 
   Future<bool> _onWillPop() async {
-    if (respostas.isNotEmpty) {
+    if (_respostas.isNotEmpty) {
       return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -48,37 +63,37 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
   }
 
   void responderPergunta(int classificacao) {
-    final pergunta = perguntas[_currentPageIndex];
-    final index = respostas.indexWhere(
+    final pergunta = _perguntasList[_currentPageIndex];
+    final index = _respostas.indexWhere(
       (resposta) => resposta.idDesempenhoLinha == pergunta.idDesempenhoLinha,
     );
 
     if (index != -1) {
       setState(() {
-        respostas[index].classificacao = classificacao;
+        _respostas[index].classificacao = classificacao;
       });
     } else {
       setState(() {
-        respostas.add(Resposta(
+        _respostas.add(Resposta(
           idDesempenhoLinha: pergunta.idDesempenhoLinha,
           classificacao: classificacao,
         ));
       });
     }
 
-    if (respostas.length == perguntas.length) {
+    if (_respostas.length == _perguntasList.length) {
       setState(() {
-        _quizCompleted = true;
+        _avaliacaoCompleted = true;
       });
     }
   }
 
   void avancarPergunta() {
     setState(() {
-      if (_currentPageIndex < perguntas.length - 1) {
+      if (_currentPageIndex < _perguntasList.length - 1) {
         _currentPageIndex++;
         _pageController.nextPage(
-            duration: const Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut);
       }
     });
@@ -89,7 +104,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
       if (_currentPageIndex > 0) {
         _currentPageIndex--;
         _pageController.previousPage(
-            duration: const Duration(milliseconds: 800),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut);
       }
     });
@@ -101,22 +116,35 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
     });
   }
 
-  void reiniciarQuiz() {
+  void reiniciarAvaliacao() {
     setState(() {
       _currentPageIndex = 0;
-      respostas.clear();
-      _quizCompleted = false;
+      _respostas.clear();
+      _avaliacaoCompleted = false;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setData();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: _quizCompleted
+      child: _avaliacaoCompleted
           ? AvaliacaoConclusionScreen(
-              reiniciarQuiz: reiniciarQuiz,
-              respostas: respostas,
+              perguntas: _perguntasList,
+              reiniciarAvaliacao: reiniciarAvaliacao,
+              respostas: _respostas,
               aluno: widget.aluno,
             )
           : Scaffold(
@@ -152,15 +180,15 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
-                      itemCount: perguntas.length,
+                      itemCount: _perguntasList.length,
                       onPageChanged: (index) {
                         setState(() {
                           _currentPageIndex = index;
                         });
                       },
                       itemBuilder: (context, index) {
-                        final pergunta = perguntas[index];
-                        final resposta = respostas.firstWhere(
+                        final pergunta = _perguntasList[index];
+                        final resposta = _respostas.firstWhere(
                           (resposta) =>
                               resposta.idDesempenhoLinha ==
                               pergunta.idDesempenhoLinha,
@@ -178,13 +206,21 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                  title: Text(pergunta.descricao, style: Theme.of(context).textTheme.labelLarge,),
-                                  subtitle:
-                                      Text('Categoria: ${pergunta.categoria}', style: Theme.of(context).textTheme.labelSmall,),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  title: Text(
+                                    pergunta.descricao,
+                                    style:
+                                        Theme.of(context).textTheme.labelLarge,
+                                  ),
+                                  subtitle: Text(
+                                    'Categoria: ${pergunta.categoria}',
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
                                 ),
                                 RadioListTile<int>(
-                                  title: const Text('Muito bom'),
+                                  title: const Text('Muito bom (3)'),
                                   value: 3,
                                   groupValue: resposta.classificacao,
                                   onChanged: (value) {
@@ -192,7 +228,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                                   },
                                 ),
                                 RadioListTile<int>(
-                                  title: const Text('Bom'),
+                                  title: const Text('Bom (2)'),
                                   value: 2,
                                   groupValue: resposta.classificacao,
                                   onChanged: (value) {
@@ -200,7 +236,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                                   },
                                 ),
                                 RadioListTile<int>(
-                                  title: const Text('A Melhorar'),
+                                  title: const Text('A Melhorar (1)'),
                                   value: 1,
                                   groupValue: resposta.classificacao,
                                   onChanged: (value) {
@@ -208,7 +244,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                                   },
                                 ),
                                 RadioListTile<int>(
-                                  title: const Text('Matéria não lecionada'),
+                                  title: const Text('Matéria não lecionada (0)'),
                                   value: 0,
                                   groupValue: resposta.classificacao,
                                   onChanged: (value) {
@@ -239,10 +275,9 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                         Directionality(
                           textDirection: TextDirection.rtl,
                           child: TextButton.icon(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: avancarPergunta,
-                            label:const Text('Avançar')
-                          ),
+                              icon: const Icon(Icons.arrow_back),
+                              onPressed: avancarPergunta,
+                              label: const Text('Avançar')),
                         ),
                       ],
                     ),
@@ -254,7 +289,7 @@ class _NovaAvaliacaoScreenState extends State<NovaAvaliacaoScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (int i = 0; i < perguntas.length; i++)
+                    for (int i = 0; i < _perguntasList.length; i++)
                       Icon(
                         Icons.circle,
                         color: i == _currentPageIndex

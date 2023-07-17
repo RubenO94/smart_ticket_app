@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/turma.dart';
 
-import 'package:smart_ticket/screens/employee/turma_details.dart';
+import 'package:smart_ticket/screens/employee/assessments/turma_details.dart';
 
 
 class TurmaItem extends StatelessWidget {

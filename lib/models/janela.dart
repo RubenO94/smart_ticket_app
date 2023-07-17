@@ -6,3 +6,29 @@ class Janela {
   final String name;
   final IconData icon;
 }
+
+IconData getIcon(int id, int tipoPerfil) {
+  if (tipoPerfil == 1) {
+    switch (id) {
+      case 100:
+        return Icons.assignment_rounded;
+      case 200:
+        return Icons.app_registration_rounded;
+      case 300:
+        return Icons.payment_rounded;
+
+      case 400:
+        return Icons.calendar_today_rounded;
+
+      default:
+        return Icons.device_unknown_rounded;
+    }
+  } else {
+    switch (id) {
+      case 100:
+        return Icons.assignment_add;
+      default:
+        return Icons.device_unknown_rounded;
+    }
+  }
+}

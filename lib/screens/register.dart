@@ -38,7 +38,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _registerDevice() async {
     final isNifValid = await _apiService.getWSApp(_enteredNIF);
-    if (isNifValid) {
+    if (isNifValid == 'success') {
       final headers = await ref.read(headersProvider.notifier).getHeaders();
 
       final result = await _apiService.registerDevice(
@@ -48,63 +48,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       });
 
       if (result && mounted) {
-        final dialog = await showDialog(
-          context: context,
-          builder: (ctx) {
-            return AlertDialog(
-              title: const Text('Confirmar Registo'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                      'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  TextField(
-                    controller: _codeController,
-                    decoration: const InputDecoration(
-                      hintText: 'Insira o código aqui',
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  child: const Text('Cancelar'),
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: const Text('Confirmar'),
-                  onPressed: () async {
-                    FocusScope.of(context).unfocus();
-
-                    setState(() {
-                      _activationCode = _codeController.text;
-                    });
-
-                    final result = await _onActivateDevice(_activationCode);
-
-                    if (result && mounted) {
-                      showToast(
-                          context,
-                          'Codigo aceite. Dispositivo registado com sucesso!',
-                          'success');
-                      Navigator.of(context).pop(result);
-                    } else {
-                      showToast(
-                          context, 'O código inserido é inválido', 'error');
-                      Navigator.of(context).pop(result);
-                    }
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        final dialog = await _showConfirmationDialog();
         if (dialog && mounted) {
           final perfilStatus = await ref
               .read(perfilNotifierProvider.notifier)
@@ -116,21 +60,82 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 builder: (ctx) => HomeScreen(perfil: perfil)));
           }
         }
-      } else {
+      } else if(isNifValid == 'null') {
+        showToast(context, 'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.', 'error');
+      }
+      else{
         showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
       }
     }
   }
 
+  Future<bool> _showConfirmationDialog() async {
+    final dialog = await showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Confirmar Registo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                  'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _codeController,
+                decoration: const InputDecoration(
+                  hintText: 'Insira o código aqui',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: const Text('Confirmar'),
+              onPressed: () async {
+                FocusScope.of(context).unfocus();
+                setState(() {
+                  _activationCode = _codeController.text;
+                });
+                final result = await _onActivateDevice(_activationCode);
+
+                if (result && mounted) {
+                  showToast(
+                      context,
+                      'Codigo aceite. Dispositivo registado com sucesso!',
+                      'success');
+                  Navigator.of(context).pop(true);
+                } else {
+                  showToast(context, 'O código inserido é inválido', 'error');
+                  Navigator.of(context).pop(false);
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return dialog ?? false;
+  }
+
   Future<bool> _onActivateDevice(String code) async {
-    final username = generateUsername();
-    final password = generatePassword();
-    final deviceID = await generateDeviceId();
-    final token = await _apiService.getToken(username, password);
-
-    final result = await _apiService.activateDevice(deviceID, token, code);
-
+    final headers = await ref.read(headersProvider.notifier).getHeaders();
+    final result = await _apiService.activateDevice(
+        headers['DeviceID']!, headers['Token']!, code);
     return result;
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/screens/home.dart';
+import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/screens/register.dart';
 
 import '../providers/perfil_provider.dart';
@@ -17,11 +18,21 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _isLoading = true;
   bool _isDeviceActivated = false;
+  bool _isOffline = false;
   final ApiService _apiService = ApiService();
 
   void auth() async {
     try {
       final headers = await ref.watch(headersProvider.notifier).getHeaders();
+      if (headers.isEmpty) {
+        setState(() {
+          _isOffline = true;
+        });
+      } else {
+        setState(() {
+          _isOffline = false;
+        });
+      }
       _isDeviceActivated = await _apiService.isDeviceActivated(
           headers['Token']!, headers['DeviceID']!);
       //DEBUG:
@@ -72,44 +83,43 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      color: Theme.of(context).colorScheme.background,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              isDarkMode
-                  ? 'assets/images/logo-darkTheme.png'
-                  : 'assets/images/logo.png',
-              height: 100,
-            ),
-            const SizedBox(
-              height: 48,
-            ),
-            _isLoading
-                ? CircularProgressIndicator(
+    return _isOffline
+        ? OfflineScreen(
+            refresh: auth,
+          )
+        : Container(
+            color: Theme.of(context).colorScheme.background,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    isDarkMode
+                        ? 'assets/images/logo-darkTheme.png'
+                        : 'assets/images/logo.png',
+                    height: 100,
+                  ),
+                  const SizedBox(
+                    height: 48,
+                  ),
+                  CircularProgressIndicator(
                     color: Theme.of(context).colorScheme.onBackground,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Theme.of(context).colorScheme.primary,
                     ),
                     strokeWidth: 2,
-                  )
-                : Text(
-                    'Houve um problema ao carregar os dados. Tente novamente mais tarde.',
-                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
-            const SizedBox(
-              height: 24,
-            ),
-            if (_isLoading)
-              Text(
-                'A Carregar...',
-                style: Theme.of(context).textTheme.bodyLarge,
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  if (_isLoading)
+                    Text(
+                      'A Carregar...',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                ],
               ),
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

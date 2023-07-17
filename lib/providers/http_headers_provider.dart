@@ -15,12 +15,21 @@ class HeadersNotifier extends StateNotifier<Map<String, String>> {
     _username = generateUsername();
     _password = generatePassword();
     _deviceId = await generateDeviceId();
-    if (_username != null && _password != null) {
-      _token = await _service.getToken(_username!, _password!);
-      if (_token != null && _deviceId!= null) {
-        state = {'Idioma': 'pt-PT', 'Token': _token!, 'DeviceID': _deviceId!};
+    try {
+      if (_username != null && _password != null) {
+        _token = await _service.getToken(_username!, _password!);
+        if (_token == 'noInternetConnection' ||
+            _token == 'notRegistered' ||
+            _token == 'errorUnknown') {
+          return {};
+        }
+        if (_token != null && _deviceId != null) {
+          state = {'Idioma': 'pt-PT', 'Token': _token!, 'DeviceID': _deviceId!};
+        }
+        return state;
       }
-      return state;
+    } catch (e) {
+      return {};
     }
 
     state = {};

@@ -1,12 +1,19 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:smart_ticket/services/secure_storage.dart';
+
+import '../utils/error_messages.dart';
 
 class ApiService {
   final SecureStorageService storage = SecureStorageService();
 
-  Future<bool> getWSApp(String nif) async {
+  Future<String> getWSApp(String nif) async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      return 'noInternetConnection';
+    }
     final url =
         'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc/GetWSApp?strNIF=$nif&strSoftware=08';
 
@@ -15,43 +22,53 @@ class ApiService {
       try {
         final response = await http.get(uriUrl);
         if (response.statusCode != 200) {
-          return false;
+          final status = getErrorMessage(response.statusCode);
+          return status;
         }
         final Map<String, dynamic> data = json.decode(response.body);
         final String? baseUrl = data['strDescricao'];
         if (baseUrl != null) {
           await storage.writeSecureData('WSApp', baseUrl);
-          return true;
+          return 'success';
+        }
+        else{
+          return 'null';
         }
       } catch (error) {
-        return false;
+        return error.toString();
       }
     }
-    return false;
+    return 'errorUnknown';
   }
 
   Future<String> getToken(String username, String password) async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      return 'noInternetConnection';
+    }
+
     final wasp = await storage.readSecureData('WSApp');
     if (wasp.isEmpty) {
-      return '';
+      return 'notRegistered';
     }
     final url =
         Uri.parse('$wasp/GetToken?strUsername=$username&strPassword=$password');
 
     try {
       final response = await http.get(url);
-      if (response.body.isEmpty || response.statusCode != 200) {
-        return '';
+      if (response.statusCode >= 400) {
+        final status = getErrorMessage(response.statusCode);
+        return status;
       }
 
       final Map<String, dynamic> data = json.decode(response.body);
       final String? token = data['strToken'];
-      if (token != null) {
+      if (token != null || token! == 'Username ou password inválida') {
         return token;
       }
-      return '';
+      return 'errorUnknown';
     } catch (error) {
-      return '';
+      return 'errorUnknown';
     }
   }
 
