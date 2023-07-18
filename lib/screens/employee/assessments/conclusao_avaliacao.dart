@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 import 'package:smart_ticket/models/pergunta.dart';
+import 'package:smart_ticket/providers/employee/niveis_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/screens/employee/assessments/resultados_avaliacao.dart';
 import 'package:smart_ticket/screens/home.dart';
@@ -38,24 +40,24 @@ class _AvaliacaoConclusionScreenState
   int _idAula = 0;
   bool _isSending = false;
   bool _showResults = false;
+  bool _isLoading = true;
   Nivel? _selectedNivel;
-  final List<Nivel> niveis = [
-    Nivel(
-      nIDDesempenhoNivel: 1,
-      strCodigo: 'BB2',
-      strDescricao: 'Bebés Nível 2',
-    ),
-    Nivel(
-      nIDDesempenhoNivel: 2,
-      strCodigo: 'BB3',
-      strDescricao: 'Bebés Nível 3',
-    ),
-    Nivel(
-      nIDDesempenhoNivel: 4,
-      strCodigo: 'BB4',
-      strDescricao: 'Bébés Nível 4',
-    ),
-  ];
+  List<Nivel> niveis = [];
+  Map<String, String> headers = {};
+
+  void loadScreen() async {
+    headers = await ref.read(headersProvider.notifier).getHeaders();
+    _idAula = ref.read(alunosNotifierProvider.notifier).idAula;
+    final niveisList = await ref
+        .read(niveisProvider.notifier)
+        .loadNiveis(headers['DeviceID']!, headers['Token']!);
+    if (niveisList.isNotEmpty) {
+      setState(() {
+        niveis = niveisList;
+        _isLoading = false;
+      });
+    }
+  }
 
   void selecionarNivel(Nivel nivel) {
     setState(() {
@@ -69,8 +71,6 @@ class _AvaliacaoConclusionScreenState
       _isSending = true;
     });
     try {
-      final headers = await ref.read(headersProvider.notifier).getHeaders();
-      final idAula = ref.read(alunosNotifierProvider.notifier).idAula;
       final result = await ref
           .read(alunosNotifierProvider.notifier)
           .postAvaliacao(
@@ -137,7 +137,7 @@ class _AvaliacaoConclusionScreenState
   @override
   void initState() {
     super.initState();
-    _idAula = ref.read(alunosNotifierProvider.notifier).idAula;
+    loadScreen();
   }
 
   @override
@@ -202,22 +202,28 @@ class _AvaliacaoConclusionScreenState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
-                            children: niveis.map((nivel) {
-                              return ElevatedButton(
-                                onPressed: () {
-                                  selecionarNivel(nivel);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  foregroundColor: _selectedNivel == nivel
-                                      ? Theme.of(context).colorScheme.onTertiary
-                                      : null,
-                                  backgroundColor: _selectedNivel == nivel
-                                      ? Theme.of(context).colorScheme.tertiary
-                                      : null,
-                                ),
-                                child: Text(nivel.strDescricao),
-                              );
-                            }).toList(),
+                            children: _isLoading
+                                ? const [CircularProgressIndicator()]
+                                : niveis.map((nivel) {
+                                    return ElevatedButton(
+                                      onPressed: () {
+                                        selecionarNivel(nivel);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: _selectedNivel == nivel
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onTertiary
+                                            : null,
+                                        backgroundColor: _selectedNivel == nivel
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .tertiary
+                                            : null,
+                                      ),
+                                      child: Text(nivel.strDescricao),
+                                    );
+                                  }).toList(),
                           ),
                           const SizedBox(height: 48),
                           Row(

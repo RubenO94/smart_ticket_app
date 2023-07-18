@@ -22,14 +22,14 @@ String generateUsername() {
 Future<String> generateDeviceId() async {
   //TODO: Implementar o gerador de ID para iOS com o package: device_info_plus
 
-  // const androidId = AndroidId();
-  // final deviceId = await androidId.getId();
-  // if (deviceId == null) {
-  //   return '';
-  // }
-  // return deviceId;
+  const androidId = AndroidId();
+  final deviceId = await androidId.getId();
+  if (deviceId == null) {
+    return '';
+  }
+  return deviceId;
 
-  return 'ae4448759d50bc39';
+  // return 'ae4448759d50bc39';
 }
 
 enum Classificacao {
