@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
+import 'package:smart_ticket/screens/client/calendar/calendario.dart';
+import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
+import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
 
 class JanelaItem extends StatefulWidget {
-  const JanelaItem({super.key, required this.janela});
+  const JanelaItem({super.key, required this.janela, required this.tipoPerfil});
   final Janela janela;
+  final int tipoPerfil;
 
   @override
   State<JanelaItem> createState() => _JanelaItemState();
@@ -12,22 +16,32 @@ class JanelaItem extends StatefulWidget {
 
 class _JanelaItemState extends State<JanelaItem> {
   Widget _onScreenChange() {
-    switch (widget.janela.id) {
-      case 100:
-        return const AvaliacoesScreen();
-      case 200: return Container(
-        color: Colors.amber
-      );
-      case 300: return Container(
-        color: Colors.red,
-      );
-      case 400: return Container(
-        color: Colors.green,
-      );
-      default:
-        return Container(
-          color: Colors.blue,
-        ); // TODO: implement error screen
+    if (widget.tipoPerfil == 1) {
+      switch (widget.janela.id) {
+        case 100:
+          return Container(
+            color: Colors.blue,
+          );
+        case 200:
+          return const InscricoesScreen();
+        case 300:
+          return const PagamentosPendentesScreen();
+        case 400:
+          return const CalendarioScreen();
+        default:
+          return Container(
+            color: Colors.blue,
+          ); // TODO: implement error screen
+      }
+    } else {
+      switch (widget.janela.id) {
+        case 100:
+          return const AvaliacoesScreen();
+        default:
+          return Container(
+            color: Colors.blue,
+          ); // TODO: implement error screen
+      }
     }
   }
 
@@ -66,7 +80,7 @@ class _JanelaItemState extends State<JanelaItem> {
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
-                  textAlign: TextAlign.center,
+              textAlign: TextAlign.center,
             ),
           ],
         ),

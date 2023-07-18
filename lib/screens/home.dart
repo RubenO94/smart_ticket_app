@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/widgets/employee/janela_item.dart';
+import 'package:smart_ticket/widgets/janela_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/material.dart';
 
@@ -68,7 +68,7 @@ class HomeScreen extends ConsumerWidget {
                     mainAxisSpacing: 20),
                 children: [
                   for(final janela in perfil.janelas)
-                  JanelaItem(janela: janela,)
+                  JanelaItem(janela: janela, tipoPerfil: perfil.userType,)
                 ],
               ),
             )

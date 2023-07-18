@@ -1,4 +1,6 @@
 import 'package:android_id/android_id.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 const _username = 'SmartTicketWSApp';
 
@@ -22,19 +24,20 @@ String generateUsername() {
 Future<String> generateDeviceId() async {
   //TODO: Implementar o gerador de ID para iOS com o package: device_info_plus
 
-  const androidId = AndroidId();
-  final deviceId = await androidId.getId();
-  if (deviceId == null) {
-    return '';
-  }
-  return deviceId;
+  // const androidId = AndroidId();
+  // final deviceId = await androidId.getId();
+  // if (deviceId == null) {
+  //   return '';
+  // }
+  // return deviceId;
 
-  // return 'ae4448759d50bc39';
+  return 'ae4448759d50bc39';
 }
 
-enum Classificacao {
-  MuitoBom,
-  Bom,
-  AMelhorar,
-  MateriaNaoLecionada,
+
+String formattedDate(DateTime data) {
+   initializeDateFormatting();
+  Intl.defaultLocale = 'pt_PT';
+   final formato = DateFormat('dd/MMM/yyyy', 'pt_PT');
+  return formato.format(data);
 }
