@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:smart_ticket/data/dummy_data.dart';
-
-import '../../models/atividade.dart';
 
 class NovaInscricao extends StatefulWidget {
   const NovaInscricao({super.key});

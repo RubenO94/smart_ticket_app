@@ -5,9 +5,15 @@ import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 
 class AlunoItem extends StatelessWidget {
-  const AlunoItem({super.key, required this.aluno});
+  const AlunoItem(
+      {super.key,
+      required this.aluno,
+      required this.idAula,
+      required this.idAtividadeLetiva});
 
   final Aluno aluno;
+  final int idAula;
+  final int idAtividadeLetiva;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +90,10 @@ class AlunoItem extends StatelessWidget {
               ),
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => NovaAvaliacaoScreen(aluno: aluno),
+            builder: (ctx) => NovaAvaliacaoScreen(
+                aluno: aluno,
+                idAula: idAula,
+                idAtividadeLetiva: idAtividadeLetiva),
           ));
         },
       ),

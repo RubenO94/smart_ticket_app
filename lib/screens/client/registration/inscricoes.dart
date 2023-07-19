@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/widgets/client/nova_inscricao.dart';

@@ -36,18 +36,7 @@ final lightTheme = ThemeData().copyWith(
 );
 
 
-Future<bool> checkConnectivity() async {
-    final result = await Connectivity().checkConnectivity();
-    if(result == ConnectivityResult.mobile || result == ConnectivityResult.wifi){
-      print(result.toString());
-      print('Connected');
-      return true;
-    }
-    print(result.toString());
-    print('Offline');
-    return false;
-    
-}
+
 
 void main() {
   runApp(

@@ -2,24 +2,24 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:smart_ticket/models/pergunta.dart';
-import 'package:smart_ticket/providers/employee/niveis_provider.dart';
-import 'package:smart_ticket/providers/perfil_provider.dart';
+import 'package:smart_ticket/providers/api_service_provider.dart';
+import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
+import 'package:smart_ticket/providers/aula_id_provider.dart';
+import 'package:smart_ticket/providers/niveis_provider.dart';
 import 'package:smart_ticket/screens/employee/assessments/resultados_avaliacao.dart';
-import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/utils/dialogs/dialogs.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../../models/aluno.dart';
 import '../../../models/nivel.dart';
 import '../../../models/resposta.dart';
-import '../../../providers/employee/alunos_provider.dart';
-import '../../../providers/headers_provider.dart';
+
 
 class AvaliacaoConclusionScreen extends ConsumerStatefulWidget {
   final List<Pergunta> perguntas;
   final List<Resposta> respostas;
   final VoidCallback reiniciarAvaliacao;
+
   final Aluno aluno;
 
   const AvaliacaoConclusionScreen({
@@ -37,73 +37,43 @@ class AvaliacaoConclusionScreen extends ConsumerStatefulWidget {
 
 class _AvaliacaoConclusionScreenState
     extends ConsumerState<AvaliacaoConclusionScreen> {
-  int _idAula = 0;
   bool _isSending = false;
   bool _showResults = false;
-  bool _isLoading = true;
   Nivel? _selectedNivel;
-  List<Nivel> niveis = [];
-  Map<String, String> headers = {};
+  List<Nivel> _niveisList = [];
 
-  void loadScreen() async {
-    headers = await ref.read(headersProvider.notifier).getHeaders();
-    _idAula = ref.read(alunosNotifierProvider.notifier).idAula;
-    final niveisList = await ref
-        .read(niveisProvider.notifier)
-        .loadNiveis(headers['DeviceID']!, headers['Token']!);
-    if (niveisList.isNotEmpty) {
-      setState(() {
-        niveis = niveisList;
-        _isLoading = false;
-      });
+  void _loadScreen() async {
+    _niveisList = ref.read(niveisProvider);
+  }
+
+  void _enviarAvaliacao() async {
+    setState(() {
+      _isSending = true;
+    });
+    final apiService = ref.read(apiServiceProvider);
+    final int atividadeLetiva = ref.read(atividadeLetivaIDProvider);
+    final int aulaId = ref.read(aulaIDProvider);
+    final hasSended = await apiService.postAvaliacao(
+        widget.aluno.idCliente,
+        widget.respostas,
+        _selectedNivel!.nIDDesempenhoNivel,
+        aulaId,
+        atividadeLetiva);
+    if (hasSended && mounted) {
+      showToast(context, 'Avaliação enviada com sucesso!', 'sucess');
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } else {
+      showToast(context, 'Houve um erro ao enviar a Avaliação', 'error');
     }
   }
 
-  void selecionarNivel(Nivel nivel) {
+  void _selecionarNivel(Nivel nivel) {
     setState(() {
       _selectedNivel = nivel;
     });
   }
 
-  void _postAvaliacao() async {
-    setState(() {
-      _showResults = false;
-      _isSending = true;
-    });
-    try {
-      final result = await ref
-          .read(alunosNotifierProvider.notifier)
-          .postAvaliacao(
-              widget.aluno.idCliente,
-              widget.respostas,
-              _selectedNivel!.nIDDesempenhoNivel,
-              headers['Token']!,
-              headers['DeviceID']!);
-
-      if (result && mounted) {
-        final perfil =
-            ref.read(perfilNotifierProvider.notifier).generatePerfil();
-        showToast(context, 'Avaliação enviada com sucesso!', 'success');
-
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(perfil: perfil),
-          ),
-          (route) => route.isFirst, // Verificar se é a primeira rota
-        );
-      } else {
-        showToast(context, 'Erro ao enviar avaliação!', 'error');
-      }
-    } catch (e) {
-      print(e);
-    } finally {
-      setState(() {
-        _isSending = false;
-      });
-    }
-  }
-
-  void enviarAvaliacao() {
+  void _confirmarAvaliacao() {
     showDialog(
       context: context,
       builder: (context) {
@@ -123,7 +93,7 @@ class _AvaliacaoConclusionScreenState
 
                 // Agendar a chamada do método após o fechamento do AlertDialog
                 Future.delayed(Duration.zero, () {
-                  _postAvaliacao();
+                  _enviarAvaliacao();
                 });
               },
               child: const Text('Enviar'),
@@ -137,7 +107,7 @@ class _AvaliacaoConclusionScreenState
   @override
   void initState() {
     super.initState();
-    loadScreen();
+    _loadScreen();
   }
 
   @override
@@ -175,7 +145,7 @@ class _AvaliacaoConclusionScreenState
               nivel: _selectedNivel!,
               perguntas: widget.perguntas,
               respostas: widget.respostas,
-              enviarAvaliacao: enviarAvaliacao)
+              confirmarAvaliacao: _confirmarAvaliacao)
           : Center(
               child: _isSending
                   ? const Padding(
@@ -202,28 +172,22 @@ class _AvaliacaoConclusionScreenState
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
-                            children: _isLoading
-                                ? const [CircularProgressIndicator()]
-                                : niveis.map((nivel) {
-                                    return ElevatedButton(
-                                      onPressed: () {
-                                        selecionarNivel(nivel);
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        foregroundColor: _selectedNivel == nivel
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .onTertiary
-                                            : null,
-                                        backgroundColor: _selectedNivel == nivel
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .tertiary
-                                            : null,
-                                      ),
-                                      child: Text(nivel.strDescricao),
-                                    );
-                                  }).toList(),
+                            children: _niveisList.map((nivel) {
+                              return ElevatedButton(
+                                onPressed: () {
+                                  _selecionarNivel(nivel);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: _selectedNivel == nivel
+                                      ? Theme.of(context).colorScheme.onTertiary
+                                      : null,
+                                  backgroundColor: _selectedNivel == nivel
+                                      ? Theme.of(context).colorScheme.tertiary
+                                      : null,
+                                ),
+                                child: Text(nivel.strDescricao),
+                              );
+                            }).toList(),
                           ),
                           const SizedBox(height: 48),
                           Row(

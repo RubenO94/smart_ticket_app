@@ -4,16 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/pergunta.dart';
 import 'package:smart_ticket/models/resposta.dart';
+import 'package:smart_ticket/providers/perguntas_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import '../../../models/aluno.dart';
-import '../../../providers/employee/alunos_provider.dart';
+
 import 'conclusao_avaliacao.dart';
 
 class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
-  const NovaAvaliacaoScreen({super.key, required this.aluno});
+  const NovaAvaliacaoScreen(
+      {super.key,
+      required this.aluno,
+      required this.idAula,
+      required this.idAtividadeLetiva});
 
   final Aluno aluno;
+  final int idAula;
+  final int idAtividadeLetiva;
 
   @override
   ConsumerState<NovaAvaliacaoScreen> createState() =>
@@ -24,17 +31,14 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
   final List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
-  int? _idAula;
-  int? _actividadeLetiva;
+  int _selectedNivel = 0;
   final PageController _pageController = PageController(initialPage: 0);
   bool _avaliacaoCompleted = false;
-  int _selectedNivel = 1;
 
-  void setData() {
-    _idAula = ref.read(alunosNotifierProvider.notifier).idAula;
-    _actividadeLetiva =
-        ref.read(alunosNotifierProvider.notifier).actividadeLetiva;
-    _perguntasList = ref.read(alunosNotifierProvider.notifier).preguntasList;
+  void loadPerguntas() {
+    setState(() {
+      _perguntasList = ref.read(perguntasNotifierProvider);
+    });
   }
 
   Future<bool> _onWillPop() async {
@@ -109,12 +113,6 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
     });
   }
 
-  void selecionarNivel(int nivel) {
-    setState(() {
-      _selectedNivel = nivel;
-    });
-  }
-
   void reiniciarAvaliacao() {
     setState(() {
       _currentPageIndex = 0;
@@ -126,7 +124,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   @override
   void initState() {
     super.initState();
-    setData();
+    loadPerguntas();
   }
 
   @override
@@ -243,7 +241,8 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                                   },
                                 ),
                                 RadioListTile<int>(
-                                  title: const Text('Matéria não lecionada (0)'),
+                                  title:
+                                      const Text('Matéria não lecionada (0)'),
                                   value: 0,
                                   groupValue: resposta.classificacao,
                                   onChanged: (value) {

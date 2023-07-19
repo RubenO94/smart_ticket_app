@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
+import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
 import 'package:smart_ticket/screens/client/calendar/calendario.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
@@ -19,9 +20,7 @@ class _JanelaItemState extends State<JanelaItem> {
     if (widget.tipoPerfil == 1) {
       switch (widget.janela.id) {
         case 100:
-          return Container(
-            color: Colors.blue,
-          );
+          return const MinhaAvaliacaoScreen();
         case 200:
           return const InscricoesScreen();
         case 300:

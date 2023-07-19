@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/employee/turmas_provider.dart';
-import 'package:smart_ticket/providers/headers_provider.dart';
+import 'package:smart_ticket/providers/turmas_provider.dart';
+
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/widgets/employee/turma_item.dart';
 
@@ -15,50 +15,39 @@ class AvaliacoesScreen extends ConsumerStatefulWidget {
 }
 
 class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
-  late final List<Turma> _turmas;
+  late List<Turma> listaTurmas = [];
   List<Turma> _items = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isOffline = false;
   final _searchController = TextEditingController();
 
   void _getTurmas() async {
     setState(() {
-      _isLoading = true;
-      _isOffline = false;
+      listaTurmas = ref.read(turmasProvider);
+      _items = listaTurmas;
     });
-    final headers = await ref.read(headersProvider.notifier).getHeaders();
-    if (headers.isEmpty) {
+
+    if (listaTurmas.isEmpty) {
       setState(() {
         _isLoading = false;
         _isOffline = true;
       });
+      return;
     }
-    final result = await ref
-        .read(turmasProvider.notifier)
-        .getTurmas(headers['DeviceID']!, headers['Token']!);
-    if (result.isNotEmpty) {
-      setState(() {
-        _turmas = result;
-        _items = result;
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _isOffline = true;
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _filterSearchResults(String value) {
     if (value.isEmpty) {
       setState(() {
-        _items = _turmas;
+        _items = listaTurmas;
       });
       return;
     }
     setState(() {
-      final resultList = _turmas
+      final resultList = listaTurmas
           .where((turma) =>
               turma.descricao.toLowerCase().contains(value.toLowerCase()))
           .toList();

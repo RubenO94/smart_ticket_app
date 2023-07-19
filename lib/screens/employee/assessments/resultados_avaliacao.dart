@@ -10,12 +10,12 @@ class ResultadosAvaliacaoScreen extends StatelessWidget {
     required this.nivel,
     required this.perguntas,
     required this.respostas,
-    required this.enviarAvaliacao,
+    required this.confirmarAvaliacao,
   });
   final Nivel nivel;
   final List<Pergunta> perguntas;
   final List<Resposta> respostas;
-  final VoidCallback enviarAvaliacao;
+  final VoidCallback confirmarAvaliacao;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class ResultadosAvaliacaoScreen extends StatelessWidget {
             ),
           ),
           FloatingActionButton(
-              onPressed: enviarAvaliacao, child: const Icon(Icons.send)),
+              onPressed: confirmarAvaliacao, child: const Icon(Icons.send)),
         ],
       ),
     );

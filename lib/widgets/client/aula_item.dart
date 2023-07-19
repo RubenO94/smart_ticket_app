@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:smart_ticket/utils/environments.dart';
+
+import 'package:smart_ticket/utils/utils.dart';
 
 import '../../models/aula.dart';
 
@@ -72,9 +71,7 @@ class _AulaItemState extends State<AulaItem> {
                 Icons.more_vert_rounded,
                 color: Theme.of(context).colorScheme.onTertiary,
               ),
-              onPressed: () {
-                
-              }),
+              onPressed: () {}),
         ),
       ),
     );

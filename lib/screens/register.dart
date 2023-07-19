@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/widgets/register/about_app.dart';
 
-import '../providers/headers_provider.dart';
 import '../providers/perfil_provider.dart';
-import '../services/api.dart';
+
 import '../utils/dialogs/dialogs.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -17,7 +17,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _apiService = ApiService();
   final _codeController = TextEditingController();
   var _enteredNIF = '';
   var _enteredEmail = '';
@@ -36,33 +35,42 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   void _registerDevice() async {
-    final isNifValid = await _apiService.getWSApp(_enteredNIF);
+    final apiService = ref.read(apiServiceProvider);
+    final isNifValid = await apiService.getWSApp(_enteredNIF);
     if (isNifValid == 'success') {
-      final headers = await ref.read(headersProvider.notifier).getHeaders();
+      final isRegistred =
+          await apiService.registerDevice(_enteredNIF, _enteredEmail);
 
-      final result = await _apiService.registerDevice(
-          _enteredNIF, _enteredEmail, headers['DeviceID']!, headers['Token']!);
-      setState(() {
-        _isSending = false;
-      });
-
-      if (result && mounted) {
+      if (isRegistred && mounted) {
         final dialog = await _showConfirmationDialog();
         if (dialog && mounted) {
-          final perfilStatus = await ref
-              .read(perfilNotifierProvider.notifier)
-              .getPerfil(headers['DeviceID']!, headers['Token']!);
-          if (perfilStatus && mounted) {
-            final perfil =
-                ref.read(perfilNotifierProvider.notifier).generatePerfil();
+          final hasPerfil = await apiService.getPerfil();
+          final hasNiveis = await apiService.getNiveis();
+          final hasTurmas = await apiService.getTurmas();
+
+          if (hasPerfil && hasNiveis && hasTurmas && mounted) {
+            final perfil = ref.read(perfilNotifierProvider);
+            setState(() {
+              _isSending = false;
+            });
+
             Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (ctx) => HomeScreen(perfil: perfil)));
+              builder: (context) => HomeScreen(perfil: perfil),
+            ));
           }
         }
-      } else if(isNifValid == 'null') {
-        showToast(context, 'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.', 'error');
-      }
-      else{
+      } else if (isNifValid == 'null') {
+        setState(() {
+          _isSending = false;
+        });
+        showToast(
+            context,
+            'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.',
+            'error');
+      } else {
+        setState(() {
+          _isSending = false;
+        });
         showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
       }
     }
@@ -125,9 +133,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Future<bool> _onActivateDevice(String code) async {
-    final headers = await ref.read(headersProvider.notifier).getHeaders();
-    final result = await _apiService.activateDevice(
-        headers['DeviceID']!, headers['Token']!, code);
+    final apiService = ref.read(apiServiceProvider);
+    final result = await apiService.activateDevice(code);
     return result;
   }
 

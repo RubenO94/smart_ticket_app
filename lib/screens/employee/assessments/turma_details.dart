@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/aluno.dart';
+import 'package:smart_ticket/providers/api_service_provider.dart';
+import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
-import '../../../providers/employee/alunos_provider.dart';
-import '../../../providers/headers_provider.dart';
+import '../../../providers/alunos_provider.dart';
 
 class TurmaDetails extends ConsumerStatefulWidget {
   const TurmaDetails({super.key, required this.idAula});
@@ -18,36 +19,26 @@ class TurmaDetails extends ConsumerStatefulWidget {
 class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   late final List<Aluno> _alunosList;
   List<Aluno> _items = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isOffline = false;
   final _searchController = TextEditingController();
 
-  void _getList() async {
+  void _loadAlunos() async {
+    final apiService = ref.read(apiServiceProvider);
+    final hasAlunos =
+        await apiService.getAlunos(widget.idAula.toString(), '');
+    if (hasAlunos) {
+      _alunosList = ref.read(alunosNotifierProvider);
+      setState(() {
+        _items = _alunosList;
+        _isLoading = false;
+      });
+      return;
+    }
     setState(() {
-        _isLoading = true;
-        _isOffline = false;
-      });
-    final headers = await ref.read(headersProvider.notifier).getHeaders();
-    if(headers.isEmpty) {
-      setState(() {
-        _isLoading = false;
-        _isOffline = true;
-      });
-    }
-    final results = await ref.read(alunosNotifierProvider.notifier).getAlunos(
-        headers['DeviceID']!, headers['Token']!, widget.idAula.toString());
-
-    if (results.isNotEmpty && mounted) {
-      setState(() {
-        _alunosList = results;
-        _items = results;
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _isOffline = true;
-      });
-    }
+      _isLoading = false;
+      _isOffline = true;
+    });
   }
 
   void _filterSearchResults(String value) {
@@ -69,17 +60,20 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   @override
   void initState() {
     super.initState();
-    _getList();
+    _loadAlunos();
   }
 
   @override
   Widget build(BuildContext context) {
+    final idAtividadeLetiva = ref.read(atividadeLetivaIDProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Alunos'),
       ),
       body: _isOffline
-          ? OfflineScreen(refresh: _getList,)
+          ? OfflineScreen(
+              refresh: _loadAlunos,
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -109,8 +103,10 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
                         )
                       : ListView.builder(
                           itemCount: _items.length,
-                          itemBuilder: (context, index) =>
-                              AlunoItem(aluno: _items[index]),
+                          itemBuilder: (context, index) => AlunoItem(
+                              aluno: _items[index],
+                              idAula: widget.idAula,
+                              idAtividadeLetiva: idAtividadeLetiva),
                         ),
                 )
               ],

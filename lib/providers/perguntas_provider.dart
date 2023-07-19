@@ -1,0 +1,17 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/pergunta.dart';
+
+class PerguntasNotifier extends StateNotifier<List<Pergunta>> {
+  PerguntasNotifier() : super(const []);
+
+  void setPerguntas(List<Pergunta> perguntas) {
+    state = perguntas;
+  }
+}
+
+final perguntasNotifierProvider =
+    StateNotifierProvider<PerguntasNotifier, List<Pergunta>>(
+  (ref) {
+    return PerguntasNotifier();
+  },
+);
