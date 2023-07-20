@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
+import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
 import 'package:smart_ticket/screens/client/calendar/calendario.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
@@ -20,7 +21,7 @@ class _JanelaItemState extends State<JanelaItem> {
     if (widget.tipoPerfil == 1) {
       switch (widget.janela.id) {
         case 100:
-          return const MinhaAvaliacaoScreen();
+          return const AvaliacoesDisponiveisScreen();
         case 200:
           return const InscricoesScreen();
         case 300:
@@ -61,8 +62,8 @@ class _JanelaItemState extends State<JanelaItem> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(1.0),
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.7),
+              Theme.of(context).colorScheme.tertiary.withOpacity(1.0),
+              Theme.of(context).colorScheme.tertiary.withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -73,11 +74,11 @@ class _JanelaItemState extends State<JanelaItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(widget.janela.icon, size: 32),
+            Icon(widget.janela.icon, size: 32, color: Theme.of(context).colorScheme.onTertiary,),
             Text(
               widget.janela.name,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: Theme.of(context).colorScheme.onTertiary,
                   ),
               textAlign: TextAlign.center,
             ),

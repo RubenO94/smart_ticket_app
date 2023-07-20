@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
+import 'package:smart_ticket/utils/utils.dart';
 import 'package:smart_ticket/widgets/register/about_app.dart';
 
 import '../providers/perfil_provider.dart';
@@ -17,7 +18,8 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _codeController = TextEditingController();
+  final _dialogFormKey = GlobalKey<FormState>();
+  var _isCodeValid = false;
   var _enteredNIF = '';
   var _enteredEmail = '';
   var _activationCode = '';
@@ -34,6 +36,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     FocusScope.of(context).unfocus();
   }
 
+  void _saveActivationCode() async {
+    _dialogFormKey.currentState!.save();
+    final apiService = ref.read(apiServiceProvider);
+    final result = await apiService.activateDevice(_activationCode);
+    if (result) {
+      setState(() {
+        _isCodeValid = true;
+      });
+    }
+    if (_dialogFormKey.currentState!.validate() && mounted) {
+      FocusScope.of(context).unfocus();
+      Navigator.of(context).pop(true);
+    }
+  }
+
   void _registerDevice() async {
     final apiService = ref.read(apiServiceProvider);
     final isNifValid = await apiService.getWSApp(_enteredNIF);
@@ -42,37 +59,63 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           await apiService.registerDevice(_enteredNIF, _enteredEmail);
 
       if (isRegistred && mounted) {
+        setState(() {
+          _isSending = false;
+        });
         final dialog = await _showConfirmationDialog();
         if (dialog && mounted) {
+          showToast(
+              context, 'Sucesso! O seu dispositivo foi registrado.', 'success');
           final hasPerfil = await apiService.getPerfil();
-          final hasNiveis = await apiService.getNiveis();
-          final hasTurmas = await apiService.getTurmas();
-
-          if (hasPerfil && hasNiveis && hasTurmas && mounted) {
+          if (hasPerfil) {
             final perfil = ref.read(perfilNotifierProvider);
-            setState(() {
-              _isSending = false;
-            });
-
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => HomeScreen(perfil: perfil),
-            ));
+            if (perfil.userType == 0) {
+              final hasNiveis = await apiService.getNiveis();
+              final hasTurmas = await apiService.getTurmas();
+              if (hasNiveis && hasTurmas && mounted) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => HomeScreen(perfil: perfil),
+                ));
+                return;
+              }
+            }
+            //TODO: falta fazer o loading dos restantes dados do perfil Client;
+            if (perfil.userType == 1) {
+              final hasNiveis = await apiService.getNiveis();
+              final hasAulasInscricoes = await apiService.getAulasInscricoes();
+              final hasAtividades = await apiService.getAtividades();
+              final hasAtividadesLetivas =
+                  await apiService.getAtividadesLetivas();
+              if (hasNiveis &&
+                  hasAulasInscricoes &&
+                  hasAtividades &&
+                  hasAtividadesLetivas &&
+                  mounted) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => HomeScreen(perfil: perfil),
+                ));
+                return;
+              }
+            }
           }
         }
-      } else if (isNifValid == 'null') {
         setState(() {
           _isSending = false;
         });
-        showToast(
-            context,
-            'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.',
-            'error');
-      } else {
-        setState(() {
-          _isSending = false;
-        });
-        showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
       }
+    } else if (isNifValid == 'null' && mounted) {
+      setState(() {
+        _isSending = false;
+      });
+      showToast(
+          context,
+          'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.',
+          'error');
+    } else {
+      setState(() {
+        _isSending = false;
+      });
+      showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
     }
   }
 
@@ -82,48 +125,56 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       builder: (ctx) {
         return AlertDialog(
           title: const Text('Confirmar Registo'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                  'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _codeController,
-                decoration: const InputDecoration(
-                  hintText: 'Insira o código aqui',
+          content: Form(
+            key: _dialogFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                    'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
+                const SizedBox(height: 20),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.characters,
+                  decoration: InputDecoration(
+                    hintText: 'Insira o código aqui',
+                    hintStyle: Theme.of(context).textTheme.labelMedium,
+                    border: const OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Insira o código de ativação';
+                    }
+                    if (_isCodeValid == false) {
+                      return 'Código inválido';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    setState(() {
+                      _activationCode = value!;
+                    });
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           actions: [
             TextButton(
-              child: const Text('Cancelar'),
               onPressed: () {
                 FocusScope.of(context).unfocus();
                 Navigator.of(context).pop(false);
               },
+              child: const Text('Cancelar'),
             ),
             TextButton(
-              child: const Text('Confirmar'),
-              onPressed: () async {
-                FocusScope.of(context).unfocus();
+              onPressed: () {
                 setState(() {
-                  _activationCode = _codeController.text;
+                  _isSending = true;
                 });
-                final result = await _onActivateDevice(_activationCode);
-
-                if (result && mounted) {
-                  showToast(
-                      context,
-                      'Codigo aceite. Dispositivo registado com sucesso!',
-                      'success');
-                  Navigator.of(context).pop(true);
-                } else {
-                  showToast(context, 'O código inserido é inválido', 'error');
-                  Navigator.of(context).pop(false);
-                }
+                _saveActivationCode();
               },
+              child: const Text('Confirmar'),
             ),
           ],
         );
@@ -132,15 +183,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return dialog ?? false;
   }
 
-  Future<bool> _onActivateDevice(String code) async {
-    final apiService = ref.read(apiServiceProvider);
-    final result = await apiService.activateDevice(code);
-    return result;
-  }
-
   @override
   void dispose() {
-    _codeController.dispose();
     super.dispose();
   }
 
@@ -148,7 +192,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registo de  Dispositivo'),
+        title: const Row(
+          children: [
+            Icon(Icons.mobile_friendly_rounded),
+            SizedBox(
+              width: 8,
+            ),
+            Text('Registo de  Dispositivo')
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -173,9 +225,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.length != 9) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, introduza um NIF';
+                            }
+                            if (value.length != 9) {
+                              return 'O número de identificação fiscal deve conter 9 dígitos';
+                            }
+                            if (!isValidNIF(value)) {
                               return 'O número de identificação fiscal inserido é inválido';
                             }
                             return null;
@@ -193,10 +249,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.emailAddress,
+                          textCapitalization: TextCapitalization.none,
                           validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                !value.contains('@')) {
+                            if (value == null || value.isEmpty) {
+                              return 'Por favor, insira um endereço de e-mail';
+                            }
+                            if (!isValidEmail(value)) {
                               return 'O endereço de email inserido é inválido';
                             }
                             return null;

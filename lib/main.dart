@@ -1,42 +1,9 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import 'package:smart_ticket/screens/splash.dart';
-
-final darkColorScheme = ColorScheme.fromSeed(
-  brightness: Brightness.dark,
-  seedColor: const Color(0xFF7BC67E),
-  background: const Color(0xFF212121),
-);
-
-final lightColorScheme = ColorScheme.fromSeed(
-  brightness: Brightness.light,
-  seedColor: const Color(0xFF4CAF50),
-  background: const Color(0xF5F5F5F5),
-);
-
-final lightTheme = ThemeData().copyWith(
-  useMaterial3: true,
-  scaffoldBackgroundColor: lightColorScheme.background,
-  colorScheme: lightColorScheme,
-  textTheme: GoogleFonts.ubuntuCondensedTextTheme().copyWith(
-    titleSmall: GoogleFonts.ubuntuCondensed(
-      fontWeight: FontWeight.bold,
-    ),
-    titleMedium: GoogleFonts.ubuntuCondensed(
-      fontWeight: FontWeight.bold,
-    ),
-    titleLarge: GoogleFonts.ubuntuCondensed(
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-);
-
-
-
+import 'package:smart_ticket/utils/theme.dart';
 
 void main() {
   runApp(
@@ -51,12 +18,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SmartTicket App',
       darkTheme: ThemeData.dark()
           .copyWith(useMaterial3: true, colorScheme: darkColorScheme),
-      theme: lightTheme,
+      theme: theme,
       themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );

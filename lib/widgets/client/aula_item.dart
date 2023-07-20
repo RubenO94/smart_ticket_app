@@ -5,8 +5,14 @@ import 'package:smart_ticket/utils/utils.dart';
 import '../../models/aula.dart';
 
 class AulaItem extends StatefulWidget {
-  const AulaItem({super.key, required this.aula});
+  const AulaItem(
+      {super.key,
+      required this.aula,
+      required this.index,
+      required this.onDelete});
   final Aula aula;
+  final int index;
+  final Future<bool> Function(Aula aula) onDelete;
 
   @override
   State<AulaItem> createState() => _AulaItemState();
@@ -15,7 +21,7 @@ class AulaItem extends StatefulWidget {
 class _AulaItemState extends State<AulaItem> {
   @override
   Widget build(BuildContext context) {
-    final dataInscricao = formattedDate(widget.aula.dataInscricao);
+    final dataInscricao = formattedDate(DateTime.now());
     return Card(
       color: Theme.of(context).colorScheme.tertiary,
       child: Padding(
@@ -29,7 +35,7 @@ class _AulaItemState extends State<AulaItem> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                '#1',
+                '#${widget.index + 1}',
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onSecondaryContainer),
               ),
@@ -68,10 +74,13 @@ class _AulaItemState extends State<AulaItem> {
           ),
           trailing: IconButton(
               icon: Icon(
-                Icons.more_vert_rounded,
+                Icons.delete_sweep_rounded,
                 color: Theme.of(context).colorScheme.onTertiary,
+                size: 32,
               ),
-              onPressed: () {}),
+              onPressed: () {
+                widget.onDelete(widget.aula);
+              },),
         ),
       ),
     );

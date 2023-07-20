@@ -1,16 +1,16 @@
-class Aula{
-  final String atividade;
+class Aula {
+  final String? atividade;
   final String aula;
-  final DateTime dataInscricao;
-  final int idAtivadadeLetiva;
-  final int idAula;
-  final int idAulaInscricao;
-  final int inscritos;
-  final int lotacao;
+  final String dataInscricao;
+  final int? idAtivadadeLetiva;
+  final int? idAula;
+  final int? idAulaInscricao;
+  final int? inscritos;
+  final int? lotacao;
   final bool pendente;
-  final int nPendentes;
-  final String periodoLetivo;
-  final int vagas;
+  final int? nPendentes;
+  final String? periodoLetivo;
+  final int? vagas;
 
   Aula({
     required this.idAulaInscricao,

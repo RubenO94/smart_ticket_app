@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
+import 'package:smart_ticket/providers/secure_storage_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/screens/register.dart';
@@ -22,7 +23,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
-          auth();
+      auth();
       setState(() {
         _isOffline = false;
       });
@@ -34,27 +35,54 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   void auth() async {
+    final hasWSApp =
+        await ref.read(secureStorageProvider).readSecureData('WSApp');
+    if (hasWSApp.isEmpty && mounted) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const RegisterScreen(),
+      ));
+    }
 
     final apiService = ref.read(apiServiceProvider);
 
     final isDeviceActivated = await apiService.isDeviceActivated();
     if (isDeviceActivated) {
       final hasPerfil = await apiService.getPerfil();
-      final hasNiveis = await apiService.getNiveis();
-      final hasTurmas = await apiService.getTurmas();
-
-      if (hasPerfil && hasNiveis && hasTurmas && mounted) {
+      if (hasPerfil) {
         final perfil = ref.read(perfilNotifierProvider);
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => HomeScreen(perfil: perfil),
-        ));
-        return;
+        if (perfil.userType == 0) {
+          final hasNiveis = await apiService.getNiveis();
+          final hasTurmas = await apiService.getTurmas();
+          if (hasNiveis && hasTurmas && mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomeScreen(perfil: perfil),
+            ));
+            return;
+          }
+        }
+        //TODO: falta fazer o loading dos restantes dados do perfil Client;
+        if (perfil.userType == 1) {
+          final hasNiveis = await apiService.getNiveis();
+          final hasAulasInscricoes = await apiService.getAulasInscricoes();
+          final hasAtividades = await apiService.getAtividades();
+          final hasAtividadesLetivas = await apiService.getAtividadesLetivas();
+          if (hasNiveis &&
+              hasAulasInscricoes &&
+              hasAtividades &&
+              hasAtividadesLetivas &&
+              mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomeScreen(perfil: perfil),
+            ));
+            return;
+          }
+        }
       }
-      if (mounted) {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const RegisterScreen(),
-        ));
-      }
+    }
+    if (mounted) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const RegisterScreen(),
+      ));
     }
   }
 
