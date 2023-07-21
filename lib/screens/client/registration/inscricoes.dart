@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/models/aula.dart';
+import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/utils/dialogs/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/registration/nova_inscricao.dart';
 
@@ -14,15 +16,6 @@ class InscricoesScreen extends ConsumerStatefulWidget {
 }
 
 class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
-  List<Aula> inscricoes = [];
-
-  void _addInscricao(Aula inscricao) {
-    setState(() {
-      inscricoes.add(inscricao);
-    });
-    ref.watch(aulasInscritasProvider.notifier).setInscricoes(inscricoes);
-  }
-
   Future<bool> _removeAula(Aula aula) async {
     return await showDialog(
       context: context,
@@ -41,16 +34,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
               child: const Text('Não'),
             ),
             TextButton(
-              onPressed: () {
-                final index = inscricoes.indexOf(aula);
-                setState(() {
-                  inscricoes.removeAt(index);
-                });
-                ref
-                    .watch(aulasInscritasProvider.notifier)
-                    .setInscricoes(inscricoes);
-                Navigator.of(context).pop(true);
-              },
+              onPressed: () => _onSubmitDelete(aula),
               child: const Text('Sim'),
             ),
           ],
@@ -59,14 +43,28 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    inscricoes = ref.read(aulasInscritasProvider);
+  void _onSubmitDelete(Aula aula) async {
+    final apiService = ref.read(apiServiceProvider);
+    final isRequestSuccessful =
+        await apiService.deleteInscricao(aula.idAulaInscricao!);
+    if (isRequestSuccessful && mounted) {
+      ref.read(aulasInscritasProvider.notifier).removeAula(aula);
+      Navigator.of(context).pop(true);
+      showToast(context, 'Foi removido da aula com sucesso!', 'success');
+      return;
+    }
+    if (mounted) {
+      showToast(
+          context,
+          'Não foi possível remover a inscrição!',
+          'error');
+          Navigator.of(context).pop(false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final inscricoes = ref.watch(aulasInscritasProvider);
     Widget content = Column(
       children: [
         Expanded(
@@ -114,14 +112,12 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
         padding: const EdgeInsets.all(12),
         child: content,
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.large(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NovaInscricao(
-                addNovaInscricao: _addInscricao,
-              ),
+              builder: (context) => const NovaInscricao(),
             ),
           );
         },

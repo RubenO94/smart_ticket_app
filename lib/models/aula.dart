@@ -1,3 +1,5 @@
+import 'package:smart_ticket/utils/utils.dart';
+
 class Aula {
   final String? atividade;
   final String aula;
@@ -26,4 +28,21 @@ class Aula {
     required this.atividade,
     required this.aula,
   });
+
+  Aula copyWith(Aula aula, int idAulaInscricao) {
+    return Aula(
+      idAulaInscricao: idAulaInscricao,
+      idAula: aula.idAula,
+      idAtivadadeLetiva: aula.idAtivadadeLetiva,
+      periodoLetivo: aula.periodoLetivo,
+      vagas: aula.vagas,
+      inscritos: aula.inscritos,
+      lotacao: aula.lotacao,
+      pendente: aula.pendente,
+      nPendentes: aula.nPendentes,
+      dataInscricao: getCurrentDateInApiFormat(),
+      atividade: aula.atividade,
+      aula: aula.aula,
+    );
+  }
 }

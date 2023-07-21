@@ -21,12 +21,12 @@ class AulaItem extends StatefulWidget {
 class _AulaItemState extends State<AulaItem> {
   @override
   Widget build(BuildContext context) {
-    final dataInscricao = formattedDate(DateTime.now());
     return Card(
       color: Theme.of(context).colorScheme.tertiary,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
+
           leading: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onTertiary,
@@ -41,46 +41,33 @@ class _AulaItemState extends State<AulaItem> {
               ),
             ),
           ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Atividade: ${widget.aula.atividade}',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onTertiary,
-                    fontSize: 12),
-              ),
-              const SizedBox(height: 4),
-              Text('Aula: ${widget.aula.aula}',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onTertiary,
-                      fontSize: 12)),
-            ],
+          title: Text(
+            'Aula: ${widget.aula.aula}',
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onTertiary),
           ),
-          subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              Text('Periodo Letivo: ${widget.aula.periodoLetivo}',
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onTertiary,
-                      fontSize: 10)),
-              const SizedBox(height: 4),
-              Text('Data de inscrição: $dataInscricao',
-                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onTertiary)),
-            ],
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              'Data de inscrição: ${formattedDate(widget.aula.dataInscricao)}',
+              style: Theme.of(context)
+                  .textTheme
+                  .labelSmall!
+                  .copyWith(color: Theme.of(context).colorScheme.onTertiary),
+            ),
           ),
           trailing: IconButton(
-              icon: Icon(
-                Icons.delete_sweep_rounded,
-                color: Theme.of(context).colorScheme.onTertiary,
-                size: 32,
-              ),
-              onPressed: () {
-                widget.onDelete(widget.aula);
-              },),
+            icon: Icon(
+              Icons.delete_sweep_rounded,
+              color: Theme.of(context).colorScheme.onTertiary,
+              size: 32,
+            ),
+            onPressed: () {
+              widget.onDelete(widget.aula);
+            },
+          ),
         ),
       ),
     );

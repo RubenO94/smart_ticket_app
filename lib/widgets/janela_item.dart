@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
-import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
 import 'package:smart_ticket/screens/client/calendar/calendario.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
@@ -74,7 +73,11 @@ class _JanelaItemState extends State<JanelaItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(widget.janela.icon, size: 32, color: Theme.of(context).colorScheme.onTertiary,),
+            Icon(
+              widget.janela.icon,
+              size: 32,
+              color: Theme.of(context).colorScheme.onTertiary,
+            ),
             Text(
               widget.janela.name,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(

@@ -8,8 +8,17 @@ class AulasInscritasNotifier extends StateNotifier<List<Aula>> {
     state = inscricoes;
   }
 
-  void addAula(Aula aula) {
+  void addAula(Aula aula, int idAulaInscricao) {
+    if(aula.dataInscricao == '/Date(-62135596800000+0000)/'){
+      final novaAula = aula.copyWith(aula, idAulaInscricao);
+      state = [...state, novaAula];
+      return;
+    }
     state = [...state, aula];
+  }
+
+  void removeAula(Aula aula) {
+    state = state.where((element) => element!= aula).toList();
   }
 }
 

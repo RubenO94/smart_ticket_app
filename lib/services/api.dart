@@ -7,6 +7,7 @@ import 'package:smart_ticket/models/atividade.dart';
 import 'package:smart_ticket/models/atividade_letiva.dart';
 import 'package:smart_ticket/models/aula.dart';
 import 'package:smart_ticket/models/nivel.dart';
+import 'package:smart_ticket/models/pagamento.dart';
 
 import 'package:smart_ticket/models/perfil.dart';
 import 'package:smart_ticket/models/pergunta.dart';
@@ -22,6 +23,8 @@ import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/providers/device_id_provider.dart';
 import 'package:smart_ticket/providers/http_client_provider.dart';
 import 'package:smart_ticket/providers/niveis_provider.dart';
+import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
+import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/providers/secure_storage_provider.dart';
 import 'package:smart_ticket/providers/token_provider.dart';
@@ -101,15 +104,19 @@ class ApiService {
   Future<bool> isDeviceActivated() async {
     const endPoint = '/IsDeviceActivated';
 
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
 
-      if (data['nResultado'] == 1) {
-        return true;
+        if (data['nResultado'] == 1) {
+          return true;
+        }
+        return false;
       }
+    } catch (e) {
       return false;
     }
 
@@ -119,30 +126,37 @@ class ApiService {
   Future<bool> registerDevice(String nif, String email) async {
     final endPoint = '/RegisterDevice?strNif=$nif&strEmail=$email';
 
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      if (data['nResultado'] == 1) {
-        return true;
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['nResultado'] == 1) {
+          return true;
+        }
+        return false;
       }
+    } catch (e) {
       return false;
     }
+
     return false;
   }
 
   Future<bool> activateDevice(String activationCode) async {
     final endPoint = '/ActivateDevice?strCodigoAtivacao=$activationCode';
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
 
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-
-      if (data['nResultado'] == 1) {
-        return true;
+        if (data['nResultado'] == 1) {
+          return true;
+        }
       }
+    } catch (e) {
       return false;
     }
 
@@ -151,52 +165,59 @@ class ApiService {
 
   Future<bool> getPerfil() async {
     const endPoint = '/GetPerfil';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
 
-      //converte data['lJanelas'] para List<Janela>
-      List<Janela> lJanelas = [];
-      data['lJanelas'].forEach((element) {
-        lJanelas.add(Janela(
-            id: element['nIDMenuPrincipal'],
-            name: element['strMenuPrincipal'],
-            icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil'])));
-      });
-      final perfil = Perfil(
-          id: data['strID'],
-          name: data['strNome'],
-          photo: data['strFotoBase64'],
-          userType: data['eTipoPerfil'],
-          janelas: lJanelas);
-      ref.read(perfilNotifierProvider.notifier).setPerfil(perfil);
-      return true;
+        //converte data['lJanelas'] para List<Janela>
+        List<Janela> lJanelas = [];
+        data['lJanelas'].forEach((element) {
+          lJanelas.add(Janela(
+              id: element['nIDMenuPrincipal'],
+              name: element['strMenuPrincipal'],
+              icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil'])));
+        });
+        final perfil = Perfil(
+            id: data['strID'],
+            name: data['strNome'],
+            photo: data['strFotoBase64'],
+            userType: data['eTipoPerfil'],
+            janelas: lJanelas);
+        ref.read(perfilNotifierProvider.notifier).setPerfil(perfil);
+        return true;
+      }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getTurmas() async {
     const endPoint = '/GetTurmas';
-
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final turmas = data
-            .map(
-              (e) => Turma(
-                id: e['nIDAula'],
-                descricao: e['strDescricao'],
-                color: randomColor(),
-              ),
-            )
-            .toList();
-        ref.read(turmasProvider.notifier).setTurmas(turmas);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final turmas = data
+              .map(
+                (e) => Turma(
+                  id: e['nIDAula'],
+                  descricao: e['strDescricao'],
+                  color: randomColor(),
+                ),
+              )
+              .toList();
+          ref.read(turmasProvider.notifier).setTurmas(turmas);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
 
     return false;
@@ -209,81 +230,87 @@ class ApiService {
     } else {
       endPoint = '/GetAvaliacoes?nIDAula=$idAula&strIDCliente=$idCliente';
     }
-
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      List<Aluno> listaAlunos = [];
-      List<Resposta> listaRespostas = [];
-      List<Pergunta> listaPerguntas = [];
-      final int actividadeLetiva = data['nIDAtividadeLetiva'];
-      ref
-          .read(atividadeLetivaIDProvider.notifier)
-          .setAtividadeLetiva(actividadeLetiva);
-
-      final int idAula = data['nIDAula'];
-      ref.read(aulaIDProvider.notifier).setAulaId(idAula);
-
-      data['listPerguntas'].forEach((pergunta) {
-        listaPerguntas.add(
-          Pergunta(
-            obrigatorio: pergunta['bObrigatorio'],
-            idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
-            tipo: pergunta['nTipo'],
-            categoria: pergunta['strCategoria'],
-            descricao: pergunta['strPergunta'],
-          ),
-        );
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        List<Aluno> listaAlunos = [];
+        List<Resposta> listaRespostas = [];
+        List<Pergunta> listaPerguntas = [];
+        final int actividadeLetiva = data['nIDAtividadeLetiva'];
         ref
-            .read(perguntasNotifierProvider.notifier)
-            .setPerguntas(listaPerguntas);
-      });
-      data['listAlunos'].forEach((element) {
-        element['listRespostas'].forEach((resposta) {
-          listaRespostas.add(
-            Resposta(
-              idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
-              classificacao: resposta['nRespostaClassificacao'],
+            .read(atividadeLetivaIDProvider.notifier)
+            .setAtividadeLetiva(actividadeLetiva);
+
+        final int idAula = data['nIDAula'];
+        ref.read(aulaIDProvider.notifier).setAulaId(idAula);
+
+        data['listPerguntas'].forEach((pergunta) {
+          listaPerguntas.add(
+            Pergunta(
+              obrigatorio: pergunta['bObrigatorio'],
+              idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
+              tipo: pergunta['nTipo'],
+              categoria: pergunta['strCategoria'],
+              descricao: pergunta['strPergunta'],
             ),
           );
+          ref
+              .read(perguntasNotifierProvider.notifier)
+              .setPerguntas(listaPerguntas);
         });
+        data['listAlunos'].forEach((element) {
+          element['listRespostas'].forEach((resposta) {
+            listaRespostas.add(
+              Resposta(
+                idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
+                classificacao: resposta['nRespostaClassificacao'],
+              ),
+            );
+          });
 
-        listaAlunos.add(Aluno(
-          idCliente: element['nIDCliente'],
-          idDesempenhoNivel: element['nIDDesempenhoNivel'],
-          numeroAluno: element['nNumero'],
-          nome: element['strNome'],
-          dataAvalicao: element['strDataAvaliacao'],
-          respostas: listaRespostas,
-          photo: element['strFotoBase64'],
-        ));
-      });
-      ref.read(alunosNotifierProvider.notifier).setAlunos(listaAlunos);
-      return true;
+          listaAlunos.add(Aluno(
+            idCliente: element['nIDCliente'],
+            idDesempenhoNivel: element['nIDDesempenhoNivel'],
+            numeroAluno: element['nNumero'],
+            nome: element['strNome'],
+            dataAvalicao: element['strDataAvaliacao'],
+            respostas: listaRespostas,
+            photo: element['strFotoBase64'],
+          ));
+        });
+        ref.read(alunosProvider.notifier).setAlunos(listaAlunos);
+        return true;
+      }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getNiveis() async {
     const endPoint = '/GetNiveis';
-
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final niveis = data
-            .map(
-              (nivel) => Nivel(
-                  nIDDesempenhoNivel: nivel['nIDDesempenhoNivel'],
-                  strCodigo: nivel['strCodigo'],
-                  strDescricao: nivel['strDescricao']),
-            )
-            .toList();
-        ref.read(niveisProvider.notifier).setNiveis(niveis);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final niveis = data
+              .map(
+                (nivel) => Nivel(
+                    nIDDesempenhoNivel: nivel['nIDDesempenhoNivel'],
+                    strCodigo: nivel['strCodigo'],
+                    strDescricao: nivel['strDescricao']),
+              )
+              .toList();
+          ref.read(niveisProvider.notifier).setNiveis(niveis);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }
@@ -305,92 +332,108 @@ class ApiService {
           .toList(),
       'nIDDesempenhoNivel': idDesempenhoLinha,
     };
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.post(Uri.parse(baseUrl + endPoint),
-            headers: headers, body: json.encode(body)));
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.post(Uri.parse(baseUrl + endPoint),
+              headers: headers, body: json.encode(body)));
 
-    if (response.statusCode == 200) {
-      return true;
+      if (response.statusCode == 200) {
+        return true;
+      }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getAulasInscricoes() async {
     const endPoint = '/GetAulasInscricoes';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Aula> aulasInscricoes = data
-            .map(
-              (e) => Aula(
-                idAulaInscricao: e['IDAulaInscricao'],
-                idAula: e['IDAula'],
-                idAtivadadeLetiva: e['IDAtividadeLetiva'],
-                periodoLetivo: e['PeriodoLetivo'],
-                vagas: e['Vagas'],
-                inscritos: e['Inscritos'],
-                lotacao: e['Lotacao'],
-                pendente: e['Pendente'],
-                nPendentes: e['Pendentes'],
-                dataInscricao: e['DataInscricao'],
-                atividade: e['Atividade'],
-                aula: e['Aula'],
-              ),
-            )
-            .toList();
-        ref
-            .watch(aulasInscritasProvider.notifier)
-            .setInscricoes(aulasInscricoes);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final List<Aula> aulasInscricoes = data
+              .map(
+                (e) => Aula(
+                  idAulaInscricao: e['IDAulaInscricao'],
+                  idAula: e['IDAula'],
+                  idAtivadadeLetiva: e['IDAtividadeLetiva'],
+                  periodoLetivo: e['PeriodoLetivo'],
+                  vagas: e['Vagas'],
+                  inscritos: e['Inscritos'],
+                  lotacao: e['Lotacao'],
+                  pendente: e['Pendente'],
+                  nPendentes: e['Pendentes'],
+                  dataInscricao: e['DataInscricao'],
+                  atividade: e['Atividade'],
+                  aula: e['Aula'],
+                ),
+              )
+              .toList();
+          ref
+              .watch(aulasInscritasProvider.notifier)
+              .setInscricoes(aulasInscricoes);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getAtividadesLetivas() async {
     const endPoint = '/GetAtividadesLetivas';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<AtividadeLetiva> atividadesLetivas = data
-            .map(
-              (e) => AtividadeLetiva(
-                  id: e['nIDAtividadeLetiva'],
-                  dataInicio: e['strDataInicio'],
-                  dataFim: e['strDataFim']),
-            )
-            .toList();
-        ref
-            .watch(atividadesLetivasProvider.notifier)
-            .setAtividadeLetivas(atividadesLetivas);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final List<AtividadeLetiva> atividadesLetivas = data
+              .map(
+                (e) => AtividadeLetiva(
+                    id: e['nIDAtividadeLetiva'],
+                    dataInicio: e['strDataInicio'],
+                    dataFim: e['strDataFim']),
+              )
+              .toList();
+          ref
+              .watch(atividadesLetivasProvider.notifier)
+              .setAtividadeLetivas(atividadesLetivas);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getAtividades() async {
     const endPoint = '/GetAtividades';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Atividade> atividades = data
-            .map(
-              (e) => Atividade(
-                  id: e['nIDAtividade'],
-                  codigo: e['strCodigo'],
-                  descricao: e['strDescricao']),
-            )
-            .toList();
-        ref.watch(atividadesProvider.notifier).setAtividades(atividades);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final List<Atividade> atividades = data
+              .map(
+                (e) => Atividade(
+                    id: e['nIDAtividade'],
+                    codigo: e['strCodigo'],
+                    descricao: e['strDescricao']),
+              )
+              .toList();
+          ref.watch(atividadesProvider.notifier).setAtividades(atividades);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }
@@ -399,134 +442,152 @@ class ApiService {
       int idAtividadeLetiva, int idAtividade) async {
     final endPoint =
         '/GetAulasDisponiveis?nIDAtividadeLetiva=$idAtividadeLetiva&nIDAtividade=$idAtividade';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Aula> aulas = data
-            .map(
-              (e) => Aula(
-                idAulaInscricao: e['IDAulaInscricao'],
-                idAula: e['IDAula'],
-                idAtivadadeLetiva: e['IDAtividadeLetiva'],
-                periodoLetivo: e['PeriodoLetivo'] ?? "",
-                vagas: e['Vagas'],
-                inscritos: e['Inscritos'],
-                lotacao: e['Lotacao'],
-                pendente: e['Pendente'],
-                nPendentes: e['Pendentes'],
-                dataInscricao: e['DataInscricao'],
-                atividade: e['Atividade'] ?? "",
-                aula: e['Aula'],
-              ),
-            )
-            .toList();
-        ref.watch(aulasDisponiveisProvider.notifier).setAulas(aulas);
-        return true;
+
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final List<Aula> aulas = data
+              .map(
+                (e) => Aula(
+                  idAulaInscricao: e['IDAulaInscricao'],
+                  idAula: e['IDAula'],
+                  idAtivadadeLetiva: e['IDAtividadeLetiva'],
+                  periodoLetivo: e['PeriodoLetivo'] ?? "",
+                  vagas: e['Vagas'],
+                  inscritos: e['Inscritos'],
+                  lotacao: e['Lotacao'],
+                  pendente: e['Pendente'],
+                  nPendentes: e['Pendentes'],
+                  dataInscricao: e['DataInscricao'],
+                  atividade: e['Atividade'] ?? "",
+                  aula: e['Aula'],
+                ),
+              )
+              .toList();
+          ref.watch(aulasDisponiveisProvider.notifier).setAulas(aulas);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
-  Future<bool> getPagamentosPendentes() async {
-    const endPoint = '/GetPagamentosPendentes';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Aula> aulasInscricoes = data
-            .map(
-              (e) => Aula(
-                idAulaInscricao: e['IDAulaInscricao'],
-                idAula: e['IDAula'],
-                idAtivadadeLetiva: e['IDAtividadeLetiva'],
-                periodoLetivo: e['PeriodoLetivo'],
-                vagas: e['Vagas'],
-                inscritos: e['Inscritos'],
-                lotacao: e['Lotacao'],
-                pendente: e['Pendente'],
-                nPendentes: e['Pendentes'],
-                dataInscricao: e['DataInscricao'],
-                atividade: e['Atividade'],
-                aula: e['Aula'],
-              ),
-            )
-            .toList();
-        ref
-            .watch(aulasInscritasProvider.notifier)
-            .setInscricoes(aulasInscricoes);
-        return true;
+  Future<int> setInscricao(int idAtividadeLetiva, int idAula) async {
+    final endPoint =
+        '/SetInscricao?nIDAtividadeLetiva=$idAtividadeLetiva&nIDAula=$idAula';
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final idAulaInscricao = data['nResultado'];
+
+        if (idAulaInscricao > 0) {
+          return idAulaInscricao;
+        }
       }
+    } catch (e) {
+      return 0;
+    }
+    return 0;
+  }
+
+  Future<bool> deleteInscricao(int idAulaInscricao) async {
+    final endPoint = '/DelInscricao?nIDAulaInscricao=$idAulaInscricao';
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data['nResultado'] == 1) {
+          return true;
+        }
+      }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> getCalendario() async {
     const endPoint = '/GetCalendario';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Aula> aulasInscricoes = data
-            .map(
-              (e) => Aula(
-                idAulaInscricao: e['IDAulaInscricao'],
-                idAula: e['IDAula'],
-                idAtivadadeLetiva: e['IDAtividadeLetiva'],
-                periodoLetivo: e['PeriodoLetivo'],
-                vagas: e['Vagas'],
-                inscritos: e['Inscritos'],
-                lotacao: e['Lotacao'],
-                pendente: e['Pendente'],
-                nPendentes: e['Pendentes'],
-                dataInscricao: e['DataInscricao'],
-                atividade: e['Atividade'],
-                aula: e['Aula'],
-              ),
-            )
-            .toList();
-        ref
-            .watch(aulasInscritasProvider.notifier)
-            .setInscricoes(aulasInscricoes);
-        return true;
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          //TODO: Implementar logica para atualizar o calendario;
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  Future<bool> getPagamentosPendentes() async {
+    const endPoint = '/GetPagamentosPendentes';
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final List<Pagamento> pagamentosPendentes = data
+              .map(
+                (e) => Pagamento(
+                  dataInicio: e['DataInicio'],
+                  dataFim: e['DataFim'],
+                  desconto: e['Desconto'],
+                  desconto1: e['Desconto1'],
+                  idClienteTarifaLinha: e['IDClienteTarifaLinha'],
+                  idTarifaLinha: e['IDTarifaLinha'],
+                  plano: e['Plano'],
+                  valor: e['Valor'],
+                ),
+              )
+              .toList();
+          ref
+              .watch(pagamentosPendentesProvider.notifier)
+              .setPagamentosPendentes(pagamentosPendentes);
+          return true;
+        }
+      }
+    } catch (e) {
+      return false;
     }
     return false;
   }
 
   Future<bool> postPagamento(int idCliente, List<int> idTarifaList) async {
     const endPoint = '/SetPagamento';
-    final response = await executeRequest((client, baseUrl, headers) =>
-        client.get(Uri.parse(baseUrl + endPoint), headers: headers));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data.isNotEmpty) {
-        final List<Aula> aulasInscricoes = data
-            .map(
-              (e) => Aula(
-                idAulaInscricao: e['IDAulaInscricao'],
-                idAula: e['IDAula'],
-                idAtivadadeLetiva: e['IDAtividadeLetiva'],
-                periodoLetivo: e['PeriodoLetivo'],
-                vagas: e['Vagas'],
-                inscritos: e['Inscritos'],
-                lotacao: e['Lotacao'],
-                pendente: e['Pendente'],
-                nPendentes: e['Pendentes'],
-                dataInscricao: e['DataInscricao'],
-                atividade: e['Atividade'],
-                aula: e['Aula'],
-              ),
-            )
-            .toList();
-        ref
-            .watch(aulasInscritasProvider.notifier)
-            .setInscricoes(aulasInscricoes);
-        return true;
+    final body = {
+      'strIDCliente': idCliente,
+      'listIDClienteTarifaLinha': idTarifaList,
+    };
+    try {
+      final response = await executeRequest((client, baseUrl, headers) => client
+          .post(Uri.parse(baseUrl + endPoint), headers: headers, body: body));
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          final String redirectUrl = data['strRedirectUrl'];
+          ref
+              .watch(pagamentoCallbackProvider.notifier)
+              .setRedirectUrl(redirectUrl);
+          return true;
+        }
       }
+    } catch (e) {
+      return false;
     }
     return false;
   }

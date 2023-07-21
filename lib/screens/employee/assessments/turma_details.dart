@@ -28,7 +28,7 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
     final hasAlunos =
         await apiService.getAlunos(widget.idAula.toString(), '');
     if (hasAlunos) {
-      _alunosList = ref.read(alunosNotifierProvider);
+      _alunosList = ref.read(alunosProvider);
       setState(() {
         _items = _alunosList;
         _isLoading = false;

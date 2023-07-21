@@ -5,11 +5,11 @@ import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/atividades_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/atividades_letivas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/utils/dialogs/dialogs.dart';
 
 class NovaInscricao extends ConsumerStatefulWidget {
-  const NovaInscricao({super.key, required this.addNovaInscricao});
-  final void Function(Aula aula) addNovaInscricao;
+  const NovaInscricao({super.key});
 
   @override
   ConsumerState<NovaInscricao> createState() => _NovaInscricaoState();
@@ -29,12 +29,12 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
     if (checkFields) {
       setState(() {
         _canLoad = true;
-        futureAulasDisponiveis = _onSubmit();
+        futureAulasDisponiveis = _onSearch();
       });
     }
   }
 
-  Future<List<Aula>> _onSubmit() async {
+  Future<List<Aula>> _onSearch() async {
     final apiService = ref.read(apiServiceProvider);
     final hasAulasDisponiveis =
         await apiService.getAulasDisponiveis(idPeriodoLetivo, idAtividade);
@@ -43,8 +43,23 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
       final aulasDisponiveis = ref.watch(aulasDisponiveisProvider);
       return aulasDisponiveis;
     }
-
     return [];
+  }
+
+  void _onSubmit(Aula aula) async {
+    final apiService = ref.read(apiServiceProvider);
+    final idAulaInscricao =
+        await apiService.setInscricao(aula.idAtivadadeLetiva!, aula.idAula!);
+    if (idAulaInscricao > 0 && mounted) {
+      ref.read(aulasInscritasProvider.notifier).addAula(aula, idAulaInscricao);
+      Navigator.of(context).pop();
+      showToast(
+          context, 'A sua inscrição foi registada com sucesso!', 'success');
+      return;
+    }
+    if (mounted) {
+      showToast(context, 'Não foi possível registar sua inscrição', 'error');
+    }
   }
 
   @override
@@ -147,69 +162,103 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                       color: Theme.of(context).colorScheme.onBackground),
                 ),
               ),
-              FutureBuilder(
-                future: futureAulasDisponiveis,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (_canLoad &&
-                      snapshot.connectionState == ConnectionState.done) {
-                    return Expanded(
-                      child: ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) => RadioListTile(
-                                title: Text(snapshot.data![index].aula),
-                                value: snapshot.data![index],
-                                groupValue: aulaSelecionada,
-                                onChanged: (value) {
-                                  setState(() {
-                                    aulaSelecionada = value as Aula;
-                                  });
-                                },
-                              )),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Center(
-                      child: Text(
-                        'Por favor, selecione um periodo létivo e uma atividade',
-                        style: Theme.of(context).textTheme.bodyLarge,
+              Expanded(
+                child: FutureBuilder(
+                  future: futureAulasDisponiveis,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Padding(
+                        padding: EdgeInsets.all(48.0),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                    if (_canLoad &&
+                        snapshot.connectionState == ConnectionState.done) {
+                      if (snapshot.data!.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.all(48),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.warning_rounded,
+                                  size: 100,
+                                  color: Colors.orangeAccent,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                    'Não foi possível carregar a lista de aulas. Tente novamente mais tarde.',
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      final aulasComVagas = snapshot.data!.where((element) {
+                        return element.vagas! > 0;
+                      }).toList();
+
+                      if (aulasComVagas.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 48.0),
+                          child: Center(
+                            child: Text(
+                              'Não há aulas disponíveis para inscrição nesta atividade.',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: aulasComVagas.length,
+                        itemBuilder: (context, index) => RadioListTile(
+                          title: Text(aulasComVagas[index].aula),
+                          value: aulasComVagas[index],
+                          groupValue: aulaSelecionada,
+                          onChanged: (value) {
+                            setState(() {
+                              aulaSelecionada = value as Aula;
+                            });
+                          },
+                        ),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 48.0),
+                      child: Center(
+                        child: Text(
+                          'Por favor, selecione um periodo létivo e uma atividade',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                       ),
-                    ),
-                  );
-                },
-              )
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
       ),
-      persistentFooterButtons: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text('Cancelar'),
-        ),
-        TextButton(
-          onPressed: aulaSelecionada == null
-              ? null
-              : () {
-                  if (aulaSelecionada != null) {
-                    widget.addNovaInscricao(aulaSelecionada!);
-                    Navigator.of(context).pop();
-                    showToast(
-                        context,
-                        'A sua inscrição foi registada com sucesso!',
-                        'success');
-                  }
-                },
-          child: const Text('Confirmar'),
-        ),
-      ],
+      floatingActionButton: FloatingActionButton.extended(
+        foregroundColor: aulaSelecionada == null
+            ? Colors.grey
+            : null,
+        backgroundColor: aulaSelecionada == null
+            ? Theme.of(context).colorScheme.onInverseSurface
+            : null,
+        disabledElevation: 0,
+        onPressed:
+            aulaSelecionada == null ? null : () => _onSubmit(aulaSelecionada!),
+        icon: const Icon(Icons.check_box_rounded),
+        label: const Text('Confirmar'),
+      ),
     );
   }
 }

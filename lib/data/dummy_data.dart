@@ -1,215 +1,12 @@
-import '../models/atividade.dart';
-import '../models/atividade_letiva.dart';
-import '../models/aula.dart';
+import 'package:smart_ticket/models/pergunta.dart';
+import 'package:smart_ticket/models/resposta.dart';
+
 import '../models/pagamento.dart';
-
-final List<Atividade> atividades = [
-  const Atividade(
-    id: 5,
-    codigo: '2001',
-    descricao: 'A - Aprendizagem 8-14 Anos',
-  ),
-  const Atividade(
-    id: 6,
-    codigo: '2002',
-    descricao: 'INI - Iniciação 4-7 Anos',
-  ),
-  const Atividade(
-    id: 8,
-    codigo: '2004',
-    descricao: 'X - Aprendizagem >= 15 Anos',
-  ),
-  const Atividade(
-    id: 9,
-    codigo: '2005',
-    descricao: 'W - Aprend 10-15 Anos',
-  ),
-  const Atividade(
-    id: 10,
-    codigo: '3001',
-    descricao: 'Z - Aperfeiçoamento >= 15 Anos',
-  ),
-  const Atividade(
-    id: 11,
-    codigo: '3002',
-    descricao: 'Y - Aperfeiçoamento < 15 Anos',
-  ),
-  const Atividade(
-    id: 16,
-    codigo: '3004',
-    descricao: 'COMP - AMAMB',
-  ),
-  const Atividade(
-    id: 14,
-    codigo: '5001',
-    descricao: 'B - Natação para Bebés',
-  ),
-  const Atividade(
-    id: 15,
-    codigo: '6001',
-    descricao: 'T - Exercício Físico Assistido',
-  ),
-  const Atividade(
-    id: 17,
-    codigo: '7001',
-    descricao: 'BC - Bebés >= 18 meses e <= 36 meses',
-  ),
-  const Atividade(
-    id: 18,
-    codigo: '8001',
-    descricao: 'Q - Atividade Aquática',
-  ),
-  const Atividade(
-    id: 23,
-    codigo: '8002',
-    descricao: 'H - Hidroginástica',
-  ),
-  const Atividade(
-    id: 25,
-    codigo: '8003',
-    descricao: 'TC - Natação Adaptada',
-  ),
-  const Atividade(
-    id: 19,
-    codigo: '9001',
-    descricao: 'AC - Aprendizagem <15 anos',
-  ),
-  const Atividade(
-    id: 20,
-    codigo: '9002',
-    descricao: 'XC - Aprendizagem Adultos >= 15 anos',
-  ),
-  const Atividade(
-    id: 21,
-    codigo: '9003',
-    descricao: 'YC - Aperfeiçoamento < 15 anos',
-  ),
-  const Atividade(
-    id: 22,
-    codigo: '9004',
-    descricao: 'ZC - Aperfeiçoamento >= 15 anos',
-  ),
-  const Atividade(
-    id: 24,
-    codigo: '9005',
-    descricao: 'IN - Iniciação 4-6 Anos',
-  ),
-];
-
-final List<AtividadeLetiva> atividadesLetivas = [
-  const AtividadeLetiva(
-    id: 1,
-    dataInicio: '2022-10-01',
-    dataFim: '2023-07-31',
-  ),
-];
-
-final List<Aula> aulas = [
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 111,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 5,
-    inscritos: 7,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '111 | Z14 - APERF (4.ªSÁB.ª) 18h40/10h25',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 96,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '115 | Z04 - APERFEIÇOAMENTO (2.ª5.ª) 18h40',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 94,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '116 | Z06 - APERFEIÇOAMENTO (2.ª5.ª) 20h00',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 90,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '116 | Z06 - APERFEIÇOAMENTO (2.ª5.ª) 20h00',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 91,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '116 | Z06 - APERFEIÇOAMENTO (2.ª5.ª) 20h00',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 92,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '116 | Z06 - APERFEIÇOAMENTO (2.ª5.ª) 20h00',
-  ),
-  Aula(
-    idAulaInscricao: 0,
-    idAula: 93,
-    idAtivadadeLetiva: 1,
-    periodoLetivo: '',
-    vagas: 1,
-    inscritos: 11,
-    lotacao: 12,
-    pendente: false,
-    nPendentes: 0,
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(-62135596800000).toString(),
-    atividade: '',
-    aula: '116 | Z06 - APERFEIÇOAMENTO (2.ª5.ª) 20h00',
-  ),
-  // Restante das aulas...
-];
 
 final List<Pagamento> pagamentos = [
   Pagamento(
-    dataInicio: DateTime.fromMillisecondsSinceEpoch(1677628800000),
-    dataFim: DateTime.fromMillisecondsSinceEpoch(1680217200000),
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
     desconto: 0.0,
     desconto1: 0.0,
     idClienteTarifaLinha: 51726,
@@ -218,144 +15,194 @@ final List<Pagamento> pagamentos = [
     valor: 20.00,
   ),
   Pagamento(
-    dataInicio: DateTime.fromMillisecondsSinceEpoch(1680303600000),
-    dataFim: DateTime.fromMillisecondsSinceEpoch(1682809200000),
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
     desconto: 0.0,
     desconto1: 0.0,
-    idClienteTarifaLinha: 51727,
+    idClienteTarifaLinha: 51726,
     idTarifaLinha: 269,
     plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
     valor: 20.00,
   ),
   Pagamento(
-    dataInicio: DateTime.fromMillisecondsSinceEpoch(1682895600000),
-    dataFim: DateTime.fromMillisecondsSinceEpoch(1685487600000),
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
     desconto: 0.0,
     desconto1: 0.0,
-    idClienteTarifaLinha: 51728,
+    idClienteTarifaLinha: 51726,
     idTarifaLinha: 269,
     plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
     valor: 20.00,
   ),
   Pagamento(
-    dataInicio: DateTime.fromMillisecondsSinceEpoch(1685574000000),
-    dataFim: DateTime.fromMillisecondsSinceEpoch(1688079600000),
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
     desconto: 0.0,
     desconto1: 0.0,
-    idClienteTarifaLinha: 51729,
-    idTarifaLinha: 269,
-    plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    valor: 20.00,
-  ),
-  Pagamento(
-    dataInicio: DateTime.fromMillisecondsSinceEpoch(1688166000000),
-    dataFim: DateTime.fromMillisecondsSinceEpoch(1690758000000),
-    desconto: 0.0,
-    desconto1: 0.0,
-    idClienteTarifaLinha: 51730,
+    idClienteTarifaLinha: 51726,
     idTarifaLinha: 269,
     plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
     valor: 20.00,
   ),
 ];
 
-final List<Aula> inscricoes = [
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+const List<Pergunta> listPerguntas = [
+  Pergunta(
+    obrigatorio: true,
+    idDesempenhoLinha: 3,
+    tipo: 2,
+    categoria: "Respiração",
+    descricao: "Domínio da Respiração (inspiração/expiração) automatizada",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: true,
+    idDesempenhoLinha: 1,
+    tipo: 2,
+    categoria: "Alinhamento",
+    descricao:
+        "Tem um correto alinhamento lateral e horizontal nas diversas ações motoras. Posição Hidrodinãmica Fundamental",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: true,
+    idDesempenhoLinha: 2,
+    tipo: 2,
+    categoria: "Costas",
+    descricao:
+        "Executa batimento de pernas dorsal associado ao movimento alternado de braços/inspiração",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 4,
+    tipo: 2,
+    categoria: "Costas",
+    descricao: "Entrada correta dos membros superiores",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 5,
+    tipo: 2,
+    categoria: "Costas",
+    descricao: "Executa corretamente a pernada",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 6,
+    tipo: 2,
+    categoria: "Costas",
+    descricao:
+        "Execução de movimentos propulsivos de pernas e braços continuo (nado continuo)",
   ),
-  Aula(
-    atividade: '2001 | A - Aprendizagem 8-14 Anos',
-    aula: '045 | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
-    dataInscricao: DateTime.fromMillisecondsSinceEpoch(1674590373240).toString(),
-    idAtivadadeLetiva: 0,
-    idAula: 0,
-    idAulaInscricao: 1908,
-    inscritos: 0,
-    lotacao: 0,
-    pendente: false,
-    nPendentes: 0,
-    periodoLetivo: '01/out/2022 | 31/jul/2023',
-    vagas: 0,
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 7,
+    tipo: 2,
+    categoria: "Crol",
+    descricao: "Boa postura nos vários planos",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 8,
+    tipo: 2,
+    categoria: "Crol",
+    descricao:
+        "Entrada correta dos membros superiores coordenado com respiração bilateral",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 9,
+    tipo: 2,
+    categoria: "Crol",
+    descricao: "Executa corretamente a pernada",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 10,
+    tipo: 2,
+    categoria: "Crol",
+    descricao:
+        "Execução de movimentos propulsivos de pernas e braços continuo (nado contínuo)",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 11,
+    tipo: 2,
+    categoria: "Saltos",
+    descricao:
+        "Da parede, com deslize, com batimento dos pés, de cabeça (início do ensino da partida de Crol)",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 12,
+    tipo: 2,
+    categoria: "Segurança e hiegene",
+    descricao:
+        "Não corre no cais da piscina, toma banho antes de entrar, arruma o seu material, brinca com segurança",
+  ),
+  Pergunta(
+    obrigatorio: false,
+    idDesempenhoLinha: 13,
+    tipo: 2,
+    categoria: "Sócio afetivo",
+    descricao:
+        "Espírito de sociabilização e desportivo. Respeita as regras da aula, os colegas e o Professor. É participante na aula",
   ),
 ];
+
+
+final List<Resposta> listRespostas = [
+  Resposta(
+    idDesempenhoLinha: 3,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 1,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 2,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 4,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 5,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 6,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 7,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 8,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 9,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 10,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 11,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 12,
+    classificacao: 2,
+  ),
+  Resposta(
+    idDesempenhoLinha: 13,
+    classificacao: 2,
+  ),
+];
+
+const String dataAvalicao = '"2023-07-19';
+const int idDesenpenhoLinha = 2;

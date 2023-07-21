@@ -45,6 +45,8 @@ dependencies:
   dots_indicator: ^3.0.0
   flutter_launcher_icons: ^0.13.1
   intl: ^0.18.1
+  webview_flutter: ^4.2.2
+  url_launcher: ^6.1.12
 
 dev_dependencies:
   flutter_test:

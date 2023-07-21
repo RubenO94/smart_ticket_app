@@ -1,6 +1,6 @@
 class Pagamento {
-  final DateTime dataInicio;
-  final DateTime dataFim;
+  final String dataInicio;
+  final String dataFim;
   final double desconto;
   final double desconto1;
   final int idClienteTarifaLinha;

@@ -9,6 +9,6 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
   }
 }
 
-final alunosNotifierProvider =
+final alunosProvider =
     StateNotifierProvider<AlunosProvider, List<Aluno>>(
         (ref) => AlunosProvider());
