@@ -46,11 +46,11 @@ class AboutApp extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ContactItem(contact: '+351 252 860 090', icon: Icons.phone),
+                ContactItem(contact: '+351 252 860 090', icon: Icons.phone, contactType: 'phone'),
                 SizedBox(
                   width: 12,
                 ),
-                ContactItem(contact: 'info@smartstep.pt', icon: Icons.email),
+                ContactItem(contact: 'info@smartstep.pt', icon: Icons.email, contactType: 'email',),
               ],
             )
           ],
