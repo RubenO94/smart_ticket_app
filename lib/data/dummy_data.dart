@@ -44,6 +44,46 @@ final List<Pagamento> pagamentos = [
     plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
     valor: 20.00,
   ),
+  Pagamento(
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
+    desconto: 0.0,
+    desconto1: 0.0,
+    idClienteTarifaLinha: 51726,
+    idTarifaLinha: 269,
+    plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
+    valor: 20.00,
+  ),
+  Pagamento(
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
+    desconto: 0.0,
+    desconto1: 0.0,
+    idClienteTarifaLinha: 51726,
+    idTarifaLinha: 269,
+    plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
+    valor: 20.00,
+  ),
+  Pagamento(
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
+    desconto: 0.0,
+    desconto1: 0.0,
+    idClienteTarifaLinha: 51726,
+    idTarifaLinha: 269,
+    plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
+    valor: 20.00,
+  ),
+  Pagamento(
+    dataInicio: '/Date(1677628800000+0000)/',
+    dataFim: '/Date(1680217200000+0100)/',
+    desconto: 0.0,
+    desconto1: 0.0,
+    idClienteTarifaLinha: 51726,
+    idTarifaLinha: 269,
+    plano: '1.Tarifas | A08 - APRENDIZAGEM (3.ª6.ª) 20h00',
+    valor: 20.00,
+  ),
 ];
 
 const List<Pergunta> listPerguntas = [
@@ -206,3 +246,14 @@ final List<Resposta> listRespostas = [
 
 const String dataAvalicao = '"2023-07-19';
 const int idDesenpenhoLinha = 2;
+
+
+final List<String> categorias = [
+  "Respiração",
+  "Alinhamento",
+  "Costas",
+  "Crol",
+  "Saltos",
+  "Segurança e hiegene",
+  "Sócio afetivo",
+];

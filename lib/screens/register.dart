@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/utils/utils.dart';
-import 'package:smart_ticket/widgets/register/about_app.dart';
+import 'package:smart_ticket/widgets/about_app.dart';
 
 import '../providers/perfil_provider.dart';
 
@@ -68,7 +68,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               context, 'Sucesso! O seu dispositivo foi registrado.', 'success');
           final hasPerfil = await apiService.getPerfil();
           if (hasPerfil) {
-            final perfil = ref.read(perfilNotifierProvider);
+            final perfil = ref.read(perfilProvider);
             if (perfil.userType == 0) {
               final hasNiveis = await apiService.getNiveis();
               final hasTurmas = await apiService.getTurmas();

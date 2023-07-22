@@ -23,6 +23,8 @@ class _AulaItemState extends State<AulaItem> {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).colorScheme.tertiary,
+      elevation: 6,
+      shape: ContinuousRectangleBorder(side: BorderSide.none),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(

@@ -12,7 +12,7 @@ class PerfilNotifier extends StateNotifier<Perfil> {
   }
 }
 
-final perfilNotifierProvider = StateNotifierProvider<PerfilNotifier, Perfil>(
+final perfilProvider = StateNotifierProvider<PerfilNotifier, Perfil>(
   (ref) {
     return PerfilNotifier();
   },

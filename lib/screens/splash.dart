@@ -19,21 +19,6 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _isOffline = false;
 
-  void _checkConnectivity() async {
-    final result = await Connectivity().checkConnectivity();
-    if (result == ConnectivityResult.mobile ||
-        result == ConnectivityResult.wifi) {
-      auth();
-      setState(() {
-        _isOffline = false;
-      });
-      return;
-    }
-    setState(() {
-      _isOffline = true;
-    });
-  }
-
   void auth() async {
     final hasWSApp =
         await ref.read(secureStorageProvider).readSecureData('WSApp');
@@ -41,6 +26,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const RegisterScreen(),
       ));
+      return;
     }
 
     final apiService = ref.read(apiServiceProvider);
@@ -49,7 +35,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     if (isDeviceActivated) {
       final hasPerfil = await apiService.getPerfil();
       if (hasPerfil) {
-        final perfil = ref.read(perfilNotifierProvider);
+        final perfil = ref.read(perfilProvider);
         if (perfil.userType == 0) {
           final hasNiveis = await apiService.getNiveis();
           final hasTurmas = await apiService.getTurmas();
@@ -84,6 +70,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         builder: (context) => const RegisterScreen(),
       ));
     }
+  }
+
+  void _checkConnectivity() async {
+    final result = await Connectivity().checkConnectivity();
+    if (result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi) {
+      auth();
+      setState(() {
+        _isOffline = false;
+      });
+      return;
+    }
+    setState(() {
+      _isOffline = true;
+    });
   }
 
   @override

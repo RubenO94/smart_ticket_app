@@ -186,7 +186,7 @@ class ApiService {
             photo: data['strFotoBase64'],
             userType: data['eTipoPerfil'],
             janelas: lJanelas);
-        ref.read(perfilNotifierProvider.notifier).setPerfil(perfil);
+        ref.read(perfilProvider.notifier).setPerfil(perfil);
         return true;
       }
     } catch (e) {

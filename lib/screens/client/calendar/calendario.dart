@@ -9,8 +9,12 @@ class CalendarioScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Calendario'),
       ),
-      body: const Center(
-        child: Text('calendario'),
+      body: CalendarDatePicker(
+        firstDate: DateTime(2022,11,1),
+        initialDate: DateTime.now(),
+        lastDate: DateTime(2023,7,31),
+        onDateChanged: (value) {},
+        initialCalendarMode: DatePickerMode.day,
       ),
     );
   }

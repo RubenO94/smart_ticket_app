@@ -5,6 +5,7 @@ import 'package:smart_ticket/screens/client/calendar/calendario.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
+import 'package:smart_ticket/utils/utils.dart';
 
 class JanelaItem extends StatefulWidget {
   const JanelaItem({super.key, required this.janela, required this.tipoPerfil});
@@ -55,7 +56,7 @@ class _JanelaItemState extends State<JanelaItem> {
         );
       },
       splashColor: Theme.of(context).primaryColor,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(6),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -67,7 +68,14 @@ class _JanelaItemState extends State<JanelaItem> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(
+                blurRadius: 4,
+                color: Color.fromARGB(75, 0, 0, 0),
+                offset: Offset(1, 2),
+                spreadRadius: 1)
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

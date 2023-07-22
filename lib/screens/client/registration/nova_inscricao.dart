@@ -246,7 +246,8 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      persistentFooterButtons: [
+        FloatingActionButton.extended(
         foregroundColor: aulaSelecionada == null
             ? Colors.grey
             : null,
@@ -259,6 +260,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
         icon: const Icon(Icons.check_box_rounded),
         label: const Text('Confirmar'),
       ),
+      ] 
     );
   }
 }

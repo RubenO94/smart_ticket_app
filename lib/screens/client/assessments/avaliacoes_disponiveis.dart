@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
 
 class AvaliacoesDisponiveisScreen extends StatelessWidget {
   const AvaliacoesDisponiveisScreen({super.key});
@@ -10,7 +11,12 @@ class AvaliacoesDisponiveisScreen extends StatelessWidget {
         title: Text('Avaliações disponíveis'),
       ),
       body: Center(
-        child: Text('Avaliações disponíveis'),
+        child: ElevatedButton(
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => MinhaAvaliacaoScreen(),
+          )),
+          child: Text('Avaliacao teste'),
+        ),
       ),
     );
   }
