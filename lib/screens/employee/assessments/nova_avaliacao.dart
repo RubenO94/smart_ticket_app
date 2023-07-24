@@ -31,7 +31,6 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
   final List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
-  int _selectedNivel = 0;
   final PageController _pageController = PageController(initialPage: 0);
   bool _avaliacaoCompleted = false;
 

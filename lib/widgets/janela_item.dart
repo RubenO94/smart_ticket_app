@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/calendar/calendario.dart';
+import 'package:smart_ticket/screens/client/calendar/weekly_schedule_table.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
-import 'package:smart_ticket/utils/utils.dart';
 
 class JanelaItem extends StatefulWidget {
   const JanelaItem({super.key, required this.janela, required this.tipoPerfil});
@@ -27,7 +28,7 @@ class _JanelaItemState extends State<JanelaItem> {
         case 300:
           return const PagamentosPendentesScreen();
         case 400:
-          return const CalendarioScreen();
+          return  CalendarioSemanal(eventos: eventos,);
         default:
           return Container(
             color: Colors.blue,

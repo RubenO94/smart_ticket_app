@@ -63,3 +63,11 @@ Color randomColor() {
   return Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
       .withOpacity(0.9);
 }
+
+// Método para obter a descrição formatada sem a repetição de dias e horários
+  String getDescricaoFormatada(String descricao, String codigo) {
+    String descricaoFormatada = descricao;
+    descricaoFormatada = descricaoFormatada.replaceAll('$codigo - ', '');
+    descricaoFormatada = descricaoFormatada.replaceAll(RegExp(r'\(\d+\.\w+\d+\)'), '');
+    return descricaoFormatada;
+  }

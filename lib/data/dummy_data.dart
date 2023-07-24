@@ -257,3 +257,129 @@ final List<String> categorias = [
   "Segurança e hiegene",
   "Sócio afetivo",
 ];
+
+
+class Calendario {
+  final String codigo;
+  final String descricao;
+  final String horaInicio;
+  final String horaFim;
+  final bool friday;
+  final bool saturday;
+  final bool sunday;
+  final bool monday;
+  final bool tuesday;
+  final bool wednesday;
+  final bool thursday;
+
+ Calendario({
+    required this.codigo,
+    required this.descricao,
+    required this.horaInicio,
+    required this.horaFim,
+    required this.friday,
+    required this.saturday,
+    required this.sunday,
+    required this.monday,
+    required this.tuesday,
+    required this.wednesday,
+    required this.thursday,
+  });
+}
+
+final eventos = [
+    Calendario(
+      codigo: "001",
+      descricao: "Evento 1",
+      horaInicio: "08:00",
+      horaFim: "09:30",
+      friday: false,
+      saturday: false,
+      sunday: false,
+      monday: true,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+    ),
+    Calendario(
+      codigo: "002",
+      descricao: "Evento 2",
+      horaInicio: "10:00",
+      horaFim: "12:00",
+      friday: false,
+      saturday: false,
+      sunday: false,
+      monday: false,
+      tuesday: true,
+      wednesday: false,
+      thursday: false,
+    ),
+    Calendario(
+      codigo: "003",
+      descricao: "Evento 3",
+      horaInicio: "15:00",
+      horaFim: "16:30",
+      friday: false,
+      saturday: false,
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: true,
+      thursday: false,
+    ),
+    Calendario(
+      codigo: "004",
+      descricao: "Evento 4",
+      horaInicio: "19:00",
+      horaFim: "20:30",
+      friday: false,
+      saturday: false,
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: true,
+    ),
+    Calendario(
+      codigo: "005",
+      descricao: "Evento 5",
+      horaInicio: "14:00",
+      horaFim: "15:30",
+      friday: true,
+      saturday: false,
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+    ),
+    Calendario(
+      codigo: "006",
+      descricao: "Evento 6",
+      horaInicio: "12:00",
+      horaFim: "13:00",
+      friday: false,
+      saturday: false,
+      sunday: true,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+    ),
+    Calendario(
+      codigo: "007",
+      descricao: "Evento 7",
+      horaInicio: "16:00",
+      horaFim: "17:30",
+      friday: false,
+      saturday: true,
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+    ),
+  ];
+
+
+  

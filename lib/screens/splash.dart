@@ -52,10 +52,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           final hasAulasInscricoes = await apiService.getAulasInscricoes();
           final hasAtividades = await apiService.getAtividades();
           final hasAtividadesLetivas = await apiService.getAtividadesLetivas();
+          final hasPagamentosPendentes =
+              await apiService.getPagamentosPendentes();
           if (hasNiveis &&
               hasAulasInscricoes &&
               hasAtividades &&
               hasAtividadesLetivas &&
+              hasPagamentosPendentes &&
               mounted) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => HomeScreen(perfil: perfil),

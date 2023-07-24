@@ -541,20 +541,28 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          final List<Pagamento> pagamentosPendentes = data
-              .map(
-                (e) => Pagamento(
-                  dataInicio: e['DataInicio'],
-                  dataFim: e['DataFim'],
-                  desconto: e['Desconto'],
-                  desconto1: e['Desconto1'],
-                  idClienteTarifaLinha: e['IDClienteTarifaLinha'],
-                  idTarifaLinha: e['IDTarifaLinha'],
-                  plano: e['Plano'],
-                  valor: e['Valor'],
-                ),
-              )
-              .toList();
+          final List<Pagamento> pagamentosPendentes = data.map((e) {
+            final valorString = e['Valor'];
+            final valorNumerico = double.tryParse(valorString
+                .replaceAll(RegExp(r'[^\d,.]'), '')
+                .replaceAll(',', '.'));
+            final valor = valorNumerico ?? 0.0;
+
+            return Pagamento(
+              dataInicio: e['DataInicio'],
+              dataFim: e['DataFim'],
+              desconto: double.parse(
+                      e['Desconto'].replaceAll(',', '').replaceAll('%', '')) /
+                  100,
+              desconto1: double.parse(
+                      e['Desconto1'].replaceAll(',', '').replaceAll('%', '')) /
+                  100,
+              idClienteTarifaLinha: e['IDClienteTarifaLinha'],
+              idTarifaLinha: e['IDTarifaLinha'],
+              plano: e['Plano'],
+              valor: valor,
+            );
+          }).toList();
           ref
               .watch(pagamentosPendentesProvider.notifier)
               .setPagamentosPendentes(pagamentosPendentes);
@@ -574,16 +582,23 @@ class ApiService {
       'listIDClienteTarifaLinha': idTarifaList,
     };
     try {
-      final response = await executeRequest((client, baseUrl, headers) => client
-          .post(Uri.parse(baseUrl + endPoint), headers: headers, body: body));
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: jsonEncode(body),
+        ),
+      );
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
           final String redirectUrl = data['strRedirectUrl'];
-          ref
-              .watch(pagamentoCallbackProvider.notifier)
-              .setRedirectUrl(redirectUrl);
-          return true;
+          if (redirectUrl.isNotEmpty) {
+            ref
+                .watch(pagamentoCallbackProvider.notifier)
+                .setRedirectUrl(redirectUrl);
+            return true;
+          }
         }
       }
     } catch (e) {
