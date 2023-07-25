@@ -13,15 +13,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      drawer: const Drawer(
-          //TODO: Barra lateral...
-          child: Center(
-            child: Text('TODO: Barra lateral...'),
-          ),
-          ),
       appBar: AppBar(
         title: const Text('Menu Principal'),
-        centerTitle: true,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),

@@ -19,7 +19,6 @@ String formattedDate(String timeStampString) {
   return formato.format(dateTime);
 }
 
-
 String getCurrentDateInApiFormat() {
   DateTime currentDate = DateTime.now().toUtc();
   DateTime baseDate = DateTime.utc(1970, 1, 1);
@@ -27,7 +26,6 @@ String getCurrentDateInApiFormat() {
   int milliseconds = difference.inMilliseconds;
   return "/Date($milliseconds+0000)/";
 }
-
 
 bool isValidNIF(String nif) {
   if (nif.isEmpty) return false;
@@ -64,10 +62,10 @@ Color randomColor() {
       .withOpacity(0.9);
 }
 
-// Método para obter a descrição formatada sem a repetição de dias e horários
-  String getDescricaoFormatada(String descricao, String codigo) {
-    String descricaoFormatada = descricao;
-    descricaoFormatada = descricaoFormatada.replaceAll('$codigo - ', '');
-    descricaoFormatada = descricaoFormatada.replaceAll(RegExp(r'\(\d+\.\w+\d+\)'), '');
-    return descricaoFormatada;
+String formatDescricao(String descricao) {
+  final index = descricao.indexOf('(');
+  if (index != -1) {
+    descricao = descricao.substring(0, index).trim();
   }
+  return descricao;
+}

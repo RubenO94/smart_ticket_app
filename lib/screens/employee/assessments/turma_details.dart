@@ -25,8 +25,7 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
 
   void _loadAlunos() async {
     final apiService = ref.read(apiServiceProvider);
-    final hasAlunos =
-        await apiService.getAlunos(widget.idAula.toString(), '');
+    final hasAlunos = await apiService.getAlunos(widget.idAula.toString(), '');
     if (hasAlunos) {
       _alunosList = ref.read(alunosProvider);
       setState(() {
@@ -61,6 +60,12 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   void initState() {
     super.initState();
     _loadAlunos();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override

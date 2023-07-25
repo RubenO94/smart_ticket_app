@@ -1,82 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/calendario.dart';
 import 'package:smart_ticket/providers/calendario_provider.dart';
 import 'package:smart_ticket/utils/utils.dart';
-
-class CalendarioSemanal extends ConsumerWidget {
-  const CalendarioSemanal({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Controlador do TextField
-    final searchController = TextEditingController();
-
-    return DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Calendário'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
-              Tab(text: 'Segunda'),
-              Tab(text: 'Terça'),
-              Tab(text: 'Quarta'),
-              Tab(text: 'Quinta'),
-              Tab(text: 'Sexta'),
-              Tab(text: 'Sábado'),
-            ],
-          ),
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextField(
-                controller: searchController,
-                onChanged: (query) {
-                  ref
-                      .read(calendarioGeralProvider.notifier)
-                      .filterEvents(query);
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Pesquisar',
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            const Expanded(
-              child: TabBarView(
-                children: [
-                  CalendarioDiaItem(dayOfWeek: 'Monday'),
-                  CalendarioDiaItem(dayOfWeek: 'Tuesday'),
-                  CalendarioDiaItem(dayOfWeek: 'Wednesday'),
-                  CalendarioDiaItem(dayOfWeek: 'Thursday'),
-                  CalendarioDiaItem(dayOfWeek: 'Friday'),
-                  CalendarioDiaItem(dayOfWeek: 'Saturday'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class CalendarioDiaItem extends ConsumerWidget {
   const CalendarioDiaItem({
     super.key,
     required this.dayOfWeek,
+    required this.isPessoal,
   });
 
   final String dayOfWeek;
+  final bool isPessoal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final eventos = ref.watch(calendarioGeralProvider);
+    final eventos = isPessoal
+        ? ref.watch(calendarioPessoalProvider)
+        : ref.watch(calendarioGeralProvider);
     final eventsForDay = eventos
         .where((event) =>
             (dayOfWeek == 'Monday' && event.monday) ||
@@ -106,10 +47,11 @@ class CalendarioDiaItem extends ConsumerWidget {
                     final event = eventsForDay[index];
                     final descricaoFormatada = formatDescricao(event.descricao);
                     return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
                       child: Card(
-                        color: Theme.of(context).colorScheme.tertiary,
-                        shape: BeveledRectangleBorder(),
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: const BeveledRectangleBorder(),
                         elevation: 6,
                         child: ListTile(
                           title: Text(
@@ -130,7 +72,7 @@ class CalendarioDiaItem extends ConsumerWidget {
                                   Icons.access_time_filled_rounded,
                                   size: 16,
                                   color:
-                                      Theme.of(context).colorScheme.onTertiary,
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                                 const SizedBox(
                                   width: 4,
@@ -143,7 +85,7 @@ class CalendarioDiaItem extends ConsumerWidget {
                                       .copyWith(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onTertiary),
+                                              .onPrimary),
                                 ),
                               ],
                             ),

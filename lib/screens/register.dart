@@ -86,10 +86,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               final hasAtividades = await apiService.getAtividades();
               final hasAtividadesLetivas =
                   await apiService.getAtividadesLetivas();
+              final hasPagamentosPendentes =
+                  await apiService.getPagamentosPendentes();
+              final hasCalendario = await apiService.getCalendario();
               if (hasNiveis &&
                   hasAulasInscricoes &&
                   hasAtividades &&
                   hasAtividadesLetivas &&
+                  hasPagamentosPendentes &&
+                  hasCalendario &&
                   mounted) {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
                   builder: (context) => HomeScreen(perfil: perfil),

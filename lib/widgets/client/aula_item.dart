@@ -22,7 +22,7 @@ class _AulaItemState extends State<AulaItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.tertiary,
+      color: Theme.of(context).colorScheme.primary,
       elevation: 6,
       shape: ContinuousRectangleBorder(side: BorderSide.none),
       child: Padding(
@@ -31,7 +31,7 @@ class _AulaItemState extends State<AulaItem> {
 
           leading: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onTertiary,
+              color: Theme.of(context).colorScheme.onPrimary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
@@ -39,7 +39,7 @@ class _AulaItemState extends State<AulaItem> {
               child: Text(
                 '#${widget.index + 1}',
                 style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondaryContainer),
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
               ),
             ),
           ),
@@ -48,7 +48,7 @@ class _AulaItemState extends State<AulaItem> {
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
           subtitle: Padding(
             padding: const EdgeInsets.only(top: 4),
@@ -57,13 +57,13 @@ class _AulaItemState extends State<AulaItem> {
               style: Theme.of(context)
                   .textTheme
                   .labelSmall!
-                  .copyWith(color: Theme.of(context).colorScheme.onTertiary),
+                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
             ),
           ),
           trailing: IconButton(
             icon: Icon(
               Icons.delete_sweep_rounded,
-              color: Theme.of(context).colorScheme.onTertiary,
+              color: Theme.of(context).colorScheme.onPrimary,
               size: 32,
             ),
             onPressed: () {

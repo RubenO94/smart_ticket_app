@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/data/dummy_data.dart';
+
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/calendar/calendario.dart';
-import 'package:smart_ticket/screens/client/calendar/weekly_schedule_table.dart';
+
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
@@ -28,7 +28,7 @@ class _JanelaItemState extends State<JanelaItem> {
         case 300:
           return const PagamentosPendentesScreen();
         case 400:
-          return  CalendarioSemanal(eventos: eventos,);
+          return const Calendario();
         default:
           return Container(
             color: Colors.blue,
@@ -56,15 +56,15 @@ class _JanelaItemState extends State<JanelaItem> {
           ),
         );
       },
-      splashColor: Theme.of(context).primaryColor,
+      splashColor: Theme.of(context).colorScheme.primary,
       borderRadius: BorderRadius.circular(6),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Theme.of(context).colorScheme.tertiary.withOpacity(1.0),
-              Theme.of(context).colorScheme.tertiary.withOpacity(0.7),
+              Theme.of(context).colorScheme.primary.withOpacity(1.0),
+              Theme.of(context).colorScheme.primary.withOpacity(0.7),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -85,12 +85,12 @@ class _JanelaItemState extends State<JanelaItem> {
             Icon(
               widget.janela.icon,
               size: 32,
-              color: Theme.of(context).colorScheme.onTertiary,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             Text(
               widget.janela.name,
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
               textAlign: TextAlign.center,
             ),

@@ -43,7 +43,9 @@ class _PagamentosPendentesScreenState
           .firstWhere(
               (element) => element.idClienteTarifaLinha == idClienteTarifa)
           .valor;
-      _total -= valor;
+      if (_total - valor >= 0) {
+        _total -= valor;
+      }
     });
   }
 
@@ -87,7 +89,6 @@ class _PagamentosPendentesScreenState
       _pagamentosSelecionados.clear();
       _total = 0;
     });
-    showToast(context, 'TESTE: Fez refresh', 'success');
   }
 
   @override

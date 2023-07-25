@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/models/atividade.dart';
 import 'package:smart_ticket/models/atividade_letiva.dart';
 import 'package:smart_ticket/models/aula.dart';
+import 'package:smart_ticket/models/avaliacao.dart';
+import 'package:smart_ticket/models/calendario.dart';
 import 'package:smart_ticket/models/nivel.dart';
 import 'package:smart_ticket/models/pagamento.dart';
 
@@ -20,6 +23,8 @@ import 'package:smart_ticket/providers/atividades_letivas_disponiveis_provider.d
 import 'package:smart_ticket/providers/aula_id_provider.dart';
 import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/calendario_provider.dart';
 import 'package:smart_ticket/providers/device_id_provider.dart';
 import 'package:smart_ticket/providers/http_client_provider.dart';
 import 'package:smart_ticket/providers/niveis_provider.dart';
@@ -375,6 +380,42 @@ class ApiService {
           ref
               .watch(aulasInscritasProvider.notifier)
               .setInscricoes(aulasInscricoes);
+
+          final List<FichaAvaliacao> avaliacoes = data.map((e) {
+            List<Pergunta> listaPerguntas = [];
+            List<Resposta> listaRespostas = [];
+            e['obAvaliacao']['listPerguntas'].forEach((pergunta) {
+              listaPerguntas.add(
+                Pergunta(
+                  obrigatorio: pergunta['bObrigatorio'],
+                  idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
+                  tipo: pergunta['nTipo'],
+                  categoria: pergunta['strCategoria'],
+                  descricao: pergunta['strPergunta'],
+                ),
+              );
+            });
+            e['obAvaliacao']['listAlunos'][0]['listRespostas']
+                .forEach((resposta) {
+              listaRespostas.add(
+                Resposta(
+                    idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
+                    classificacao: resposta['nRespostaClassificacao']),
+              );
+            });
+            return FichaAvaliacao(
+                idAula: e['IDAula'],
+                descricao: e['Aula'],
+                dataAvalicao: e['obAvaliacao']['listAlunos'][0]
+                    ['strDataAvaliacao'],
+                idDesempenhoNivel: e['obAvaliacao']['listAlunos'][0]
+                    ['nIDDesempenhoNivel'],
+                perguntasList: listaPerguntas,
+                respostasList: listaRespostas);
+          }).toList();
+          ref
+              .read(fichasAvaliacaoProvider.notifier)
+              .setFichasAvaliacao(avaliacoes);
           return true;
         }
       }
@@ -523,7 +564,29 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          //TODO: Implementar logica para atualizar o calendario;
+          final List<Calendario> calendarioGeral = data
+              .map(
+                (e) => Calendario(
+                  codigo: e['strCodigo'],
+                  idAtividade: e['nIDAtividade'],
+                  descricao: e['strDescricao'],
+                  horaInicio: e['strHoraInicio'],
+                  horaFim: e['strHoraFim'],
+                  friday: e['bFriday'],
+                  saturday: e['bSaturday'],
+                  sunday: e['bSunday'],
+                  monday: e['bMonday'],
+                  tuesday: e['bTuesday'],
+                  wednesday: e['bWednesday'],
+                  thursday: e['bThursday'],
+                  inscrito: e['bInscrito'],
+                ),
+              )
+              .toList();
+
+          ref
+              .watch(calendarioGeralProvider.notifier)
+              .setCalendarioGeral(calendarioGeral);
           return true;
         }
       }

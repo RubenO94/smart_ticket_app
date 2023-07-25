@@ -25,7 +25,7 @@ class _PagamentoItemState extends State<PagamentoItem> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         color: Theme.of(context).cardColor,
-        elevation: 4,
+        elevation: 6,
         shape: ContinuousRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),

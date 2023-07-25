@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/perfil.dart';
 
-
 class PerfilNotifier extends StateNotifier<Perfil> {
   PerfilNotifier()
       : super(const Perfil(
