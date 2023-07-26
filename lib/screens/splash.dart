@@ -36,37 +36,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       final hasPerfil = await apiService.getPerfil();
       if (hasPerfil) {
         final perfil = ref.read(perfilProvider);
-        if (perfil.userType == 0) {
-          final hasNiveis = await apiService.getNiveis();
-          final hasTurmas = await apiService.getTurmas();
-          if (hasNiveis && hasTurmas && mounted) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => HomeScreen(perfil: perfil),
-            ));
-            return;
-          }
-        }
-        //TODO: falta fazer o loading dos restantes dados do perfil Client;
-        if (perfil.userType == 1) {
-          final hasNiveis = await apiService.getNiveis();
-          final hasAulasInscricoes = await apiService.getAulasInscricoes();
-          final hasAtividades = await apiService.getAtividades();
-          final hasAtividadesLetivas = await apiService.getAtividadesLetivas();
-          final hasPagamentosPendentes =
-              await apiService.getPagamentosPendentes();
-          final hasCalendario = await apiService.getCalendario();
-          if (hasNiveis &&
-              hasAulasInscricoes &&
-              hasAtividades &&
-              hasAtividadesLetivas &&
-              hasPagamentosPendentes &&
-              hasCalendario &&
-              mounted) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => HomeScreen(perfil: perfil),
-            ));
-            return;
-          }
+        final isDataloaded = await ref.read(apiDataProvider.future);
+        if (isDataloaded && mounted) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => HomeScreen(perfil: perfil),
+          ));
+          return;
         }
       }
     }

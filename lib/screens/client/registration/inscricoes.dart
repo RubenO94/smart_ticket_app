@@ -75,7 +75,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
               background: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).colorScheme.errorContainer,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
               onDismissed: (direction) {},

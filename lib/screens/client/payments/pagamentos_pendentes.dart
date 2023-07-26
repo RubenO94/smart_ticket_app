@@ -76,6 +76,10 @@ class _PagamentosPendentesScreenState
       if (mounted) {
         showToast(context,
             'O serviço está insdiponível, tente novamente mais tarde', 'error');
+        setState(() {
+          _pagamentosSelecionados.clear();
+          _total = 0;
+        });
       }
     }
     setState(() {

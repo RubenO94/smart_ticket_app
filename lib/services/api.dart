@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:smart_ticket/data/dummy_data.dart';
 import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/models/atividade.dart';
 import 'package:smart_ticket/models/atividade_letiva.dart';
 import 'package:smart_ticket/models/aula.dart';
-import 'package:smart_ticket/models/avaliacao.dart';
+import 'package:smart_ticket/models/ficha_avaliacao.dart';
 import 'package:smart_ticket/models/calendario.dart';
 import 'package:smart_ticket/models/nivel.dart';
 import 'package:smart_ticket/models/pagamento.dart';

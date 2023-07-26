@@ -11,3 +11,5 @@ class AtividadeLetivaIDProvider extends StateNotifier<int> {
 final atividadeLetivaIDProvider =
     StateNotifierProvider<AtividadeLetivaIDProvider, int>(
         (ref) => AtividadeLetivaIDProvider());
+
+

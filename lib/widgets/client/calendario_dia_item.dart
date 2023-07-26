@@ -34,7 +34,7 @@ class CalendarioDiaItem extends ConsumerWidget {
     return eventsForDay.isEmpty
         ? Center(
             child: Text(
-              'Sem aulas.',
+              'Sem aulas neste dia.',
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           )

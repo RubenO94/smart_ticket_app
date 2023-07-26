@@ -8,6 +8,9 @@ class AboutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).colorScheme.surface,
+      elevation: 3,
+      shape: const BeveledRectangleBorder(),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -46,11 +49,18 @@ class AboutApp extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ContactItem(contact: '+351 252 860 090', icon: Icons.phone, contactType: 'phone'),
+                ContactItem(
+                    contact: '+351 252 860 090',
+                    icon: Icons.phone,
+                    contactType: 'phone'),
                 SizedBox(
                   width: 12,
                 ),
-                ContactItem(contact: 'info@smartstep.pt', icon: Icons.email, contactType: 'email',),
+                ContactItem(
+                  contact: 'info@smartstep.pt',
+                  icon: Icons.email,
+                  contactType: 'email',
+                ),
               ],
             )
           ],

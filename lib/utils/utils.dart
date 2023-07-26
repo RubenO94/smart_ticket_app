@@ -3,6 +3,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
+const String adminPassword = 'smartadminapp';
+
 String formattedDate(String timeStampString) {
   initializeDateFormatting();
   Intl.defaultLocale = 'pt_PT';

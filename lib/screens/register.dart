@@ -69,52 +69,30 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           final hasPerfil = await apiService.getPerfil();
           if (hasPerfil) {
             final perfil = ref.read(perfilProvider);
-            if (perfil.userType == 0) {
-              final hasNiveis = await apiService.getNiveis();
-              final hasTurmas = await apiService.getTurmas();
-              if (hasNiveis && hasTurmas && mounted) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomeScreen(perfil: perfil),
-                ));
-                return;
-              }
-            }
-            //TODO: falta fazer o loading dos restantes dados do perfil Client;
-            if (perfil.userType == 1) {
-              final hasNiveis = await apiService.getNiveis();
-              final hasAulasInscricoes = await apiService.getAulasInscricoes();
-              final hasAtividades = await apiService.getAtividades();
-              final hasAtividadesLetivas =
-                  await apiService.getAtividadesLetivas();
-              final hasPagamentosPendentes =
-                  await apiService.getPagamentosPendentes();
-              final hasCalendario = await apiService.getCalendario();
-              if (hasNiveis &&
-                  hasAulasInscricoes &&
-                  hasAtividades &&
-                  hasAtividadesLetivas &&
-                  hasPagamentosPendentes &&
-                  hasCalendario &&
-                  mounted) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomeScreen(perfil: perfil),
-                ));
-                return;
-              }
+            final isDataloaded = await ref.read(apiDataProvider.future);
+            if (isDataloaded && mounted) {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => HomeScreen(perfil: perfil),
+              ));
+              return;
             }
           }
         }
         setState(() {
           _isSending = false;
         });
+      } else {
+        setState(() {
+          _isSending = false;
+        });
+        showToast(
+            context, 'Este email não está registado no sistema.', 'error');
       }
     } else if (isNifValid == 'null' && mounted) {
       setState(() {
         _isSending = false;
       });
-      showToast(
-          context,
-          'Erro ao registar o dispositivo. Certifique-se que o NIF introduzido é válido.',
+      showToast(context, 'Este NIF / Utilizador não está registado no sistema.',
           'error');
     } else {
       setState(() {
@@ -215,6 +193,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Card(
+                color: Theme.of(context).colorScheme.surface,
+                shape: const BeveledRectangleBorder(),
+                elevation: 3,
                 child: Container(
                   padding: const EdgeInsets.only(
                       left: 12, right: 12, top: 24, bottom: 24),
@@ -223,21 +204,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     child: Column(
                       children: [
                         TextFormField(
-                          maxLength: 9,
                           decoration: const InputDecoration(
-                            label: Text('Numero de Identificação Fiscal'),
+                            label: Text('NIF / Utilizador'),
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, introduza um NIF';
-                            }
-                            if (value.length != 9) {
-                              return 'O número de identificação fiscal deve conter 9 dígitos';
-                            }
-                            if (!isValidNIF(value)) {
-                              return 'O número de identificação fiscal inserido é inválido';
+                              return 'Este campo é obrigatório';
                             }
                             return null;
                           },
@@ -257,7 +231,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           textCapitalization: TextCapitalization.none,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Por favor, insira um endereço de e-mail';
+                              return 'Este campo é obrigatório';
                             }
                             if (!isValidEmail(value)) {
                               return 'O endereço de email inserido é inválido';
@@ -274,16 +248,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 ),
               ),
               const SizedBox(
-                height: 12,
+                height: 24,
               ),
-              ElevatedButton(
+              FloatingActionButton.extended(
+                shape: const BeveledRectangleBorder(),
+                backgroundColor:
+                    Theme.of(context).colorScheme.secondaryContainer,
+                foregroundColor:
+                    Theme.of(context).colorScheme.onSecondaryContainer,
                 onPressed: _isSending ? null : _saveCredentials,
-                child: _isSending
+                label: _isSending
                     ? const CircularProgressIndicator()
                     : const Text('Registar'),
               ),
               const SizedBox(
-                height: 64,
+                height: 80,
               ),
               const AboutApp(),
             ],

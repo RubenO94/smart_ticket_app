@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/screens/developer_test.dart';
+import 'package:smart_ticket/screens/register.dart';
 
 import 'package:smart_ticket/screens/splash.dart';
 import 'package:smart_ticket/utils/theme.dart';

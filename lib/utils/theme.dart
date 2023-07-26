@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  seedColor: const Color(0xFF7BC67E),
+  seedColor: const Color(0xFF4DB6AC),
   background: const Color(0xFF212121),
 );
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContactItem extends StatelessWidget {
   const ContactItem(
@@ -12,14 +13,31 @@ class ContactItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String? encodeQueryParameters(Map<String, String> params) {
+      return params.entries
+          .map((MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .join('&');
+    }
+
+    final Uri emailLunchUri = Uri(
+      scheme: 'mailto',
+      path: contact,
+      query: encodeQueryParameters(<String, String>{
+        'subject': 'Informações sobre o SmartTicket App',
+      }),
+    );
+
+    final Uri phoneLunchUri = Uri(scheme: 'tel', path: contact);
+
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (contactType == 'email') {
-          //TODO: lucher email 
+          launchUrl(emailLunchUri);
           return;
         }
         if (contactType == 'phone') {
-          //TODO: lucher phone
+          launchUrl(phoneLunchUri);
           return;
         }
       },

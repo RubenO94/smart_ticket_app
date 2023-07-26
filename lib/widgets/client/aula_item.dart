@@ -24,11 +24,10 @@ class _AulaItemState extends State<AulaItem> {
     return Card(
       color: Theme.of(context).colorScheme.primary,
       elevation: 6,
-      shape: ContinuousRectangleBorder(side: BorderSide.none),
+      shape: const ContinuousRectangleBorder(side: BorderSide.none),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(
-
           leading: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onPrimary,

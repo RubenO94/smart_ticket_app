@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/developer_provider.dart';
 import 'package:smart_ticket/screens/splash.dart';
@@ -10,7 +9,6 @@ class DeveloperScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final perfil = ref.watch(developerProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('SmartTicket APP'),
@@ -32,7 +30,7 @@ class DeveloperScreen extends ConsumerWidget {
               ),
               Text(
                 'Escolha um tipo de perfil para testar as suas funcionalidades',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(
                 height: 24,
