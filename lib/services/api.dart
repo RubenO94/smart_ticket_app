@@ -2,15 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/models/atividade.dart';
 import 'package:smart_ticket/models/atividade_letiva.dart';
 import 'package:smart_ticket/models/aula.dart';
 import 'package:smart_ticket/models/ficha_avaliacao.dart';
 import 'package:smart_ticket/models/calendario.dart';
+import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/models/nivel.dart';
 import 'package:smart_ticket/models/pagamento.dart';
-
 import 'package:smart_ticket/models/perfil.dart';
 import 'package:smart_ticket/models/pergunta.dart';
 import 'package:smart_ticket/models/resposta.dart';
@@ -30,14 +31,11 @@ import 'package:smart_ticket/providers/niveis_provider.dart';
 import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
+import 'package:smart_ticket/providers/perguntas_provider.dart';
 import 'package:smart_ticket/providers/secure_storage_provider.dart';
 import 'package:smart_ticket/providers/token_provider.dart';
 import 'package:smart_ticket/providers/turmas_provider.dart';
 import 'package:smart_ticket/utils/utils.dart';
-
-import '../models/janela.dart';
-import '../providers/perguntas_provider.dart';
-import '../utils/error_messages.dart';
 
 class ApiService {
   ApiService(this.ref);
@@ -86,8 +84,7 @@ class ApiService {
                     'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc$endPoint'),
                 headers: headers));
         if (response.statusCode != 200) {
-          final status = getErrorMessage(response.statusCode);
-          return status;
+          return 'errorUnknown';
         }
         final Map<String, dynamic> data = json.decode(response.body);
         final String? baseUrl = data['strDescricao'];
