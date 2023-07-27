@@ -4,6 +4,7 @@ import 'package:android_id/android_id.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/developer_provider.dart';
 
+//TODO: Mudar para recolha de id dinamicamente em Produção!
 final deviceIdProvider = FutureProvider<String>((ref) async {
   final developer = ref.watch(developerProvider);
   if (developer) {

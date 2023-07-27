@@ -30,7 +30,7 @@ final theme = ThemeData().copyWith(
   ),
 );
 
-
+//TODO: Manter esta lista de cores?
 final List<Color> colors = [
     Colors.red,
     Colors.blue,
@@ -42,5 +42,4 @@ final List<Color> colors = [
     Colors.amber,
     Colors.indigo,
     Colors.cyan,
-    // Adicione mais cores se necessário
   ];

@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           .copyWith(useMaterial3: true, colorScheme: darkColorScheme),
       theme: theme,
       themeMode: ThemeMode.system,
-      home: const DeveloperScreen(),
+      home: const DeveloperScreen(), //TODO: Mudar para SplashScreen em produção!
     );
   }
 }
