@@ -17,6 +17,9 @@ final atividadesProvider =
     StateNotifierProvider<AtividadesNotifier, List<Atividade>>(
         (ref) => AtividadesNotifier());
 
+
+
+//TODO: Adicionar dinamicamente cores ás atividades.
 final atividadesColorProvider = Provider<Map<int, Color>>(
   (ref) {
     Map<int, Color> activityColorMap = {};

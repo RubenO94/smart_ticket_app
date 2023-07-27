@@ -14,7 +14,7 @@ class CalendarioGeralNotifier extends StateNotifier<List<Calendario>> {
 
   void filterEvents(String query) {
     if (query.isEmpty) {
-      state = [..._originalEvents]; // Mostrar todos os eventos
+      state = [..._originalEvents]; // Mostrar todos as aulas
       _filteredEvents = [];
     } else {
       _filteredEvents = _originalEvents
@@ -24,12 +24,12 @@ class CalendarioGeralNotifier extends StateNotifier<List<Calendario>> {
               event.descricao.toLowerCase().contains(query.toLowerCase()))
           .toList();
 
-      state = [..._filteredEvents]; // Atualizar os eventos filtrados
+      state = [..._filteredEvents]; // Atualizar as aulas filtradas
     }
   }
 
   void clearSearch() {
-    state = [..._originalEvents]; // Restaurar a lista original de eventos
+    state = [..._originalEvents]; // Restaurar a lista original de aulas
     _filteredEvents = [];
   }
 }
