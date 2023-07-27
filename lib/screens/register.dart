@@ -55,10 +55,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final apiService = ref.read(apiServiceProvider);
     final isNifValid = await apiService.getWSApp(_enteredNIF);
     if (isNifValid == 'success') {
-      final isRegistred =
+      final isDeviceActivated = await apiService.isDeviceActivated();
+      if (isDeviceActivated && mounted) {
+        final hasPerfil = await apiService.getPerfil();
+        if (hasPerfil) {
+          final perfil = ref.read(perfilProvider);
+          final isDataloaded = await ref.read(apiDataProvider.future);
+          if (isDataloaded && mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => HomeScreen(perfil: perfil),
+            ));
+            return;
+          }
+        }
+      }
+      final registerStatus =
           await apiService.registerDevice(_enteredNIF, _enteredEmail);
 
-      if (isRegistred && mounted) {
+      if (registerStatus == 'true' && mounted) {
         setState(() {
           _isSending = false;
         });
@@ -85,14 +99,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         setState(() {
           _isSending = false;
         });
-        showToast(
-            context, 'Este email não está registado no sistema.', 'error');
+        showToast(context, registerStatus, 'error');
       }
     } else if (isNifValid == 'null' && mounted) {
       setState(() {
         _isSending = false;
       });
-      showToast(context, 'Este NIF / Utilizador não está registado no sistema.',
+      showToast(context, 'Este NIF/Utilizador não está registado no sistema.',
           'error');
     } else {
       setState(() {

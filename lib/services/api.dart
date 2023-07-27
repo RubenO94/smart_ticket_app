@@ -125,7 +125,7 @@ class ApiService {
     return false;
   }
 
-  Future<bool> registerDevice(String nif, String email) async {
+  Future<String> registerDevice(String nif, String email) async {
     final endPoint = '/RegisterDevice?strNif=$nif&strEmail=$email';
 
     try {
@@ -135,15 +135,15 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['nResultado'] == 1) {
-          return true;
+          return 'true';
         }
-        return false;
+        return data['strDescricao'];
       }
     } catch (e) {
-      return false;
+      return 'Erro: ${e.toString()}';
     }
 
-    return false;
+    return 'Ocorreu um erro ao tentar concetar com o servidor';
   }
 
   Future<bool> activateDevice(String activationCode) async {

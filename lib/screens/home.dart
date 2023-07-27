@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('SmartTicketAPP'),
+        title: const Text('SmartTicket App'),
         content: Form(
           key: _formKey,
           child: TextFormField(
