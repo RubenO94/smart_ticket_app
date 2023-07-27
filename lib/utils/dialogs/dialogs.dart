@@ -6,18 +6,27 @@ void showToast(BuildContext context, String message, String type) {
     SnackBar(
       content: Row(
         children: [
-          type == 'error' ? const Icon(Icons.error) : const Icon(Icons.check),
+          type == 'error'
+              ? Icon(Icons.error, color: Theme.of(context).colorScheme.onError)
+              : Icon(Icons.check,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer),
           const SizedBox(
             width: 8,
           ),
           Text(
             message,
-            style: Theme.of(context).textTheme.bodyLarge,
+            style: type == 'error' ? Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onError) : Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
           ),
         ],
       ),
       backgroundColor: type == 'error'
-          ? Theme.of(context).colorScheme.errorContainer
+          ? Theme.of(context).colorScheme.error
           : Theme.of(context).colorScheme.secondaryContainer,
     ),
   );

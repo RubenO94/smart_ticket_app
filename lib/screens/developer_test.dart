@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/developer_provider.dart';
 import 'package:smart_ticket/screens/splash.dart';
 
+
+//WARNING: Usado apenas em desenvolvimento.
+
 class DeveloperScreen extends ConsumerWidget {
   const DeveloperScreen({super.key});
 

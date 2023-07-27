@@ -190,15 +190,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Card(
                 color: Theme.of(context).colorScheme.surface,
-                shape: const BeveledRectangleBorder(),
-                elevation: 3,
+                shape: const ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                ),
+                elevation: 0,
                 child: Container(
                   padding: const EdgeInsets.only(
-                      left: 12, right: 12, top: 24, bottom: 24),
+                      left: 16, right: 16, top: 24, bottom: 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -251,11 +255,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 height: 24,
               ),
               FloatingActionButton.extended(
-                shape: const BeveledRectangleBorder(),
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
-                foregroundColor:
-                    Theme.of(context).colorScheme.onSecondaryContainer,
+                shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 onPressed: _isSending ? null : _saveCredentials,
                 label: _isSending
                     ? const CircularProgressIndicator()
