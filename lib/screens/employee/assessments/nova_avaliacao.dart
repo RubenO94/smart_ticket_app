@@ -64,6 +64,21 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
     return true;
   }
 
+  bool todasPerguntasRespondidas() {
+    for (final pergunta in _perguntasList) {
+      if (pergunta.obrigatorio) {
+        final index = _respostas.indexWhere(
+          (resposta) =>
+              resposta.idDesempenhoLinha == pergunta.idDesempenhoLinha,
+        );
+        if (index == -1) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   void responderPergunta(int classificacao) {
     final pergunta = _perguntasList[_currentPageIndex];
     final index = _respostas.indexWhere(
@@ -199,7 +214,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                                 kToolbarHeight -
                                 kBottomNavigationBarHeight,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 ListTile(
                                   contentPadding: const EdgeInsets.symmetric(
@@ -214,6 +229,9 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                                     style:
                                         Theme.of(context).textTheme.labelSmall,
                                   ),
+                                  trailing: pergunta.obrigatorio
+                                      ? Text('*', style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.error),)
+                                      : null,
                                 ),
                                 RadioListTile<int>(
                                   title: const Text('Muito bom (3)'),
@@ -258,6 +276,19 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                         );
                       },
                     ),
+                  ),
+                  const SizedBox(
+                    height: 48,
+                  ),
+                  ElevatedButton(
+                    onPressed: todasPerguntasRespondidas()
+                        ? () {
+                            setState(() {
+                              _avaliacaoCompleted = true;
+                            });
+                          }
+                        : null,
+                    child: const Text('Concluir Avaliação'),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),

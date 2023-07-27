@@ -71,3 +71,18 @@ String formatDescricao(String descricao) {
   }
   return descricao;
 }
+
+Color getTextColorOnBackground(Color backgroundColor) {
+  // Calcula o brilho relativo (Contraste Relativo)
+  double relativeLuminance = (backgroundColor.red * 0.2126 +
+          backgroundColor.green * 0.7152 +
+          backgroundColor.blue * 0.0722) /
+      255.0;
+
+  // Calcula o contraste relativo entre o texto e o fundo
+  double contrast = (relativeLuminance + 0.05) / (0.05 + 0.179);
+
+  // Se o contraste for maior que 3.0, escolhemos uma cor de texto escura (preta),
+  // caso contrário, escolhemos uma cor de texto clara (branca).
+  return contrast > 3.0 ? const Color(0xFF212121) : const Color(0xF5F5F5F5);
+}

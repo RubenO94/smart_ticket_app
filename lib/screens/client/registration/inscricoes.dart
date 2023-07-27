@@ -54,11 +54,8 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
       return;
     }
     if (mounted) {
-      showToast(
-          context,
-          'Não foi possível remover a inscrição!',
-          'error');
-          Navigator.of(context).pop(false);
+      showToast(context, 'Não foi possível remover a inscrição!', 'error');
+      Navigator.of(context).pop(false);
     }
   }
 
@@ -73,8 +70,8 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
               key: ValueKey(inscricoes[index].idAulaInscricao),
               direction: DismissDirection.endToStart,
               background: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),

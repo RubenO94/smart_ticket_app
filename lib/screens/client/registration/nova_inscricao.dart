@@ -249,10 +249,10 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
       persistentFooterButtons: [
         FloatingActionButton.extended(
         foregroundColor: aulaSelecionada == null
-            ? Colors.grey
+            ? Theme.of(context).disabledColor
             : null,
         backgroundColor: aulaSelecionada == null
-            ? Theme.of(context).colorScheme.onInverseSurface
+            ? Theme.of(context).colorScheme.surfaceVariant
             : null,
         disabledElevation: 0,
         onPressed:

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Calendario {
   final String codigo;
   final int idAtividade;
@@ -12,20 +14,21 @@ class Calendario {
   final bool wednesday;
   final bool thursday;
   final bool inscrito;
+  final Color cor;
 
-  Calendario({
-    required this.codigo,
-    required this.idAtividade,
-    required this.descricao,
-    required this.horaInicio,
-    required this.horaFim,
-    required this.friday,
-    required this.saturday,
-    required this.sunday,
-    required this.monday,
-    required this.tuesday,
-    required this.wednesday,
-    required this.thursday,
-    required this.inscrito,
-  });
+  Calendario(
+      {required this.codigo,
+      required this.idAtividade,
+      required this.descricao,
+      required this.horaInicio,
+      required this.horaFim,
+      required this.friday,
+      required this.saturday,
+      required this.sunday,
+      required this.monday,
+      required this.tuesday,
+      required this.wednesday,
+      required this.thursday,
+      required this.inscrito,
+      required this.cor});
 }

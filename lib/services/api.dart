@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -460,9 +461,11 @@ class ApiService {
           final List<Atividade> atividades = data
               .map(
                 (e) => Atividade(
-                    id: e['nIDAtividade'],
-                    codigo: e['strCodigo'],
-                    descricao: e['strDescricao']),
+                  id: e['nIDAtividade'],
+                  codigo: e['strCodigo'],
+                  descricao: e['strDescricao'],
+                  cor: e['strCor'],
+                ),
               )
               .toList();
           ref.watch(atividadesProvider.notifier).setAtividades(atividades);
@@ -560,25 +563,26 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          final List<Calendario> calendarioGeral = data
-              .map(
-                (e) => Calendario(
-                  codigo: e['strCodigo'],
-                  idAtividade: e['nIDAtividade'],
-                  descricao: e['strDescricao'],
-                  horaInicio: e['strHoraInicio'],
-                  horaFim: e['strHoraFim'],
-                  friday: e['bFriday'],
-                  saturday: e['bSaturday'],
-                  sunday: e['bSunday'],
-                  monday: e['bMonday'],
-                  tuesday: e['bTuesday'],
-                  wednesday: e['bWednesday'],
-                  thursday: e['bThursday'],
-                  inscrito: e['bInscrito'],
-                ),
-              )
-              .toList();
+          final colorList = ref.watch(atividadesColorProvider);
+          final List<Calendario> calendarioGeral = data.map((e) {
+            final color = colorList[e['nIDAtividade']];
+            return Calendario(
+              codigo: e['strCodigo'],
+              idAtividade: e['nIDAtividade'],
+              descricao: e['strDescricao'],
+              horaInicio: e['strHoraInicio'],
+              horaFim: e['strHoraFim'],
+              friday: e['bFriday'],
+              saturday: e['bSaturday'],
+              sunday: e['bSunday'],
+              monday: e['bMonday'],
+              tuesday: e['bTuesday'],
+              wednesday: e['bWednesday'],
+              thursday: e['bThursday'],
+              inscrito: e['bInscrito'],
+              cor: color ?? Colors.green,
+            );
+          }).toList();
 
           ref
               .watch(calendarioGeralProvider.notifier)

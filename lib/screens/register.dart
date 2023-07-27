@@ -212,7 +212,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             label: Text('NIF / Utilizador'),
                             border: OutlineInputBorder(),
                           ),
-                          keyboardType: TextInputType.number,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Este campo é obrigatório';

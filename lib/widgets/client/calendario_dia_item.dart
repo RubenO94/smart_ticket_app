@@ -50,7 +50,7 @@ class CalendarioDiaItem extends ConsumerWidget {
                       margin: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 8),
                       child: Card(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: eventsForDay[index].cor,
                         shape: const BeveledRectangleBorder(),
                         elevation: 6,
                         child: ListTile(
@@ -60,9 +60,9 @@ class CalendarioDiaItem extends ConsumerWidget {
                                 .textTheme
                                 .titleSmall!
                                 .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onTertiary),
+                                  color: getTextColorOnBackground(
+                                      eventsForDay[index].cor),
+                                ),
                           ),
                           subtitle: Padding(
                             padding: const EdgeInsets.only(top: 8),
@@ -71,8 +71,8 @@ class CalendarioDiaItem extends ConsumerWidget {
                                 Icon(
                                   Icons.access_time_filled_rounded,
                                   size: 16,
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: getTextColorOnBackground(
+                                      eventsForDay[index].cor),
                                 ),
                                 const SizedBox(
                                   width: 4,
@@ -83,9 +83,9 @@ class CalendarioDiaItem extends ConsumerWidget {
                                       .textTheme
                                       .bodyMedium!
                                       .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
+                                        color: getTextColorOnBackground(
+                                            eventsForDay[index].cor),
+                                      ),
                                 ),
                               ],
                             ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:smart_ticket/models/pagamento.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
@@ -7,7 +9,6 @@ import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/utils/dialogs/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_item.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class PagamentosPendentesScreen extends ConsumerStatefulWidget {
   const PagamentosPendentesScreen({super.key});
@@ -66,10 +67,7 @@ class _PagamentosPendentesScreenState
               const WebViewConfiguration(enableJavaScript: true),
           webOnlyWindowName: '_blank')) {
         if (mounted) {
-          showToast(
-              context,
-              'Serviço insdiponível, tente mais tarde',
-              'error');
+          showToast(context, 'Serviço insdiponível, tente mais tarde', 'error');
         }
       }
     } else {
@@ -207,10 +205,10 @@ class _PagamentosPendentesScreenState
       persistentFooterButtons: [
         FloatingActionButton.extended(
           foregroundColor: _isLoading || _pagamentosSelecionados.isEmpty
-              ? Colors.grey
+              ? Theme.of(context).disabledColor
               : null,
           backgroundColor: _isLoading || _pagamentosSelecionados.isEmpty
-              ? Theme.of(context).colorScheme.onInverseSurface
+              ? Theme.of(context).colorScheme.surfaceVariant
               : null,
           disabledElevation: 0,
           icon: const Icon(Icons.payments_rounded),

@@ -53,7 +53,7 @@ class _PagamentoItemState extends State<PagamentoItem> {
               RichText(
                 text: TextSpan(children: [
                   TextSpan(
-                    text: 'Valor: ',
+                    text: 'Valor:  ',
                     style: Theme.of(context)
                         .textTheme
                         .labelLarge!
@@ -70,7 +70,18 @@ class _PagamentoItemState extends State<PagamentoItem> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Data de vencimento: ',
+                      text: 'Periodo:  ',
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelLarge!
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: formattedDate(widget.pagamento.dataInicio),
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    TextSpan(
+                      text: '  a  ',
                       style: Theme.of(context)
                           .textTheme
                           .labelLarge!
@@ -78,7 +89,7 @@ class _PagamentoItemState extends State<PagamentoItem> {
                     ),
                     TextSpan(
                       text: formattedDate(widget.pagamento.dataFim),
-                      style: Theme.of(context).textTheme.labelLarge,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
                 ),
