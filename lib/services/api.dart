@@ -413,6 +413,23 @@ class ApiService {
           ref
               .read(fichasAvaliacaoProvider.notifier)
               .setFichasAvaliacao(avaliacoes);
+
+          final int avalicoesDisponiveisCount = avaliacoes
+              .where((element) => element.respostasList.isNotEmpty)
+              .toList()
+              .length;
+          int count = avalicoesDisponiveisCount;
+          final previousLength = await ref
+              .watch(secureStorageProvider)
+              .readSecureData('avaliacoesCount');
+          if (previousLength != '') {
+            if (int.parse(previousLength) >= 0) {
+              count = avalicoesDisponiveisCount - int.parse(previousLength);
+            }
+          }
+          await ref
+              .read(secureStorageProvider)
+              .writeSecureData('avaliacoesCount', count.toString());
           return true;
         }
       }

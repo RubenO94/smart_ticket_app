@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/models/janela.dart';
+import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
@@ -8,16 +12,20 @@ import 'package:smart_ticket/screens/client/enrollment/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
 import 'package:smart_ticket/screens/splash.dart';
 
-class JanelaItem extends StatefulWidget {
+class JanelaItem extends ConsumerStatefulWidget {
   const JanelaItem({super.key, required this.janela, required this.tipoPerfil});
   final Janela janela;
   final int tipoPerfil;
 
   @override
-  State<JanelaItem> createState() => _JanelaItemState();
+  ConsumerState<JanelaItem> createState() => _JanelaItemState();
 }
 
-class _JanelaItemState extends State<JanelaItem> {
+class _JanelaItemState extends ConsumerState<JanelaItem> {
+  bool haveNotifications = false;
+  int pagamentosPendentes = 0;
+  int avaliacoesCount = 0;
+
   Widget _onScreenChange() {
     if (widget.tipoPerfil == 1) {
       switch (widget.janela.id) {
@@ -42,8 +50,31 @@ class _JanelaItemState extends State<JanelaItem> {
     }
   }
 
+  void _checkNotifications() async {
+    if (widget.tipoPerfil == 1) {
+      final avaliacoes = await ref.read(avaliacoesNotificationsProvider.future);
+      setState(() {
+        avaliacoesCount = avaliacoes;
+      });
+      if (widget.janela.id == 300 ||
+          widget.janela.id == 100 && avaliacoesCount > 0) {
+        haveNotifications = true;
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
+    pagamentosPendentes = ref.watch(pagamentosNotificationsProvider);
+    if (pagamentosPendentes == 0) {
+      haveNotifications = false;
+    }
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
@@ -78,10 +109,22 @@ class _JanelaItemState extends State<JanelaItem> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              widget.janela.icon,
-              size: 32,
-              color: Theme.of(context).colorScheme.onPrimary,
+            badges.Badge(
+              badgeStyle: const badges.BadgeStyle(
+                padding: EdgeInsets.all(6),
+              ),
+              badgeAnimation: const badges.BadgeAnimation.fade(
+                  animationDuration: Duration(seconds: 2)),
+              showBadge: haveNotifications,
+              badgeContent: widget.janela.id == 300
+                  ? Text(pagamentosPendentes.toString())
+                  : Text(avaliacoesCount.toString()),
+              position: badges.BadgePosition.topEnd(),
+              child: Icon(
+                widget.janela.icon,
+                size: 32,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
             ),
             Text(
               widget.janela.name,

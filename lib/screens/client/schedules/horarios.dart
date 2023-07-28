@@ -48,7 +48,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                     child: Container(
                       color: isPessoal
                           ? Theme.of(context).primaryColor
-                          : Colors.transparent,
+                          : Theme.of(context).colorScheme.surfaceVariant,
                       child: _buildToggleButton(
                           Icons.calendar_today, 'As Minhas Aulas', isPessoal),
                     ),
@@ -64,7 +64,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                     child: Container(
                       color: !isPessoal
                           ? Theme.of(context).primaryColor
-                          : Colors.transparent,
+                          : Theme.of(context).colorScheme.surfaceVariant,
                       child: _buildToggleButton(Icons.calendar_month_rounded,
                           'Todas as Aulas', !isPessoal),
                     ),
@@ -93,13 +93,10 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                 children: [
                   HorarioDiaItem(dayOfWeek: 'Monday', isPessoal: isPessoal),
                   HorarioDiaItem(dayOfWeek: 'Tuesday', isPessoal: isPessoal),
-                  HorarioDiaItem(
-                      dayOfWeek: 'Wednesday', isPessoal: isPessoal),
-                  HorarioDiaItem(
-                      dayOfWeek: 'Thursday', isPessoal: isPessoal),
+                  HorarioDiaItem(dayOfWeek: 'Wednesday', isPessoal: isPessoal),
+                  HorarioDiaItem(dayOfWeek: 'Thursday', isPessoal: isPessoal),
                   HorarioDiaItem(dayOfWeek: 'Friday', isPessoal: isPessoal),
-                  HorarioDiaItem(
-                      dayOfWeek: 'Saturday', isPessoal: isPessoal),
+                  HorarioDiaItem(dayOfWeek: 'Saturday', isPessoal: isPessoal),
                 ],
               ),
             ),

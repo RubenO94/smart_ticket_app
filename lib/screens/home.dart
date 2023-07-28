@@ -1,20 +1,24 @@
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/perfil.dart';
+import 'package:smart_ticket/providers/alertas_provider.dart';
+import 'package:smart_ticket/providers/theme_provider.dart';
 import 'package:smart_ticket/screens/admin_settings.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/janela_item.dart';
+import 'package:smart_ticket/widgets/warnings.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, required this.perfil});
   final Perfil perfil;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _formKey = GlobalKey<FormState>();
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -64,10 +68,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _toggleTheme(bool isDark) {
+    if (isDark) {
+      ref.read(themeProvider.notifier).setTheme(ThemeMode.dark);
+      return;
+    }
+    ref.read(themeProvider.notifier).setTheme(ThemeMode.light);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final alertas = ref.watch(alertasProvider);
+    final isDarkModeEnabled =
+        ref.watch(themeProvider) == ThemeMode.dark ?? false;
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Switch(
+              thumbIcon: isDarkModeEnabled
+                  ? const MaterialStatePropertyAll(
+                      Icon(Icons.dark_mode_rounded),
+                    )
+                  : const MaterialStatePropertyAll(
+                      Icon(Icons.wb_sunny),
+                    ),
+              value: isDarkModeEnabled,
+              onChanged: (value) {
+                _toggleTheme(value);
+              },
+              activeColor: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -133,11 +168,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(
-            height: 48,
+            height: 24,
           ),
           Expanded(
             child: GridView(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 3 / 2,
@@ -151,7 +186,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
               ],
             ),
-          )
+          ),
+          if (alertas.isNotEmpty)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: WarningsWidget(alertas: alertas),
+              ),
+            ),
         ],
       ),
     );

@@ -12,3 +12,9 @@ class PagamentosPendentesNotifier extends StateNotifier<List<Pagamento>> {
 final pagamentosPendentesProvider =
     StateNotifierProvider<PagamentosPendentesNotifier, List<Pagamento>>(
         (ref) => PagamentosPendentesNotifier());
+
+final pagamentosNotificationsProvider = Provider<int>((ref) {
+  final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
+
+  return pagamentosPendentes.length;
+});

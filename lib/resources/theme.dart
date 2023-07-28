@@ -3,14 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
-  seedColor: const Color(0xFF4DB6AC),
+  seedColor: const Color.fromARGB(255, 10, 53, 95),
   background: const Color(0xFF212121),
 );
 
 final lightColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
-  seedColor: const Color(0xFF4CAF50),
+  seedColor: const Color(0xFF95BD20),
   background: const Color(0xF5F5F5F5),
+  primary: const Color(0xFF95BD20),
 );
 
 final theme = ThemeData().copyWith(
