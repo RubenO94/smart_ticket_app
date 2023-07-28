@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/aula.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
-import 'package:smart_ticket/utils/dialogs/dialogs.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/registration/nova_inscricao.dart';
 

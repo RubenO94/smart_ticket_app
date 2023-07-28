@@ -7,14 +7,14 @@ import 'package:smart_ticket/widgets/employee/turma_item.dart';
 
 import '../../../models/turma.dart';
 
-class AvaliacoesScreen extends ConsumerStatefulWidget {
-  const AvaliacoesScreen({super.key});
+class TurmasScreen extends ConsumerStatefulWidget {
+  const TurmasScreen({super.key});
 
   @override
-  ConsumerState<AvaliacoesScreen> createState() => _AvaliacoesScreenState();
+  ConsumerState<TurmasScreen> createState() => _TurmasScreenState();
 }
 
-class _AvaliacoesScreenState extends ConsumerState<AvaliacoesScreen> {
+class _TurmasScreenState extends ConsumerState<TurmasScreen> {
   late List<Turma> listaTurmas = [];
   List<Turma> _items = [];
   bool _isLoading = true;

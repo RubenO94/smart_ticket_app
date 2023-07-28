@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 import '../../models/aula.dart';
 

@@ -6,7 +6,7 @@ import 'package:smart_ticket/providers/atividades_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/atividades_letivas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
-import 'package:smart_ticket/utils/dialogs/dialogs.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 
 class NovaInscricao extends ConsumerStatefulWidget {
   const NovaInscricao({super.key});

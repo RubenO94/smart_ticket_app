@@ -36,7 +36,7 @@ import 'package:smart_ticket/providers/perguntas_provider.dart';
 import 'package:smart_ticket/providers/secure_storage_provider.dart';
 import 'package:smart_ticket/providers/token_provider.dart';
 import 'package:smart_ticket/providers/turmas_provider.dart';
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class ApiService {
   ApiService(this.ref);
@@ -210,7 +210,6 @@ class ApiService {
                 (e) => Turma(
                   id: e['nIDAula'],
                   descricao: e['strDescricao'],
-                  color: randomColor(),
                 ),
               )
               .toList();

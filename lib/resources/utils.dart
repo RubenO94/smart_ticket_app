@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
-import 'dart:math' as math;
 
 const String adminPassword = 'smartadminapp';
 
@@ -29,26 +28,27 @@ String getCurrentDateInApiFormat() {
   return "/Date($milliseconds+0000)/";
 }
 
-bool isValidNIF(String nif) {
-  if (nif.isEmpty) return false;
-  if (nif.length != 9) return false;
+// Manter esta validação??
+// bool isValidNIF(String nif) {
+//   if (nif.isEmpty) return false;
+//   if (nif.length != 9) return false;
 
-  int sum = 0;
-  for (int i = 0; i < 8; i++) {
-    int? digit = int.tryParse(nif[i]);
-    if (digit == null) return false;
-    sum += digit * (9 - i);
-  }
+//   int sum = 0;
+//   for (int i = 0; i < 8; i++) {
+//     int? digit = int.tryParse(nif[i]);
+//     if (digit == null) return false;
+//     sum += digit * (9 - i);
+//   }
 
-  int? checkDigit = int.tryParse(nif[8]);
-  if (checkDigit == null) return false;
+//   int? checkDigit = int.tryParse(nif[8]);
+//   if (checkDigit == null) return false;
 
-  int remainder = sum % 11;
-  int expectedCheckDigit =
-      (remainder == 0 || remainder == 1) ? 0 : (11 - remainder);
+//   int remainder = sum % 11;
+//   int expectedCheckDigit =
+//       (remainder == 0 || remainder == 1) ? 0 : (11 - remainder);
 
-  return checkDigit == expectedCheckDigit;
-}
+//   return checkDigit == expectedCheckDigit;
+// }
 
 bool isValidEmail(String email) {
   if (email.isEmpty) return false;
@@ -59,11 +59,7 @@ bool isValidEmail(String email) {
   return regex.hasMatch(email);
 }
 
-Color randomColor() {
-  return Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-      .withOpacity(0.9);
-}
-
+//Para o calendario de aulas:
 String formatDescricao(String descricao) {
   final index = descricao.indexOf('(');
   if (index != -1) {

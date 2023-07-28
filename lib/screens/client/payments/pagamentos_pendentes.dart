@@ -7,7 +7,7 @@ import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
-import 'package:smart_ticket/utils/dialogs/dialogs.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_item.dart';
 
 class PagamentosPendentesScreen extends ConsumerStatefulWidget {

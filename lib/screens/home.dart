@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:smart_ticket/models/perfil.dart';
 import 'package:smart_ticket/screens/admin_settings.dart';
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/janela_item.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/material.dart';

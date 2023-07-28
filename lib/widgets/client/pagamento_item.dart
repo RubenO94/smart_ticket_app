@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/pagamento.dart';
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class PagamentoItem extends StatefulWidget {
   const PagamentoItem(

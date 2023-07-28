@@ -8,18 +8,16 @@ import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/providers/aula_id_provider.dart';
 import 'package:smart_ticket/providers/niveis_provider.dart';
 import 'package:smart_ticket/screens/employee/assessments/resultados_avaliacao.dart';
-import 'package:smart_ticket/utils/dialogs/dialogs.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../../../models/aluno.dart';
 import '../../../models/nivel.dart';
 import '../../../models/resposta.dart';
 
-
 class AvaliacaoConclusionScreen extends ConsumerStatefulWidget {
   final List<Pergunta> perguntas;
   final List<Resposta> respostas;
   final VoidCallback reiniciarAvaliacao;
-
   final Aluno aluno;
 
   const AvaliacaoConclusionScreen({

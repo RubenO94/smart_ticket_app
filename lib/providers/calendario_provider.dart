@@ -14,7 +14,7 @@ class CalendarioGeralNotifier extends StateNotifier<List<Calendario>> {
 
   void filterEvents(String query) {
     if (query.isEmpty) {
-      state = [..._originalEvents]; // Mostrar todos as aulas
+      state = [..._originalEvents]; // Mostrar todas as aulas
       _filteredEvents = [];
     } else {
       _filteredEvents = _originalEvents

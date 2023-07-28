@@ -6,7 +6,7 @@ import 'package:smart_ticket/screens/client/calendar/calendario.dart';
 
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
-import 'package:smart_ticket/screens/employee/assessments/avaliacoes.dart';
+import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
 import 'package:smart_ticket/screens/splash.dart';
 
 class JanelaItem extends StatefulWidget {
@@ -36,7 +36,7 @@ class _JanelaItemState extends State<JanelaItem> {
     } else {
       switch (widget.janela.id) {
         case 100:
-          return const AvaliacoesScreen();
+          return const TurmasScreen();
         default:
           return const SplashScreen();
       }

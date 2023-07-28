@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:smart_ticket/providers/api_service_provider.dart';
+import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/about_app.dart';
-
-import '../providers/perfil_provider.dart';
-
-import '../utils/dialogs/dialogs.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -31,7 +30,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       setState(() {
         _isSending = true;
       });
-      _registerDevice();
+      _authenticate();
     }
     FocusScope.of(context).unfocus();
   }
@@ -51,7 +50,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
-  void _registerDevice() async {
+  void _authenticate() async {
     final apiService = ref.read(apiServiceProvider);
     final isNifValid = await apiService.getWSApp(_enteredNIF);
     if (isNifValid == 'success') {
@@ -73,11 +72,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           await apiService.registerDevice(_enteredNIF, _enteredEmail);
 
       if (registerStatus == 'true' && mounted) {
-        setState(() {
-          _isSending = false;
-        });
-        final dialog = await _showConfirmationDialog();
-        if (dialog && mounted) {
+        final confirmationDialog = await _showConfirmationDialog();
+        if (confirmationDialog && mounted) {
           showToast(
               context, 'Sucesso! O seu dispositivo foi registrado.', 'success');
           final hasPerfil = await apiService.getPerfil();
@@ -92,27 +88,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             }
           }
         }
-        setState(() {
-          _isSending = false;
-        });
       } else {
-        setState(() {
-          _isSending = false;
-        });
         showToast(context, registerStatus, 'error');
       }
     } else if (isNifValid == 'null' && mounted) {
-      setState(() {
-        _isSending = false;
-      });
-      showToast(context, 'Este NIF/Utilizador não está registado no sistema.',
-          'error');
+      showToast(context, 'Este NIF/Utilizador não está registado.', 'error');
     } else {
-      setState(() {
-        _isSending = false;
-      });
       showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
     }
+    setState(() {
+      _isSending = false;
+    });
   }
 
   Future<bool> _showConfirmationDialog() async {
@@ -126,6 +112,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                RichText(
+                  textAlign: TextAlign.start,
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text:
+                            'Por favor, verifique o código de ativação enviado para o e-mail ',
+                      ),
+                      TextSpan(
+                        text: _enteredEmail,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                      const TextSpan(text: '.'),
+                    ],
+                  ),
+                ),
                 Text(
                     'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
                 const SizedBox(height: 20),
@@ -273,7 +277,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 foregroundColor: Theme.of(context).colorScheme.onSecondary,
                 onPressed: _isSending ? null : _saveCredentials,
                 label: _isSending
-                    ? const CircularProgressIndicator()
+                    ? CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      )
                     : const Text('Registar'),
               ),
               const SizedBox(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/calendario_provider.dart';
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class CalendarioDiaItem extends ConsumerWidget {
   const CalendarioDiaItem({

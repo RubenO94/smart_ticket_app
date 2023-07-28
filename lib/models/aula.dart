@@ -1,4 +1,4 @@
-import 'package:smart_ticket/utils/utils.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class Aula {
   final String? atividade;

@@ -89,7 +89,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 children: [
                   Image.asset(
                     isDarkMode
-                        ? 'assets/images/logo-darkTheme.png'
+                        ? 'assets/images/logo-dark.png'
                         : 'assets/images/logo.png',
                     height: 100,
                   ),
