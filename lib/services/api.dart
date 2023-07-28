@@ -9,7 +9,7 @@ import 'package:smart_ticket/models/atividade.dart';
 import 'package:smart_ticket/models/atividade_letiva.dart';
 import 'package:smart_ticket/models/aula.dart';
 import 'package:smart_ticket/models/ficha_avaliacao.dart';
-import 'package:smart_ticket/models/calendario.dart';
+import 'package:smart_ticket/models/horario.dart';
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/models/nivel.dart';
 import 'package:smart_ticket/models/pagamento.dart';
@@ -25,7 +25,7 @@ import 'package:smart_ticket/providers/aula_id_provider.dart';
 import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/calendario_provider.dart';
+import 'package:smart_ticket/providers/horarios_provider.dart';
 import 'package:smart_ticket/providers/device_id_provider.dart';
 import 'package:smart_ticket/providers/http_client_provider.dart';
 import 'package:smart_ticket/providers/niveis_provider.dart';
@@ -185,6 +185,7 @@ class ApiService {
         final perfil = Perfil(
             id: data['strID'],
             name: data['strNome'],
+            entity: data['strNomeEntidade'],
             photo: data['strFotoBase64'],
             userType: data['eTipoPerfil'],
             janelas: lJanelas);
@@ -554,7 +555,7 @@ class ApiService {
     return false;
   }
 
-  Future<bool> getCalendario() async {
+  Future<bool> getHorarios() async {
     const endPoint = '/GetCalendario';
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
@@ -563,9 +564,9 @@ class ApiService {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
           final colorList = ref.watch(atividadesColorProvider);
-          final List<Calendario> calendarioGeral = data.map((e) {
+          final List<Horario> horariosGeral = data.map((e) {
             final color = colorList[e['nIDAtividade']];
-            return Calendario(
+            return Horario(
               codigo: e['strCodigo'],
               idAtividade: e['nIDAtividade'],
               descricao: e['strDescricao'],
@@ -585,7 +586,7 @@ class ApiService {
 
           ref
               .watch(calendarioGeralProvider.notifier)
-              .setCalendarioGeral(calendarioGeral);
+              .setHorariosGeral(horariosGeral);
           return true;
         }
       }

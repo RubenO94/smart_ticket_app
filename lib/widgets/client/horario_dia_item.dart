@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/calendario_provider.dart';
+import 'package:smart_ticket/providers/horarios_provider.dart';
 import 'package:smart_ticket/resources/utils.dart';
 
-class CalendarioDiaItem extends ConsumerWidget {
-  const CalendarioDiaItem({
+class HorarioDiaItem extends ConsumerWidget {
+  const HorarioDiaItem({
     super.key,
     required this.dayOfWeek,
     required this.isPessoal,

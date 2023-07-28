@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Calendario {
+class Horario {
   final String codigo;
   final int idAtividade;
   final String descricao;
@@ -16,7 +16,7 @@ class Calendario {
   final bool inscrito;
   final Color cor;
 
-  Calendario(
+  Horario(
       {required this.codigo,
       required this.idAtividade,
       required this.descricao,

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/calendario_provider.dart';
-import 'package:smart_ticket/widgets/client/calendario_dia_item.dart';
+import 'package:smart_ticket/providers/horarios_provider.dart';
+import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
 
-class Calendario extends ConsumerStatefulWidget {
-  const Calendario({super.key});
+class HorariosScreen extends ConsumerStatefulWidget {
+  const HorariosScreen({super.key});
 
   @override
-  ConsumerState<Calendario> createState() => _CalendarioState();
+  ConsumerState<HorariosScreen> createState() => _HorariosScreenState();
 }
 
-class _CalendarioState extends ConsumerState<Calendario> {
+class _HorariosScreenState extends ConsumerState<HorariosScreen> {
   final searchController = TextEditingController();
   bool isPessoal = false;
   @override
@@ -19,7 +19,7 @@ class _CalendarioState extends ConsumerState<Calendario> {
       length: 6,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Calendário'),
+          title: const Text('Horários'),
           bottom: const TabBar(
             isScrollable: true,
             tabs: [
@@ -91,14 +91,14 @@ class _CalendarioState extends ConsumerState<Calendario> {
             Expanded(
               child: TabBarView(
                 children: [
-                  CalendarioDiaItem(dayOfWeek: 'Monday', isPessoal: isPessoal),
-                  CalendarioDiaItem(dayOfWeek: 'Tuesday', isPessoal: isPessoal),
-                  CalendarioDiaItem(
+                  HorarioDiaItem(dayOfWeek: 'Monday', isPessoal: isPessoal),
+                  HorarioDiaItem(dayOfWeek: 'Tuesday', isPessoal: isPessoal),
+                  HorarioDiaItem(
                       dayOfWeek: 'Wednesday', isPessoal: isPessoal),
-                  CalendarioDiaItem(
+                  HorarioDiaItem(
                       dayOfWeek: 'Thursday', isPessoal: isPessoal),
-                  CalendarioDiaItem(dayOfWeek: 'Friday', isPessoal: isPessoal),
-                  CalendarioDiaItem(
+                  HorarioDiaItem(dayOfWeek: 'Friday', isPessoal: isPessoal),
+                  HorarioDiaItem(
                       dayOfWeek: 'Saturday', isPessoal: isPessoal),
                 ],
               ),

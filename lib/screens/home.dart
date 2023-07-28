@@ -69,9 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Menu Principal'),
+            Text(
+              widget.perfil.entity,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(color: Theme.of(context).colorScheme.onSurface),
+            ),
             GestureDetector(
               onLongPress: () => _developerDialog(),
               child: Container(
@@ -82,61 +88,71 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
-              child: FadeInImage(
-                placeholder: MemoryImage(kTransparentImage),
-                image: MemoryImage(
-                  base64Decode(widget.perfil.photo),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.only(left: 16, right: 8, bottom: 16, top: 8),
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.surface,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Olá, ${widget.perfil.nameToTitleCase}',
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                 ),
-                fit: BoxFit.cover,
-              ),
+                Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  clipBehavior: Clip.hardEdge,
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          blurStyle: BlurStyle.solid,
+                          blurRadius: 1.0,
+                          color: Theme.of(context).colorScheme.primary,
+                          spreadRadius: 2.5),
+                    ],
+                    shape: BoxShape.circle,
+                  ),
+                  child: FadeInImage(
+                    placeholder: MemoryImage(kTransparentImage),
+                    image: MemoryImage(
+                      base64Decode(widget.perfil.photo),
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(
+            height: 48,
+          ),
+          Expanded(
+            child: GridView(
+              padding: const EdgeInsets.all(12),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 3 / 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20),
+              children: [
+                for (final janela in widget.perfil.janelas)
+                  JanelaItem(
+                    janela: janela,
+                    tipoPerfil: widget.perfil.userType,
+                  )
+              ],
+            ),
+          )
         ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Olá, ${widget.perfil.nameToTitleCase}',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-            ),
-            const SizedBox(
-              height: 48,
-            ),
-            Expanded(
-              child: GridView(
-                padding: const EdgeInsets.all(12),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 3 / 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20),
-                children: [
-                  for (final janela in widget.perfil.janelas)
-                    JanelaItem(
-                      janela: janela,
-                      tipoPerfil: widget.perfil.userType,
-                    )
-                ],
-              ),
-            )
-          ],
-        ),
       ),
     );
   }

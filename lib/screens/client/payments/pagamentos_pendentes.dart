@@ -180,9 +180,9 @@ class _PagamentosPendentesScreenState
                   height: 24,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 24, left: 24),
+                  padding: const EdgeInsets.only(bottom: 24, right: 24),
                   child: RichText(
-                    textAlign: TextAlign.start,
+                    textAlign: TextAlign.end,
                     text: TextSpan(
                       children: [
                         TextSpan(

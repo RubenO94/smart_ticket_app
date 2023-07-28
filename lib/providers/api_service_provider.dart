@@ -20,7 +20,7 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
     final hasAtividades = await apiService.getAtividades();
     final hasAtividadesLetivas = await apiService.getAtividadesLetivas();
     final hasPagamentosPendentes = await apiService.getPagamentosPendentes();
-    final hasCalendario = await apiService.getCalendario();
+    final hasCalendario = await apiService.getHorarios();
     if (hasNiveis &&
         hasAulasInscricoes &&
         hasAtividades &&

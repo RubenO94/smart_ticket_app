@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/calendario.dart';
+import 'package:smart_ticket/models/horario.dart';
 
-class CalendarioGeralNotifier extends StateNotifier<List<Calendario>> {
-  CalendarioGeralNotifier() : super([]);
-  List<Calendario> _originalEvents = [];
-  List<Calendario> _filteredEvents = [];
+class HorariosGeralNotifier extends StateNotifier<List<Horario>> {
+  HorariosGeralNotifier() : super([]);
+  List<Horario> _originalEvents = [];
+  List<Horario> _filteredEvents = [];
 
-  void setCalendarioGeral(List<Calendario> calendarioGeral) {
+  void setHorariosGeral(List<Horario> calendarioGeral) {
     _originalEvents = calendarioGeral;
     _filteredEvents = calendarioGeral;
     state = calendarioGeral;
@@ -35,10 +35,10 @@ class CalendarioGeralNotifier extends StateNotifier<List<Calendario>> {
 }
 
 final calendarioGeralProvider =
-    StateNotifierProvider<CalendarioGeralNotifier, List<Calendario>>(
-        (ref) => CalendarioGeralNotifier());
+    StateNotifierProvider<HorariosGeralNotifier, List<Horario>>(
+        (ref) => HorariosGeralNotifier());
 
-final calendarioPessoalProvider = Provider<List<Calendario>>(
+final calendarioPessoalProvider = Provider<List<Horario>>(
   (ref) {
     final calendarioGeral = ref.watch(calendarioGeralProvider);
     final calendarioPessoal =

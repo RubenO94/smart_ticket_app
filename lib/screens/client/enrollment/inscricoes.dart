@@ -6,7 +6,7 @@ import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
-import 'package:smart_ticket/screens/client/registration/nova_inscricao.dart';
+import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
 
 class InscricoesScreen extends ConsumerStatefulWidget {
   const InscricoesScreen({super.key});
@@ -109,17 +109,20 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
         padding: const EdgeInsets.all(12),
         child: content,
       ),
-      floatingActionButton: FloatingActionButton.large(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NovaInscricao(),
-            ),
-          );
-        },
-        child: const Icon(Icons.add_rounded),
-      ),
+      persistentFooterButtons: [
+        FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NovaInscricao(),
+              ),
+            );
+          },
+          icon: const Icon(Icons.add),
+          label: const Text('Nova Inscrição'),
+        ),
+      ],
     );
   }
 }

@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
-import 'package:smart_ticket/screens/client/calendar/calendario.dart';
-
+import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
-import 'package:smart_ticket/screens/client/registration/inscricoes.dart';
+import 'package:smart_ticket/screens/client/enrollment/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
 import 'package:smart_ticket/screens/splash.dart';
 
@@ -29,7 +28,7 @@ class _JanelaItemState extends State<JanelaItem> {
         case 300:
           return const PagamentosPendentesScreen();
         case 400:
-          return const Calendario();
+          return const HorariosScreen();
         default:
           return const SplashScreen();
       }

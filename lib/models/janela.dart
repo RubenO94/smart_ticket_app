@@ -18,7 +18,7 @@ IconData getIcon(int id, int tipoPerfil) {
         return Icons.payment_rounded;
 
       case 400:
-        return Icons.calendar_today_rounded;
+        return Icons.access_time;
 
       default:
         return Icons.device_unknown_rounded;
