@@ -82,6 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDarkModeEnabled =
         ref.watch(themeProvider) == ThemeMode.dark ?? false;
     return Scaffold(
+      drawer: Drawer(),
       appBar: AppBar(
         scrolledUnderElevation: 0.0,
         actions: [
@@ -111,13 +112,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               style: Theme.of(context)
                   .textTheme
                   .titleLarge!
-                  .copyWith(color: Theme.of(context).colorScheme.onSurface),
+                  .copyWith(color: Theme.of(context).colorScheme.onSurface, fontSize: 16),
             ),
             GestureDetector(
               onLongPress: () => _developerDialog(),
               child: Container(
-                width: 80,
-                height: 50,
+                width: 40,
+                height: 40,
                 color: Theme.of(context).colorScheme.surface,
               ),
             )
@@ -136,7 +137,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Olá, ${widget.perfil.nameToTitleCase}',
+                  'Olá, ${widget.perfil.getFirstNameInTitleCase()}  ${widget.perfil.getLastNameInTitleCase()}',
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -172,7 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           Expanded(
             child: GridView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 3 / 2,

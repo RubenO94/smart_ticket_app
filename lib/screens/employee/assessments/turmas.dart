@@ -1,3 +1,4 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/turmas_provider.dart';
@@ -40,20 +41,24 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
   }
 
   void _filterSearchResults(String value) {
-    if (value.isEmpty) {
-      setState(() {
-        _items = listaTurmas;
-      });
-      return;
-    }
+  if (value.isEmpty) {
     setState(() {
-      final resultList = listaTurmas
-          .where((turma) =>
-              turma.descricao.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-      _items = resultList;
+      _items = listaTurmas;
     });
+    return;
   }
+
+  setState(() {
+    final resultList = listaTurmas.where((turma) {
+      final normalizedSearchTerm = removeDiacritics(value.toLowerCase());
+      final normalizedTurmaDescricao =
+          removeDiacritics(turma.descricao.toLowerCase());
+
+      return normalizedTurmaDescricao.contains(normalizedSearchTerm);
+    }).toList();
+    _items = resultList;
+  });
+}
 
   @override
   void initState() {

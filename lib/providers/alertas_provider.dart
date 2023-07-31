@@ -1,51 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/alerta.dart';
-import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 
-final alertasProvider = Provider<List<Alerta>>((ref) {
-  List<Alerta> alertas = [];
-  String message = '';
-  final pagamentosPendentesNotifications =
-      ref.watch(pagamentosNotificationsProvider);
-  int avaliacoesNotifications = 0;
-  ref.watch(avaliacoesNotificationsProvider.future).then(
-    (value) {
-      avaliacoesNotifications = value;
-    },
-  );
-//TODO: BUG - Talvez um FutureProvider resolva...
-  if (avaliacoesNotifications > 0) {
-    final isAvaliacaoplural = avaliacoesNotifications > 1 ? true : false;
-    if (isAvaliacaoplural) {
-      message = 'Tem $avaliacoesNotifications novas avaliações conluídas';
+class AlertasNotifier extends StateNotifier<List<Alerta>> {
+  AlertasNotifier() : super([]);
+
+  void addAlerta(Alerta alerta) {
+    if (state.isNotEmpty) {
+      final refreshedList =
+          state.where((element) => element.type != alerta.type).toList();
+
+      state = [alerta, ...refreshedList];
     } else {
-      'Tem $avaliacoesNotifications nova avaliação conluída';
+      state = [alerta, ...state];
     }
-
-    final alerta = Alerta(
-      type: 'Avaliações',
-      message: message,
-    );
-    alertas.add(alerta);
   }
+}
 
-  if (pagamentosPendentesNotifications > 0) {
-    final isPagamentosPlural =
-        pagamentosPendentesNotifications > 1 ? true : false;
-    if (isPagamentosPlural) {
-      message =
-          'Tem $pagamentosPendentesNotifications pagamentos por regularizar.';
-    } else {
-      message =
-          'Tem $pagamentosPendentesNotifications pagamento por regularizar.';
+final alertasProvider = StateNotifierProvider<AlertasNotifier, List<Alerta>>(
+    (ref) => AlertasNotifier());
+
+final avaliacoesNotificacoesProvider = Provider<int>(
+  (ref) {
+    int count = 0;
+    try {
+      final alertas = ref.watch(alertasProvider);
+      count = alertas
+          .firstWhere((element) => element.type == 'Avaliações')
+          .quantity;
+      return count;
+    } catch (e) {
+      return count;
     }
-    final alerta = Alerta(
-      type: 'Pagamentos',
-      message: message,
-    );
-    alertas.add(alerta);
-  }
-
-  return alertas;
-});
+  },
+);

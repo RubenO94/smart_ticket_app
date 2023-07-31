@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_ticket/models/alerta.dart';
 
 import 'package:smart_ticket/models/aluno.dart';
 import 'package:smart_ticket/models/atividade.dart';
@@ -17,6 +18,7 @@ import 'package:smart_ticket/models/perfil.dart';
 import 'package:smart_ticket/models/pergunta.dart';
 import 'package:smart_ticket/models/resposta.dart';
 import 'package:smart_ticket/models/turma.dart';
+import 'package:smart_ticket/providers/alertas_provider.dart';
 import 'package:smart_ticket/providers/alunos_provider.dart';
 import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/providers/atividades_disponiveis_provider.dart';
@@ -36,7 +38,6 @@ import 'package:smart_ticket/providers/perguntas_provider.dart';
 import 'package:smart_ticket/providers/secure_storage_provider.dart';
 import 'package:smart_ticket/providers/token_provider.dart';
 import 'package:smart_ticket/providers/turmas_provider.dart';
-import 'package:smart_ticket/resources/utils.dart';
 
 class ApiService {
   ApiService(this.ref);
@@ -418,20 +419,43 @@ class ApiService {
               .where((element) => element.respostasList.isNotEmpty)
               .toList()
               .length;
-          int count = avalicoesDisponiveisCount;
-          final previousLength = await ref
+
+          final strPreviousLength = await ref
               .watch(secureStorageProvider)
-              .readSecureData('avaliacoesCount');
-          if (previousLength != '') {
-            if (int.parse(previousLength) >= 0) {
-              count = avalicoesDisponiveisCount - int.parse(previousLength);
+              .readSecureData('avaliacoesPreviousLength');
+          int previousLength = 0;
+          if (strPreviousLength != '') {
+            previousLength = int.parse(strPreviousLength);
+          }
+
+          int newNotificationsCount =
+              avalicoesDisponiveisCount - previousLength;
+          if (newNotificationsCount > 0) {
+            final isAvaliacaoplural = newNotificationsCount > 1 ? true : false;
+            if (isAvaliacaoplural) {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                      message:
+                          'Tem $newNotificationsCount novas avaliações conluídas',
+                      type: 'Avaliações',
+                      quantity: newNotificationsCount,
+                    ),
+                  );
+            } else {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message:
+                            'Tem $newNotificationsCount nova avaliação conluída',
+                        type: 'Avaliações',
+                        quantity: newNotificationsCount),
+                  );
             }
           }
-          await ref
-              .read(secureStorageProvider)
-              .writeSecureData('avaliacoesCount', count.toString());
-          return true;
+
+          await ref.read(secureStorageProvider).writeSecureData(
+              'avaliacoesPreviousLength', avalicoesDisponiveisCount.toString());
         }
+        return true;
       }
     } catch (e) {
       return false;
@@ -602,7 +626,7 @@ class ApiService {
           }).toList();
 
           ref
-              .watch(calendarioGeralProvider.notifier)
+              .read(calendarioGeralProvider.notifier)
               .setHorariosGeral(horariosGeral);
           return true;
         }
@@ -644,10 +668,35 @@ class ApiService {
             );
           }).toList();
           ref
-              .watch(pagamentosPendentesProvider.notifier)
+              .read(pagamentosPendentesProvider.notifier)
               .setPagamentosPendentes(pagamentosPendentes);
-          return true;
+          if (pagamentosPendentes.isNotEmpty) {
+            final isPagamentosPlural =
+                pagamentosPendentes.length > 1 ? true : false;
+            if (isPagamentosPlural) {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message:
+                            'Tem ${pagamentosPendentes.length} pagamentos por regularizar.',
+                        type: 'Pagamentos',
+                        quantity: pagamentosPendentes.length),
+                  );
+            } else {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message:
+                            'Tem ${pagamentosPendentes.length} pagamento por regularizar.',
+                        type: 'Pagamentos',
+                        quantity: pagamentosPendentes.length),
+                  );
+            }
+          }
+        } else {
+          ref
+              .read(pagamentosPendentesProvider.notifier)
+              .setPagamentosPendentes([]);
         }
+        return true;
       }
     } catch (e) {
       return false;

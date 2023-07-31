@@ -3,6 +3,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/models/janela.dart';
+import 'package:smart_ticket/providers/alertas_provider.dart';
 import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
@@ -50,14 +51,9 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
     }
   }
 
-  void _checkNotifications() async {
+  void _checkNotifications() {
     if (widget.tipoPerfil == 1) {
-      final avaliacoes = await ref.read(avaliacoesNotificationsProvider.future);
-      setState(() {
-        avaliacoesCount = avaliacoes;
-      });
-      if (widget.janela.id == 300 ||
-          widget.janela.id == 100 && avaliacoesCount > 0) {
+      if (widget.janela.id == 300 || widget.janela.id == 100) {
         haveNotifications = true;
       }
     }
@@ -72,7 +68,9 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
   @override
   Widget build(BuildContext context) {
     pagamentosPendentes = ref.watch(pagamentosNotificationsProvider);
-    if (pagamentosPendentes == 0) {
+    avaliacoesCount = ref.watch(avaliacoesNotificacoesProvider);
+    if (widget.janela.id == 300 && pagamentosPendentes == 0 ||
+        widget.janela.id == 100 && avaliacoesCount == 0) {
       haveNotifications = false;
     }
     return InkWell(

@@ -31,4 +31,22 @@ class Perfil {
 
     return words.join(' ');
   }
+
+  String getFirstNameInTitleCase() {
+    if (name.isEmpty) {
+      return '';
+    }
+
+    String firstName = name.split(' ').first;
+    return firstName[0].toUpperCase() + firstName.substring(1).toLowerCase();
+  }
+
+  String getLastNameInTitleCase() {
+    if (name.isEmpty) {
+      return '';
+    }
+
+    String lastName = name.split(' ').last;
+    return lastName[0].toUpperCase() + lastName.substring(1).toLowerCase();
+  }
 }

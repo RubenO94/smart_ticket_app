@@ -64,32 +64,34 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => HomeScreen(perfil: perfil),
             ));
-            return;
-          }
-        }
-      }
-      final registerStatus =
-          await apiService.registerDevice(_enteredNIF, _enteredEmail);
-
-      if (registerStatus == 'true' && mounted) {
-        final confirmationDialog = await _showConfirmationDialog();
-        if (confirmationDialog && mounted) {
-          showToast(
-              context, 'Sucesso! O seu dispositivo foi registrado.', 'success');
-          final hasPerfil = await apiService.getPerfil();
-          if (hasPerfil) {
-            final perfil = ref.read(perfilProvider);
-            final isDataloaded = await ref.read(apiDataProvider.future);
-            if (isDataloaded && mounted) {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => HomeScreen(perfil: perfil),
-              ));
-              return;
-            }
+          } else {
+            showToast(
+                context, 'Ocorreu um erro ao carregar o seu perfil', 'error');
           }
         }
       } else {
-        showToast(context, registerStatus, 'error');
+        final registerStatus =
+            await apiService.registerDevice(_enteredNIF, _enteredEmail);
+
+        if (registerStatus == 'true' && mounted) {
+          final confirmationDialog = await _showConfirmationDialog();
+          if (confirmationDialog && mounted) {
+            showToast(context, 'Sucesso! O seu dispositivo foi registrado.',
+                'success');
+            final hasPerfil = await apiService.getPerfil();
+            if (hasPerfil) {
+              final perfil = ref.read(perfilProvider);
+              final isDataloaded = await ref.read(apiDataProvider.future);
+              if (isDataloaded && mounted) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => HomeScreen(perfil: perfil),
+                ));
+              }
+            }
+          }
+        } else {
+          showToast(context, registerStatus, 'error');
+        }
       }
     } else if (isNifValid == 'null' && mounted) {
       showToast(context, 'Este NIF/Utilizador não está registado.', 'error');
@@ -116,22 +118,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   textAlign: TextAlign.start,
                   text: TextSpan(
                     children: [
-                      const TextSpan(
-                        text:
-                            'Por favor, verifique o código de ativação enviado para o e-mail ',
-                      ),
+                      TextSpan(
+                          text:
+                              'Por favor, verifique o código de ativação enviado para o e-mail ',
+                          style: Theme.of(context).textTheme.labelMedium),
                       TextSpan(
                         text: _enteredEmail,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary),
                       ),
-                      const TextSpan(text: '.'),
+                      TextSpan(
+                          text: '.',
+                          style: Theme.of(context).textTheme.labelMedium),
                     ],
                   ),
                 ),
-                Text(
-                    'Por favor, verifique o código enviado para o e-mail $_enteredEmail.'),
                 const SizedBox(height: 20),
                 TextFormField(
                   keyboardType: TextInputType.text,

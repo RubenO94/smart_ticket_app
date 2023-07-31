@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class Alerta {
   final String message;
   final String type;
+  final int quantity;
 
-  Alerta({required this.message, required this.type});
+  Alerta({required this.message, required this.type, required this.quantity});
 
   IconData getIconDataForType() {
     switch (type) {

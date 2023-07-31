@@ -1,3 +1,4 @@
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/aluno.dart';
@@ -47,11 +48,14 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
       });
       return;
     }
+
     setState(() {
-      final resultList = _alunosList
-          .where(
-              (aluno) => aluno.nome.toLowerCase().contains(value.toLowerCase()))
-          .toList();
+      final resultList = _alunosList.where((aluno) {
+        final normalizedSearchTerm = removeDiacritics(value.toLowerCase());
+        final normalizedAlunoNome = removeDiacritics(aluno.nome.toLowerCase());
+
+        return normalizedAlunoNome.contains(normalizedSearchTerm);
+      }).toList();
       _items = resultList;
     });
   }

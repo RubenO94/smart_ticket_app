@@ -28,8 +28,14 @@ class HorarioDiaItem extends ConsumerWidget {
             (dayOfWeek == 'Saturday' && event.saturday))
         .toList();
 
-    eventsForDay.sort((a, b) => int.parse(a.horaInicio.split(":")[0])
-        .compareTo(int.parse(b.horaInicio.split(":")[0])));
+    // eventsForDay.sort((a, b) => int.parse(a.horaInicio.split(":")[0])
+    //     .compareTo(int.parse(b.horaInicio.split(":")[0])));
+
+    eventsForDay.sort((a, b) {
+      final startTimeA = DateTime.parse('2023-01-01 ${a.horaInicio}');
+      final startTimeB = DateTime.parse('2023-01-01 ${b.horaInicio}');
+      return startTimeA.compareTo(startTimeB);
+    });
 
     return eventsForDay.isEmpty
         ? Center(

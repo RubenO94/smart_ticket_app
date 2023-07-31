@@ -29,13 +29,14 @@ class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
 
 class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
-  final List<Resposta> _respostas = [];
+  List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
   final PageController _pageController = PageController(initialPage: 0);
   bool _avaliacaoCompleted = false;
 
   void loadPerguntas() {
     setState(() {
+      _respostas = widget.aluno.respostas;
       _perguntasList = ref.read(perguntasNotifierProvider);
     });
   }
@@ -144,6 +145,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   @override
   void dispose() {
     _pageController.dispose();
+    _currentPageIndex = 0;
     super.dispose();
   }
 
@@ -230,7 +232,16 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                                         Theme.of(context).textTheme.labelSmall,
                                   ),
                                   trailing: pergunta.obrigatorio
-                                      ? Text('*', style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.error),)
+                                      ? Text(
+                                          '*',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge!
+                                              .copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .error),
+                                        )
                                       : null,
                                 ),
                                 RadioListTile<int>(

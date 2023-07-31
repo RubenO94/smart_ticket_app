@@ -11,7 +11,7 @@ IconData getIcon(int id, int tipoPerfil) {
   if (tipoPerfil == 1) {
     switch (id) {
       case 100:
-        return Icons.assignment_rounded;
+        return Icons.assignment;
       case 200:
         return Icons.app_registration_rounded;
       case 300:
