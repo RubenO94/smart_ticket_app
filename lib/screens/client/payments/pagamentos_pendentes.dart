@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:smart_ticket/models/pagamento.dart';
 import 'package:smart_ticket/providers/api_service_provider.dart';
 import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
+import 'package:smart_ticket/providers/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_item.dart';
@@ -85,7 +85,7 @@ class _PagamentosPendentesScreenState
   }
 
   void refreshPagamentosPendentes() {
-    ref.read(apiServiceProvider).getPagamentosPendentes();
+    ref.read(apiServiceProvider).getPagamentos();
     setState(() {
       _pagamentosSelecionados.clear();
       _total = 0;
@@ -113,23 +113,32 @@ class _PagamentosPendentesScreenState
 
   @override
   Widget build(BuildContext context) {
-    _pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
+    _pagamentosPendentes = ref.watch(pagamentosProvider);
 
     if (_pagamentosPendentes.isEmpty) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Pagamentos Pendentes'),
-        ),
-        body: Center(
-          child: Text(
-            'Não tem pagamentos pendentes',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+          appBar: AppBar(
+            title: const Text('Pagamentos Pendentes'),
           ),
-        ),
-      );
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.web_asset_off_rounded,
+                  size: 48,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  'Não há pagamentos pendentes',
+                  style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ],
+            ),
+          ));
     }
 
     return Scaffold(

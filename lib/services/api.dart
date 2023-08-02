@@ -32,7 +32,7 @@ import 'package:smart_ticket/providers/device_id_provider.dart';
 import 'package:smart_ticket/providers/http_client_provider.dart';
 import 'package:smart_ticket/providers/niveis_provider.dart';
 import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
+import 'package:smart_ticket/providers/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
 import 'package:smart_ticket/providers/perguntas_provider.dart';
 import 'package:smart_ticket/providers/secure_storage_provider.dart';
@@ -178,15 +178,19 @@ class ApiService {
         //converte data['lJanelas'] para List<Janela>
         List<Janela> lJanelas = [];
         data['lJanelas'].forEach((element) {
-          lJanelas.add(Janela(
+          lJanelas.add(
+            Janela(
               id: element['nIDMenuPrincipal'],
               name: element['strMenuPrincipal'],
-              icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil'])));
+              icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil']),
+            ),
+          );
         });
         final perfil = Perfil(
             id: data['strID'],
             name: data['strNome'],
-            entity: data['strNomeEntidade'],
+            email: data['strEmail'],
+            entity: data['obEntidade']['strNome'],
             photo: data['strFotoBase64'],
             userType: data['eTipoPerfil'],
             janelas: lJanelas);
@@ -380,37 +384,59 @@ class ApiService {
               .setInscricoes(aulasInscricoes);
 
           final List<FichaAvaliacao> avaliacoes = data.map((e) {
-            List<Pergunta> listaPerguntas = [];
-            List<Resposta> listaRespostas = [];
-            e['obAvaliacao']['listPerguntas'].forEach((pergunta) {
-              listaPerguntas.add(
-                Pergunta(
-                  obrigatorio: pergunta['bObrigatorio'],
-                  idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
-                  tipo: pergunta['nTipo'],
-                  categoria: pergunta['strCategoria'],
-                  descricao: pergunta['strPergunta'],
-                ),
-              );
-            });
-            e['obAvaliacao']['listAlunos'][0]['listRespostas']
-                .forEach((resposta) {
-              listaRespostas.add(
-                Resposta(
-                    idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
-                    classificacao: resposta['nRespostaClassificacao']),
-              );
-            });
+            final obAvaliacao = e['obAvaliacao'];
+            if (obAvaliacao != null) {
+              final listPerguntas = obAvaliacao['listPerguntas'];
+              final listAlunos = obAvaliacao['listAlunos'];
+
+              if (listPerguntas != null &&
+                  listAlunos != null &&
+                  listAlunos.isNotEmpty) {
+                final listaPerguntas = <Pergunta>[];
+                final listaRespostas = <Resposta>[];
+
+                listPerguntas.forEach((pergunta) {
+                  listaPerguntas.add(
+                    Pergunta(
+                      obrigatorio: pergunta['bObrigatorio'],
+                      idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
+                      tipo: pergunta['nTipo'],
+                      categoria: pergunta['strCategoria'],
+                      descricao: pergunta['strPergunta'],
+                    ),
+                  );
+                });
+
+                listAlunos[0]['listRespostas'].forEach((resposta) {
+                  listaRespostas.add(
+                    Resposta(
+                      idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
+                      classificacao: resposta['nRespostaClassificacao'],
+                    ),
+                  );
+                });
+
+                return FichaAvaliacao(
+                  idAula: e['IDAula'],
+                  descricao: e['Aula'],
+                  dataAvalicao: listAlunos[0]['strDataAvaliacao'],
+                  idDesempenhoNivel: listAlunos[0]['nIDDesempenhoNivel'],
+                  perguntasList: listaPerguntas,
+                  respostasList: listaRespostas,
+                );
+              }
+            }
+
             return FichaAvaliacao(
-                idAula: e['IDAula'],
-                descricao: e['Aula'],
-                dataAvalicao: e['obAvaliacao']['listAlunos'][0]
-                    ['strDataAvaliacao'],
-                idDesempenhoNivel: e['obAvaliacao']['listAlunos'][0]
-                    ['nIDDesempenhoNivel'],
-                perguntasList: listaPerguntas,
-                respostasList: listaRespostas);
+              idAula: 0,
+              descricao: 'null',
+              dataAvalicao: 'null',
+              idDesempenhoNivel: 0,
+              perguntasList: [],
+              respostasList: [],
+            );
           }).toList();
+
           ref
               .read(fichasAvaliacaoProvider.notifier)
               .setFichasAvaliacao(avaliacoes);
@@ -628,8 +654,8 @@ class ApiService {
           ref
               .read(calendarioGeralProvider.notifier)
               .setHorariosGeral(horariosGeral);
-          return true;
         }
+        return true;
       }
     } catch (e) {
       return false;
@@ -637,15 +663,15 @@ class ApiService {
     return false;
   }
 
-  Future<bool> getPagamentosPendentes() async {
-    const endPoint = '/GetPagamentosPendentes';
+  Future<bool> getPagamentos() async {
+    const endPoint = '/GetPagamentos';
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
           client.get(Uri.parse(baseUrl + endPoint), headers: headers));
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          final List<Pagamento> pagamentosPendentes = data.map((e) {
+          final List<Pagamento> pagamentos = data.map((e) {
             final valorString = e['Valor'];
             final valorNumerico = double.tryParse(valorString
                 .replaceAll(RegExp(r'[^\d,.]'), '')
@@ -667,34 +693,29 @@ class ApiService {
               valor: valor,
             );
           }).toList();
-          ref
-              .read(pagamentosPendentesProvider.notifier)
-              .setPagamentosPendentes(pagamentosPendentes);
-          if (pagamentosPendentes.isNotEmpty) {
-            final isPagamentosPlural =
-                pagamentosPendentes.length > 1 ? true : false;
+          ref.read(pagamentosProvider.notifier).setPagamentos(pagamentos);
+          if (pagamentos.isNotEmpty) {
+            final isPagamentosPlural = pagamentos.length > 1 ? true : false;
             if (isPagamentosPlural) {
               ref.read(alertasProvider.notifier).addAlerta(
                     Alerta(
                         message:
-                            'Tem ${pagamentosPendentes.length} pagamentos por regularizar.',
+                            'Tem ${pagamentos.length} pagamentos por regularizar.',
                         type: 'Pagamentos',
-                        quantity: pagamentosPendentes.length),
+                        quantity: pagamentos.length),
                   );
             } else {
               ref.read(alertasProvider.notifier).addAlerta(
                     Alerta(
                         message:
-                            'Tem ${pagamentosPendentes.length} pagamento por regularizar.',
+                            'Tem ${pagamentos.length} pagamento por regularizar.',
                         type: 'Pagamentos',
-                        quantity: pagamentosPendentes.length),
+                        quantity: pagamentos.length),
                   );
             }
           }
         } else {
-          ref
-              .read(pagamentosPendentesProvider.notifier)
-              .setPagamentosPendentes([]);
+          ref.read(pagamentosProvider.notifier).setPagamentos([]);
         }
         return true;
       }

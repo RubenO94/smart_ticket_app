@@ -41,11 +41,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => HomeScreen(perfil: perfil),
           ));
-          return;
         }
       }
-    }
-    if (mounted) {
+    } else if (mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const RegisterScreen(),
       ));

@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/janela.dart';
 import 'package:smart_ticket/providers/alertas_provider.dart';
 import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_pendentes_provider.dart';
+import 'package:smart_ticket/providers/pagamentos_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
@@ -115,8 +115,14 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
                   animationDuration: Duration(seconds: 2)),
               showBadge: haveNotifications,
               badgeContent: widget.janela.id == 300
-                  ? Text(pagamentosPendentes.toString())
-                  : Text(avaliacoesCount.toString()),
+                  ? Text(
+                      pagamentosPendentes.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    )
+                  : Text(
+                      avaliacoesCount.toString(),
+                      style: const TextStyle(color: Colors.white),
+                    ),
               position: badges.BadgePosition.topEnd(),
               child: Icon(
                 widget.janela.icon,
@@ -124,12 +130,15 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
-            Text(
-              widget.janela.name,
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-              textAlign: TextAlign.center,
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                widget.janela.name.toUpperCase(),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                textAlign: TextAlign.center,
+              ),
             ),
           ],
         ),
