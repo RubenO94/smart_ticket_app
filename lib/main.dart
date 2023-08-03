@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:smart_ticket/providers/theme_provider.dart';
 import 'package:smart_ticket/screens/splash.dart';
 import 'package:smart_ticket/resources/theme.dart';
@@ -24,6 +26,15 @@ class MyApp extends ConsumerWidget {
     ]);
     final themeMode = ref.watch(themeProvider);
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('pt'),
+        Locale('en'),
+      ],
       debugShowCheckedModeBanner: false,
       title: 'SmartTicket App',
       darkTheme: ThemeData.dark()
@@ -31,6 +42,7 @@ class MyApp extends ConsumerWidget {
       theme: theme,
       themeMode: themeMode,
       home: const SplashScreen(),
+      locale: const Locale('pt'),
     );
   }
 }

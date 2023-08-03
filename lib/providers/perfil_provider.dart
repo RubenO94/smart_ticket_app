@@ -10,6 +10,7 @@ class PerfilNotifier extends StateNotifier<Perfil> {
           janelas: [],
           photo: '',
           userType: -1,
+          numeroCliente: '',
           email: '',
         ));
 

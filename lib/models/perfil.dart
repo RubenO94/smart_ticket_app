@@ -8,10 +8,12 @@ class Perfil {
       required this.entity,
       required this.photo,
       required this.userType,
+      required this.numeroCliente,
       required this.janelas});
   final String id;
   final String name;
   final String email;
+  final String numeroCliente;
   final String entity;
   final String photo;
   final int userType;

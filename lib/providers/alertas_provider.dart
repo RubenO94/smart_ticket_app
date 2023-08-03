@@ -19,6 +19,14 @@ class AlertasNotifier extends StateNotifier<List<Alerta>> {
 final alertasProvider = StateNotifierProvider<AlertasNotifier, List<Alerta>>(
     (ref) => AlertasNotifier());
 
+final alertasQuantityProvider = Provider<int>(
+  (ref) {
+    final alertas = ref.watch(alertasProvider);
+
+    return alertas.length;
+  },
+);
+
 final avaliacoesNotificacoesProvider = Provider<int>(
   (ref) {
     int count = 0;

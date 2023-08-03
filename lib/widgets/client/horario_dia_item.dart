@@ -54,11 +54,12 @@ class HorarioDiaItem extends ConsumerWidget {
                     final descricaoFormatada = formatDescricao(event.descricao);
                     return Container(
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
+                          horizontal: 8, vertical: 1),
                       child: Card(
                         color: eventsForDay[index].cor,
                         shape: const BeveledRectangleBorder(),
-                        elevation: 6,
+                        elevation: 0,
+                        margin: const EdgeInsets.all(0),
                         child: ListTile(
                           title: Text(
                             descricaoFormatada,

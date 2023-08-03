@@ -193,6 +193,7 @@ class ApiService {
             entity: data['obEntidade']['strNome'],
             photo: data['strFotoBase64'],
             userType: data['eTipoPerfil'],
+            numeroCliente: data['strNumero'],
             janelas: lJanelas);
         ref.read(perfilProvider.notifier).setPerfil(perfil);
         return true;

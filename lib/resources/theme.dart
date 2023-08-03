@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color primaryLight = const Color(0xFF95BD20);
-Color primaryDark = Color.fromARGB(255, 64, 107, 150);
+Color primaryDark = Color.fromARGB(255, 156, 218, 94);
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,

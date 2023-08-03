@@ -111,6 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final alertasQuantity = ref.watch(alertasQuantityProvider);
     Widget activeScreen = MenuPrincipalScreen(
       animationController: _animationController,
     );
@@ -174,10 +175,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: Colors.white,
             ),
             badges.Badge(
-              badgeStyle: badges.BadgeStyle(padding: EdgeInsets.all(4)),
+              badgeStyle: badges.BadgeStyle(padding: EdgeInsets.all(6)),
               badgeAnimation: badges.BadgeAnimation.fade(),
-              position: badges.BadgePosition.topEnd( top: -16, end: -16),
-              badgeContent: Text('26', style: TextStyle(color: Colors.white),),
+              position: badges.BadgePosition.topEnd(top: -16, end: -16),
+              badgeContent: Text(
+                alertasQuantity.toString(),
+                style: TextStyle(color: Colors.white),
+              ),
               child: const Icon(
                 Icons.notifications_active_rounded,
                 color: Colors.white,

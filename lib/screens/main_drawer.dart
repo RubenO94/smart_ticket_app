@@ -18,24 +18,56 @@ class MainDrawer extends ConsumerWidget {
     final isDarkModeEnabled =
         ref.watch(themeProvider) == ThemeMode.dark ?? false;
     return SafeArea(
-      child: Column(
-        children: [
-          Switch(
-            key: ValueKey(isDarkModeEnabled),
-            thumbIcon: isDarkModeEnabled
-                ? const MaterialStatePropertyAll(
-                    Icon(Icons.dark_mode_rounded),
-                  )
-                : const MaterialStatePropertyAll(
-                    Icon(Icons.wb_sunny),
-                  ),
-            value: isDarkModeEnabled,
-            onChanged: (value) {
-              toggleTheme(value);
-            },
-            activeColor: Theme.of(context).colorScheme.primary,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.settings_applications_rounded),
+                const SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  'Configurações',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 24,
+            ),
+            Row(
+              children: [
+                Text(
+                  'ESQUEMA DE CORES',
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Switch(
+                  key: ValueKey(isDarkModeEnabled),
+                  thumbIcon: isDarkModeEnabled
+                      ? const MaterialStatePropertyAll(
+                          Icon(Icons.dark_mode_rounded),
+                        )
+                      : const MaterialStatePropertyAll(
+                          Icon(Icons.wb_sunny),
+                        ),
+                  value: isDarkModeEnabled,
+                  onChanged: (value) {
+                    toggleTheme(value);
+                  },
+                  activeColor: Theme.of(context).colorScheme.primary,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

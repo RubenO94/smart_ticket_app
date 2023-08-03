@@ -43,12 +43,14 @@ dependencies:
   flutter_riverpod: ^2.3.6
   connectivity_plus: ^4.0.1
   flutter_launcher_icons: ^0.13.1
-  intl: ^0.18.1
+  intl: any
   webview_flutter: ^4.2.2
   url_launcher: ^6.1.12
   badges: ^3.1.1
   diacritic: ^0.1.4
   curved_navigation_bar: ^1.0.3
+  flutter_localizations:
+    sdk: flutter
 
 
 dev_dependencies:

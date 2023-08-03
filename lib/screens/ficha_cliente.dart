@@ -4,21 +4,21 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/data/dummy_data.dart';
-import 'package:smart_ticket/models/cliente.dart';
 import 'package:smart_ticket/providers/perfil_provider.dart';
-import 'package:transparent_image/transparent_image.dart';
+import 'package:smart_ticket/widgets/perfil_dados.dart';
+import 'package:smart_ticket/widgets/perfil_dados_item.dart';
 
 class FichaClienteScreen extends ConsumerWidget {
   const FichaClienteScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Cliente data = cliente;
     final perfil = ref.watch(perfilProvider);
 
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -37,12 +37,8 @@ class FichaClienteScreen extends ConsumerWidget {
                   ],
                   shape: BoxShape.circle,
                 ),
-                child: FadeInImage(
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: MemoryImage(
-                    base64Decode(perfil.photo),
-                  ),
-                  fit: BoxFit.cover,
+                child: Image.memory(
+                  base64Decode(perfil.photo),
                 ),
               ),
               const SizedBox(
@@ -67,35 +63,47 @@ class FichaClienteScreen extends ConsumerWidget {
                         .bodySmall!
                         .copyWith(fontWeight: FontWeight.normal, fontSize: 14),
                   ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(6)),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check,
+                            size: 13,
+                            weight: 800,
+                            color: Theme.of(context).colorScheme.onSecondary),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          cliente.estado.toUpperCase(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelSmall!
+                              .copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSecondary),
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
           const SizedBox(
-            height: 48,
-          ),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text(
-              'Editar dados do perfil',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
-            ),
-            trailing: IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.edit_document),
-            ),
-          ),
-          const Divider(),
-          const SizedBox(
             height: 24,
           ),
-          ListTile(
-            title: Text('Nº CLIENTE', style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).disabledColor, fontSize: 16),),
-            subtitle: Text(perfil.id),
-          )
+          Expanded(child: PerfilDados(perfil: perfil, cliente: cliente)),
         ],
       ),
     );
