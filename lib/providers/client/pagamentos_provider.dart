@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/pagamento.dart';
+import 'package:smart_ticket/models/client/pagamento.dart';
 
 class PagamentosNotifier extends StateNotifier<List<Pagamento>> {
   PagamentosNotifier() : super([]);

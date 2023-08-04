@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/cliente.dart';
-import 'package:smart_ticket/models/perfil.dart';
+
+import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/perfil_dados_item.dart';
 
 class PerfilDados extends StatefulWidget {
@@ -160,7 +161,12 @@ class PerfilDadosForm extends StatelessWidget {
                       items: _sexOptions.map((sex) {
                         return DropdownMenuItem<String>(
                           value: sex,
-                          child: Text(sex),
+                          child: Text(
+                            sex,
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground),
+                          ),
                         );
                       }).toList(),
                       onChanged: (value) {},
@@ -231,7 +237,9 @@ class PerfilDadosForm extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    showToast(context, 'Um teste com uma mensagem maior', 'success');
+                  },
                   icon: Icon(Icons.save),
                   label: Text('Guardar'),
                 ),

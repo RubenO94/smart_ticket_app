@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'package:smart_ticket/providers/theme_provider.dart';
+import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/screens/splash.dart';
 import 'package:smart_ticket/resources/theme.dart';
 

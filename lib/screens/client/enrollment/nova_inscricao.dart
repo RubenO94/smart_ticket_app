@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/aula.dart';
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/atividades_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/atividades_letivas_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
+
+import 'package:smart_ticket/models/client/aula.dart';
+import 'package:smart_ticket/providers/client/atividades_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/atividades_letivas_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/aulas_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 
 class NovaInscricao extends ConsumerStatefulWidget {
@@ -48,17 +49,40 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
 
   void _onSubmit(Aula aula) async {
     final apiService = ref.read(apiServiceProvider);
-    final idAulaInscricao =
+    final result =
         await apiService.setInscricao(aula.idAtivadadeLetiva!, aula.idAula!);
-    if (idAulaInscricao > 0 && mounted) {
-      ref.read(aulasInscritasProvider.notifier).addAula(aula, idAulaInscricao);
-      Navigator.of(context).pop();
+    if (result['id'] > 0 && mounted) {
+      ref.watch(inscricoesProvider.notifier).addAula(aula, result['id']);
       showToast(
-          context, 'A sua inscrição foi registada com sucesso!', 'success');
-      return;
-    }
-    if (mounted) {
-      showToast(context, 'Não foi possível registar sua a inscrição', 'error');
+          context,
+          'O seu pedido foi adicionado á lista de pendentes com sucesso.',
+          'success');
+      Navigator.of(context).pop();
+    } else if (mounted) {
+      final dialogResult = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Row(
+            children: [
+              Icon(Icons.warning_rounded),
+              SizedBox(
+                width: 8,
+              ),
+              Text('Atenção')
+            ],
+          ),
+          elevation: 3,
+          actions: [
+            TextButton.icon(
+                onPressed: () => Navigator.of(context).pop(true),
+                icon: const Icon(Icons.check_box),
+                label: const Text('OK'))
+          ],
+          content: result['mensagem'] != ''
+              ? Text(result['mensagem'])
+              : const Text('Não foi possível efetuar o seu pedido.'),
+        ),
+      );
     }
   }
 

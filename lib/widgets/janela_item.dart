@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/others/perfil.dart';
 
-import 'package:smart_ticket/models/janela.dart';
-import 'package:smart_ticket/providers/alertas_provider.dart';
-import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_provider.dart';
+import 'package:smart_ticket/providers/global/alertas_provider.dart';
+import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/schedules/horarios.dart';
-import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
+import 'package:smart_ticket/screens/client/payments/pagamentos.dart';
 import 'package:smart_ticket/screens/client/enrollment/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
 import 'package:smart_ticket/screens/splash.dart';
@@ -35,7 +34,7 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
         case 200:
           return const InscricoesScreen();
         case 300:
-          return const PagamentosPendentesScreen();
+          return const PagamentosScreen();
         case 400:
           return const HorariosScreen();
         default:

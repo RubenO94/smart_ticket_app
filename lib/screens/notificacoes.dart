@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/alertas_provider.dart';
+import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/widgets/alerta_item.dart';
 
 class NotificacoesScreen extends ConsumerWidget {

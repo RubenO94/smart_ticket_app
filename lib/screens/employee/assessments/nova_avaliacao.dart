@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/pergunta.dart';
-import 'package:smart_ticket/models/resposta.dart';
-import 'package:smart_ticket/providers/perguntas_provider.dart';
+import 'package:smart_ticket/models/employee/aluno.dart';
+import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-import '../../../models/aluno.dart';
 
 import 'conclusao_avaliacao.dart';
 

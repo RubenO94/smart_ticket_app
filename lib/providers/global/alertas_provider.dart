@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/alerta.dart';
+import 'package:smart_ticket/models/others/alerta.dart';
 
 class AlertasNotifier extends StateNotifier<List<Alerta>> {
   AlertasNotifier() : super([]);

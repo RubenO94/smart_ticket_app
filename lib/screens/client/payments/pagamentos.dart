@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/widgets/menu_toggle_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:smart_ticket/models/pagamento.dart';
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_provider.dart';
-import 'package:smart_ticket/providers/perfil_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
+import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
+import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_item.dart';
 
-class PagamentosPendentesScreen extends ConsumerStatefulWidget {
-  const PagamentosPendentesScreen({super.key});
+class PagamentosScreen extends ConsumerStatefulWidget {
+  const PagamentosScreen({super.key});
 
   @override
-  ConsumerState<PagamentosPendentesScreen> createState() =>
-      _PagamentosPendentesScreenState();
+  ConsumerState<PagamentosScreen> createState() => _PagamentosScreenState();
 }
 
-class _PagamentosPendentesScreenState
-    extends ConsumerState<PagamentosPendentesScreen>
+class _PagamentosScreenState extends ConsumerState<PagamentosScreen>
     with WidgetsBindingObserver {
   List<Pagamento> _pagamentosPendentes = [];
   List<int> _pagamentosSelecionados = [];
   double _total = 0;
   bool _isLoading = false;
+  bool _isPagos = false;
 
   void _addPagamento(int idClienteTarifaLinha) {
     setState(() {
@@ -143,7 +143,7 @@ class _PagamentosPendentesScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pagamentos Pendentes'),
+        title: const Text('Pagamentos'),
       ),
       body: _isLoading
           ? Center(
@@ -167,6 +167,50 @@ class _PagamentosPendentesScreenState
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isPagos = false;
+                          });
+                        },
+                        child: Container(
+                          color: !_isPagos
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).colorScheme.surfaceVariant,
+                          child: MenuToggleButton(
+                              context: context,
+                              icon: Icons.report_gmailerrorred_sharp,
+                              label: 'Pendente',
+                              selected: !_isPagos,
+                              color: Theme.of(context).colorScheme.tertiary),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isPagos = true;
+                          });
+                        },
+                        child: Container(
+                          color: _isPagos
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).colorScheme.surfaceVariant,
+                          child: MenuToggleButton(
+                              context: context,
+                              icon: Icons.check_circle,
+                              label: 'Pago',
+                              selected: _isPagos,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                       top: 24, bottom: 16, right: 16, left: 16),

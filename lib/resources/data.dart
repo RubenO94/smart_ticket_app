@@ -1,6 +1,18 @@
-const List<String> genders = ['Masculino', 'Feminino'];
+enum Estado {
+  inativo,
+  ativo,
+  devedor,
+  contencioso,
+  credito,
+  banido,
+  suspenso,
+}
 
-List<Map<String, String>> listaPaises = [
+
+
+const List<String> listaGeneros = ['Masculino', 'Feminino'];
+
+const List<Map<String, String>> listaPaises = [
   {'codigo': 'AF', 'nome': 'Afeganistão'},
   {'codigo': 'ZA', 'nome': 'África do Sul'},
   {'codigo': 'AL', 'nome': 'Albânia'},

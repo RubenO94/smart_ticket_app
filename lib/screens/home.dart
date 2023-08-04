@@ -3,9 +3,10 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:badges/badges.dart' as badges;
 
-import 'package:smart_ticket/models/perfil.dart';
-import 'package:smart_ticket/providers/alertas_provider.dart';
-import 'package:smart_ticket/providers/theme_provider.dart';
+import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/providers/global/alertas_provider.dart';
+import 'package:smart_ticket/providers/global/theme_provider.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/screens/admin_settings.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/entidade_info.dart';
@@ -153,7 +154,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 .copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
-        body: activeScreen,
+        body: RefreshIndicator(
+          child: activeScreen,
+          onRefresh: () {
+            return Future(() => showToast(context, 'teste', 'error'));
+          },
+        ),
         bottomNavigationBar: CurvedNavigationBar(
           backgroundColor:
               Theme.of(context).colorScheme.background.withOpacity(0.1),

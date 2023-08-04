@@ -9,6 +9,7 @@ final darkColorScheme = ColorScheme.fromSeed(
   seedColor: primaryDark,
   background: const Color(0xFF212121),
   primary: primaryDark,
+  tertiary: Color.fromARGB(255, 219, 141, 39),
   onPrimary: Colors.white,
 );
 
@@ -17,6 +18,7 @@ final lightColorScheme = ColorScheme.fromSeed(
   seedColor: primaryLight,
   background: const Color(0xF5F5F5F5),
   primary: primaryLight,
+  tertiary: Color.fromARGB(255, 226, 131, 6),
 );
 
 final theme = ThemeData().copyWith(

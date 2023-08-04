@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/models/ficha_avaliacao.dart';
-import 'package:smart_ticket/models/nivel.dart';
-
-import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/niveis_provider.dart';
+import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/providers/client/avaliacoes_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
 
 class AvaliacoesDisponiveisScreen extends ConsumerWidget {

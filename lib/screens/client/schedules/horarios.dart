@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/horarios_provider.dart';
+import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
+import 'package:smart_ticket/widgets/menu_toggle_button.dart';
 
 class HorariosScreen extends ConsumerStatefulWidget {
   const HorariosScreen({super.key});
@@ -49,8 +50,12 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                       color: isPessoal
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).colorScheme.surfaceVariant,
-                      child: _buildToggleButton(
-                          Icons.calendar_today, 'As Minhas Aulas', isPessoal),
+                      child: MenuToggleButton(
+                          context: context,
+                          icon: Icons.calendar_today,
+                          label: 'As Minhas Aulas',
+                          selected: isPessoal,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ),
@@ -65,8 +70,12 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                       color: !isPessoal
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).colorScheme.surfaceVariant,
-                      child: _buildToggleButton(Icons.calendar_month_rounded,
-                          'Todas as Aulas', !isPessoal),
+                      child: MenuToggleButton(
+                          context: context,
+                          icon: Icons.calendar_month_rounded,
+                          label: 'Todas as Aulas',
+                          selected: !isPessoal,
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                 ),
@@ -102,30 +111,6 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildToggleButton(IconData icon, String label, bool selected) {
-    return Container(
-      color: selected
-          ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).disabledColor,
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Icon(icon,
-              color: selected
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).disabledColor),
-          Text(
-            label,
-            style: TextStyle(
-                color: selected
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).disabledColor),
-          ),
-        ],
       ),
     );
   }

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/horario.dart';
+import 'package:smart_ticket/models/client/horario.dart';
 
 class HorariosGeralNotifier extends StateNotifier<List<Horario>> {
   HorariosGeralNotifier() : super([]);

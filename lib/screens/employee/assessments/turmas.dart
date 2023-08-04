@@ -1,12 +1,12 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/turmas_provider.dart';
+import 'package:smart_ticket/providers/employee/turmas_provider.dart';
 
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/widgets/employee/turma_item.dart';
 
-import '../../../models/turma.dart';
+import '../../../models/employee/turma.dart';
 
 class TurmasScreen extends ConsumerStatefulWidget {
   const TurmasScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/horarios_provider.dart';
+import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/resources/utils.dart';
 
 class HorarioDiaItem extends ConsumerWidget {

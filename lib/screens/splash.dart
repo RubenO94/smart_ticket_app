@@ -1,13 +1,12 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/secure_storage_provider.dart';
+import 'package:smart_ticket/providers/global/perfil_provider.dart';
+
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/screens/register.dart';
-
-import '../providers/perfil_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

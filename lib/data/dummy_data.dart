@@ -1,5 +1,4 @@
-import 'package:smart_ticket/models/agregado.dart';
-import 'package:smart_ticket/models/cliente.dart';
+import 'package:smart_ticket/models/others/perfil.dart';
 
 final cliente = Cliente(
   listaAgregados: [

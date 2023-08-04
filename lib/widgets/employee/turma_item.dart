@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/turma.dart';
+import 'package:smart_ticket/models/employee/turma.dart';
 
 import 'package:smart_ticket/screens/employee/assessments/turma_details.dart';
 

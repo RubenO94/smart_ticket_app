@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/aula.dart';
+import 'package:smart_ticket/models/client/aula.dart';
 
 class AulasDisponiveisNotifier extends StateNotifier<List<Aula>> {
   AulasDisponiveisNotifier() : super([]);

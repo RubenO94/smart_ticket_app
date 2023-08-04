@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/developer_provider.dart';
+import 'package:smart_ticket/providers/others/developer_provider.dart';
 import 'package:smart_ticket/screens/splash.dart';
 
 

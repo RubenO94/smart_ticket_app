@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
 
-import '../../../models/nivel.dart';
-import '../../../models/pergunta.dart';
-import '../../../models/resposta.dart';
+
 
 class ResultadosAvaliacaoScreen extends StatelessWidget {
   const ResultadosAvaliacaoScreen({

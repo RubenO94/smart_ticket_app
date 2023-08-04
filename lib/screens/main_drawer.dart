@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/theme_provider.dart';
+import 'package:smart_ticket/providers/global/theme_provider.dart';
 
 class MainDrawer extends ConsumerWidget {
   const MainDrawer({super.key});

@@ -1,13 +1,15 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/aluno.dart';
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
+
+import 'package:smart_ticket/models/employee/aluno.dart';
+import 'package:smart_ticket/providers/employee/alunos_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
-import '../../../providers/alunos_provider.dart';
+
 
 class TurmaDetails extends ConsumerStatefulWidget {
   const TurmaDetails({super.key, required this.idAula});

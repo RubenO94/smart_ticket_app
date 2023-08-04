@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/atividade_letiva.dart';
+import 'package:smart_ticket/models/client/atividade_letiva.dart';
 
 class AtividadesLetivasNotifier extends StateNotifier<List<AtividadeLetiva>> {
   AtividadesLetivasNotifier() : super([]);

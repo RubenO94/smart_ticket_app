@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/models/aula.dart';
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/models/client/aula.dart';
+import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
+import 'package:smart_ticket/widgets/menu_toggle_button.dart';
 
 class InscricoesScreen extends ConsumerStatefulWidget {
   const InscricoesScreen({super.key});
@@ -16,14 +17,17 @@ class InscricoesScreen extends ConsumerStatefulWidget {
 }
 
 class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
+  bool _isInscritas = true;
+
   Future<bool> _removeAula(Aula aula) async {
-    return await showDialog(
+    final result = await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Tem a certeza?'),
           content: Text(
-            'Deseja eliminar esta inscrição?',
+            'Deseja descartar este pedido de inscrição?',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           actions: [
@@ -41,6 +45,11 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
         );
       },
     );
+
+    if (result != null) {
+      return result;
+    }
+    return false;
   }
 
   void _onSubmitDelete(Aula aula) async {
@@ -48,9 +57,10 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
     final isRequestSuccessful =
         await apiService.deleteInscricao(aula.idAulaInscricao!);
     if (isRequestSuccessful && mounted) {
-      ref.read(aulasInscritasProvider.notifier).removeAula(aula);
+      ref.read(inscricoesProvider.notifier).removeAula(aula);
       Navigator.of(context).pop(true);
-      showToast(context, 'Foi removido da aula com sucesso!', 'success');
+      showToast(context, 'O seu pedido de inscrição foi removido com sucesso!',
+          'success');
       return;
     }
     if (mounted) {
@@ -61,41 +71,60 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final inscricoes = ref.watch(aulasInscritasProvider);
-    Widget content = Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (context, index) => Dismissible(
-              key: ValueKey(inscricoes[index].idAulaInscricao),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-              onDismissed: (direction) {},
-              confirmDismiss: (direction) {
-                return _removeAula(inscricoes[index]);
-              },
-              child: AulaItem(
-                onDelete: _removeAula,
-                aula: inscricoes[index],
-                index: index,
-              ),
-            ),
-            itemCount: inscricoes.length,
-          ),
-        ),
-      ],
+    final List<Aula> aulasInscritas = ref.watch(aulasInscritasProvider);
+    final List<Aula> inscricoesPendentes =
+        ref.watch(inscricoesPendentesProvider);
+
+    Widget contentInscritas = Expanded(
+      child: ListView.builder(
+        itemCount: aulasInscritas.length,
+        itemBuilder: (context, index) {
+          return AulaItem(
+              aula: aulasInscritas[index], index: index, onDelete: _removeAula);
+        },
+      ),
     );
 
-    if (inscricoes.isEmpty) {
-      content = const Center(
-        child: Text(
-          'Não está inscrito em nenhuma aula, faça uma nova inscrição',
-          textAlign: TextAlign.center,
+    Widget contentPendentes = Expanded(
+      child: ListView.builder(
+        itemCount: inscricoesPendentes.length,
+        itemBuilder: (context, index) {
+          return AulaItem(
+              aula: inscricoesPendentes[index],
+              index: index,
+              onDelete: _removeAula);
+        },
+      ),
+    );
+
+    if (aulasInscritas.isEmpty) {
+      contentInscritas = Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 250, horizontal: 12),
+          child: Text(
+            'Não está inscrito em nenhuma aula neste momento.',
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (inscricoesPendentes.isEmpty) {
+      contentPendentes = Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 250, horizontal: 12),
+          child: Text(
+            'Não tem nenhuma inscrição pendente de confirmação.',
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -105,24 +134,67 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
         title: const Text('As Minhas Inscrições'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: content,
+      body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isInscritas = true;
+                      });
+                    },
+                    child: Container(
+                      color: _isInscritas
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).colorScheme.surfaceVariant,
+                      child: MenuToggleButton(
+                          context: context,
+                          icon: Icons.fact_check_outlined,
+                          label: 'Inscrito',
+                          selected: _isInscritas,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isInscritas = false;
+                      });
+                    },
+                    child: Container(
+                      color: !_isInscritas
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).colorScheme.surfaceVariant,
+                      child: MenuToggleButton(
+                          context: context,
+                          icon: Icons.lock_clock,
+                          label: 'Pendente',
+                          selected: !_isInscritas,
+                          color: Theme.of(context).colorScheme.tertiary),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            _isInscritas ? contentInscritas : contentPendentes,
+          ]),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const NovaInscricao(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
-      persistentFooterButtons: [
-        FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NovaInscricao(),
-              ),
-            );
-          },
-          icon: const Icon(Icons.add),
-          label: const Text('Nova Inscrição'),
-        ),
-      ],
     );
   }
 }

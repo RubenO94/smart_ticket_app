@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/providers/api_service_provider.dart';
-import 'package:smart_ticket/providers/perfil_provider.dart';
+import 'package:smart_ticket/providers/global/perfil_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';

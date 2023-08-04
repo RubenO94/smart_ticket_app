@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/pergunta.dart';
+import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
 
 class PerguntasNotifier extends StateNotifier<List<Pergunta>> {
   PerguntasNotifier() : super(const []);

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/providers/device_id_provider.dart';
-import 'package:smart_ticket/providers/secure_storage_provider.dart';
+
+import 'package:smart_ticket/providers/global/device_id_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 
 class AdminSettingsScreen extends ConsumerStatefulWidget {

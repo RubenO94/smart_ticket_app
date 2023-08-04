@@ -3,41 +3,35 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:smart_ticket/models/alerta.dart';
 
-import 'package:smart_ticket/models/aluno.dart';
-import 'package:smart_ticket/models/atividade.dart';
-import 'package:smart_ticket/models/atividade_letiva.dart';
-import 'package:smart_ticket/models/aula.dart';
-import 'package:smart_ticket/models/ficha_avaliacao.dart';
-import 'package:smart_ticket/models/horario.dart';
-import 'package:smart_ticket/models/janela.dart';
-import 'package:smart_ticket/models/nivel.dart';
-import 'package:smart_ticket/models/pagamento.dart';
-import 'package:smart_ticket/models/perfil.dart';
-import 'package:smart_ticket/models/pergunta.dart';
-import 'package:smart_ticket/models/resposta.dart';
-import 'package:smart_ticket/models/turma.dart';
-import 'package:smart_ticket/providers/alertas_provider.dart';
-import 'package:smart_ticket/providers/alunos_provider.dart';
-import 'package:smart_ticket/providers/atividade_letiva_id_provider.dart';
-import 'package:smart_ticket/providers/atividades_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/atividades_letivas_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/aula_id_provider.dart';
-import 'package:smart_ticket/providers/aulas_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/aulas_inscritas_provider.dart';
-import 'package:smart_ticket/providers/avaliacoes_disponiveis_provider.dart';
-import 'package:smart_ticket/providers/horarios_provider.dart';
-import 'package:smart_ticket/providers/device_id_provider.dart';
-import 'package:smart_ticket/providers/http_client_provider.dart';
-import 'package:smart_ticket/providers/niveis_provider.dart';
-import 'package:smart_ticket/providers/pagamento_callback_provider.dart';
-import 'package:smart_ticket/providers/pagamentos_provider.dart';
-import 'package:smart_ticket/providers/perfil_provider.dart';
-import 'package:smart_ticket/providers/perguntas_provider.dart';
-import 'package:smart_ticket/providers/secure_storage_provider.dart';
-import 'package:smart_ticket/providers/token_provider.dart';
-import 'package:smart_ticket/providers/turmas_provider.dart';
+import 'package:smart_ticket/models/others/alerta.dart';
+import 'package:smart_ticket/models/employee/aluno.dart';
+import 'package:smart_ticket/models/client/atividade.dart';
+import 'package:smart_ticket/models/client/atividade_letiva.dart';
+import 'package:smart_ticket/models/client/aula.dart';
+import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/client/horario.dart';
+import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/models/employee/turma.dart';
+import 'package:smart_ticket/providers/global/alertas_provider.dart';
+import 'package:smart_ticket/providers/employee/alunos_provider.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
+import 'package:smart_ticket/providers/client/atividades_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/atividades_letivas_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/others/aula_id_provider.dart';
+import 'package:smart_ticket/providers/client/aulas_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
+import 'package:smart_ticket/providers/client/avaliacoes_disponiveis_provider.dart';
+import 'package:smart_ticket/providers/client/horarios_provider.dart';
+import 'package:smart_ticket/providers/global/device_id_provider.dart';
+import 'package:smart_ticket/providers/global/niveis_provider.dart';
+import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
+import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
+import 'package:smart_ticket/providers/global/perfil_provider.dart';
+import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
+import 'package:smart_ticket/providers/employee/turmas_provider.dart';
 
 class ApiService {
   ApiService(this.ref);
@@ -173,28 +167,74 @@ class ApiService {
           client.get(Uri.parse(baseUrl + endPoint), headers: headers));
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> dataPerfil = json.decode(response.body);
+        final Map<String, dynamic> dataCliente = dataPerfil['obCliente'];
+        final Map<String, dynamic> dataEntidade = dataPerfil['obEntidade'];
+
+        //converte dataCliente['lAgregados'] pata List<Agregado>
+        List<Agregado> lAgregados = [];
+        dataCliente['lAgregados'].forEach((element) {
+          lAgregados.add(
+            Agregado(
+                agregado: element['strAgregado'],
+                relacao: element['strRelacao']),
+          );
+        });
+        final Cliente cliente = Cliente(
+          listaAgregados: lAgregados,
+          categoria: dataCliente['strCategoria'],
+          cartaoCidadao: dataCliente['strCartaoCidadao'],
+          nif: dataCliente['strNIF'],
+          dataNascimento: dataCliente['strDataNascimento'],
+          sexo: dataCliente['strSexo'],
+          estado: dataCliente['strEstado'],
+          pais: dataCliente['strPais'],
+          localidade: dataCliente['strLocalidade'],
+          codigoPostal: dataCliente['strCodigoPostal'],
+          morada: dataCliente['strMorada'],
+          morada2: dataCliente['strMorada2'],
+          telefone: dataCliente['strTelefone'],
+          telemovel: dataCliente['strTelemovel'],
+          contatoEmergencia: dataCliente['strContatoEmergencia'],
+          contatoEmergencia2: dataCliente['strContatoEmergencia2'],
+        );
+
+        final Entidade entidade = Entidade(
+          codigoPostal: dataEntidade['strCodigoPostal'],
+          localidade: dataEntidade['strLocalidade'],
+          morada: dataEntidade['strMorada'],
+          morada2: dataEntidade['strMorada2'],
+          telefone: dataEntidade['strTelefone'],
+          nome: dataEntidade['strNome'],
+          email: dataEntidade['strEmail'],
+          website: dataEntidade['strWebSite'],
+        );
 
         //converte data['lJanelas'] para List<Janela>
         List<Janela> lJanelas = [];
-        data['lJanelas'].forEach((element) {
+        dataPerfil['lJanelas'].forEach((element) {
           lJanelas.add(
             Janela(
               id: element['nIDMenuPrincipal'],
               name: element['strMenuPrincipal'],
-              icon: getIcon(element['nIDMenuPrincipal'], data['eTipoPerfil']),
+              icon: getIcon(
+                  element['nIDMenuPrincipal'], dataPerfil['eTipoPerfil']),
             ),
           );
         });
+
         final perfil = Perfil(
-            id: data['strID'],
-            name: data['strNome'],
-            email: data['strEmail'],
-            entity: data['obEntidade']['strNome'],
-            photo: data['strFotoBase64'],
-            userType: data['eTipoPerfil'],
-            numeroCliente: data['strNumero'],
-            janelas: lJanelas);
+          id: dataPerfil['strID'],
+          name: dataPerfil['strNome'],
+          email: dataPerfil['strEmail'],
+          entity: dataPerfil['obEntidade']['strNome'],
+          photo: dataPerfil['strFotoBase64'],
+          userType: dataPerfil['eTipoPerfil'],
+          numeroCliente: dataPerfil['strNumero'],
+          janelas: lJanelas,
+          cliente: cliente,
+          entidade: entidade,
+        );
         ref.read(perfilProvider.notifier).setPerfil(perfil);
         return true;
       }
@@ -380,9 +420,7 @@ class ApiService {
                 ),
               )
               .toList();
-          ref
-              .watch(aulasInscritasProvider.notifier)
-              .setInscricoes(aulasInscricoes);
+          ref.read(inscricoesProvider.notifier).setInscricoes(aulasInscricoes);
 
           final List<FichaAvaliacao> avaliacoes = data.map((e) {
             final obAvaliacao = e['obAvaliacao'];
@@ -567,7 +605,8 @@ class ApiService {
                   vagas: e['Vagas'],
                   inscritos: e['Inscritos'],
                   lotacao: e['Lotacao'],
-                  pendente: e['Pendente'],
+                  pendente:
+                      true, // Por defeito fica True assim que faça uma nova inscrição.
                   nPendentes: e['Pendentes'],
                   dataInscricao: e['DataInscricao'],
                   atividade: e['Atividade'] ?? "",
@@ -585,24 +624,39 @@ class ApiService {
     return false;
   }
 
-  Future<int> setInscricao(int idAtividadeLetiva, int idAula) async {
+  Future<Map<String, dynamic>> setInscricao(
+      int idAtividadeLetiva, int idAula) async {
     final endPoint =
         '/SetInscricao?nIDAtividadeLetiva=$idAtividadeLetiva&nIDAula=$idAula';
+    String mensagem = '';
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
           client.get(Uri.parse(baseUrl + endPoint), headers: headers));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final idAulaInscricao = data['nResultado'];
+        if (data['strDescricao'] != null) {
+          mensagem = data['strDescricao'];
+        }
 
         if (idAulaInscricao > 0) {
-          return idAulaInscricao;
+          return {
+            'id': idAulaInscricao,
+            'mensagem': mensagem,
+          };
         }
       }
     } catch (e) {
-      return 0;
+      return {
+        'id': 0,
+        'mensagem':
+            'Ocorreu um erro ao tentar conectar com o servidor. Por favor, tente mais tarde.',
+      };
     }
-    return 0;
+    return {
+      'id': 0,
+      'mensagem': mensagem,
+    };
   }
 
   Future<bool> deleteInscricao(int idAulaInscricao) async {

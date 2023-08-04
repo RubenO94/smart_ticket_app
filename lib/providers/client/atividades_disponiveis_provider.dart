@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/atividade.dart';
+import 'package:smart_ticket/models/client/atividade.dart';
 
 class AtividadesNotifier extends StateNotifier<List<Atividade>> {
   AtividadesNotifier() : super([]);

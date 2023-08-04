@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/aluno.dart';
+import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 
 class AlunoItem extends StatelessWidget {

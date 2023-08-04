@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:smart_ticket/resources/utils.dart';
 
-import '../../models/aula.dart';
+import '../../models/client/aula.dart';
 
-class AulaItem extends StatefulWidget {
+class AulaItem extends StatelessWidget {
   const AulaItem(
       {super.key,
       required this.aula,
@@ -15,59 +15,50 @@ class AulaItem extends StatefulWidget {
   final Future<bool> Function(Aula aula) onDelete;
 
   @override
-  State<AulaItem> createState() => _AulaItemState();
-}
-
-class _AulaItemState extends State<AulaItem> {
-  @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Theme.of(context).colorScheme.primary,
-      elevation: 6,
-      shape: const ContinuousRectangleBorder(side: BorderSide.none),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+    return GestureDetector(
+      onTap: () {
+        onDelete(aula);
+      },
+      child: Card(
+        color: Theme.of(context).colorScheme.secondary,
+        elevation: 1,
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: ListTile(
-          leading: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                '#${widget.index + 1}',
-                style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+          visualDensity: VisualDensity.standard,
+          contentPadding: const EdgeInsets.all(0),
+          leading: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(right: 16),
+                width: 10,
+                color: aula.pendente
+                    ? Theme.of(context).colorScheme.tertiary
+                    : Theme.of(context).colorScheme.primary,
               ),
-            ),
+            ],
           ),
           title: Text(
-            'Aula: ${widget.aula.aula}',
-            style: Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            'Aula: ${aula.aula}',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
           ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Text(
-              'Data de inscrição: ${formattedDate(widget.aula.dataInscricao)}',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelSmall!
-                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-            ),
+          subtitle: Text(
+            ' Data de inscirção: ${formattedDate(aula.dataInscricao)}',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w800),
           ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.delete_sweep_rounded,
-              color: Theme.of(context).colorScheme.onPrimary,
-              size: 32,
+          trailing: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.delete_forever_rounded,
+              color: Theme.of(context).colorScheme.onSecondary,
             ),
-            onPressed: () {
-              widget.onDelete(widget.aula);
-            },
           ),
         ),
       ),
