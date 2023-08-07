@@ -1,4 +1,4 @@
-import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 
 class Aluno {
   const Aluno(

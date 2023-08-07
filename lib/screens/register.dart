@@ -52,55 +52,72 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   void _authenticate() async {
     final apiService = ref.read(apiServiceProvider);
-    final isNifValid = await apiService.getWSApp(_enteredNIF);
-    if (isNifValid == 'success') {
-      final isDeviceActivated = await apiService.isDeviceActivated();
-      if (isDeviceActivated && mounted) {
-        final hasPerfil = await apiService.getPerfil();
-        if (hasPerfil) {
-          final perfil = ref.read(perfilProvider);
-          final isDataloaded = await ref.read(apiDataProvider.future);
-          if (isDataloaded && mounted) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => HomeScreen(perfil: perfil),
-            ));
-          } else {
-            showToast(
-                context, 'Ocorreu um erro ao carregar o seu perfil', 'error');
-          }
-        }
-      } else {
-        final registerStatus =
-            await apiService.registerDevice(_enteredNIF, _enteredEmail);
-
-        if (registerStatus == 'true' && mounted) {
-          final confirmationDialog = await _showConfirmationDialog();
-          if (confirmationDialog && mounted) {
-            showToast(context, 'Sucesso! O seu dispositivo foi registrado.',
-                'success');
-            final hasPerfil = await apiService.getPerfil();
-            if (hasPerfil) {
-              final perfil = ref.read(perfilProvider);
-              final isDataloaded = await ref.read(apiDataProvider.future);
-              if (isDataloaded && mounted) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => HomeScreen(perfil: perfil),
-                ));
-              }
+    try {
+      final isNifValid = await apiService.getWSApp(_enteredNIF);
+      if (isNifValid == 'success') {
+        final isDeviceActivated = await apiService.isDeviceActivated();
+        if (isDeviceActivated && mounted) {
+          final hasPerfil = await apiService.getPerfil();
+          if (hasPerfil) {
+            final perfil = ref.read(perfilProvider);
+            final isDataloaded = await ref.read(apiDataProvider.future);
+            if (isDataloaded && mounted) {
+               setState(() {
+                _isSending = false;
+              });
+              print('Passou');
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => HomeScreen(perfil: perfil),
+              ));
+              print('Passou 2 vezes');
+              setState(() {
+                _isSending = false;
+              });
+              return;
+            } else {
+              showToast(
+                  context, 'Ocorreu um erro ao carregar o seu perfil', 'error');
             }
           }
         } else {
-          showToast(context, registerStatus, 'error');
+          final registerStatus =
+              await apiService.registerDevice(_enteredNIF, _enteredEmail);
+
+          if (registerStatus == 'true' && mounted) {
+            final confirmationDialog = await _showConfirmationDialog();
+            if (confirmationDialog && mounted) {
+              showToast(context, 'Sucesso! O seu dispositivo foi registrado.',
+                  'success');
+              final hasPerfil = await apiService.getPerfil();
+              if (hasPerfil) {
+                final perfil = ref.read(perfilProvider);
+                final isDataloaded = await ref.read(apiDataProvider.future);
+                if (isDataloaded && mounted) {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => HomeScreen(perfil: perfil),
+                  ));
+                }
+              }
+            }
+          } else {
+            showToast(context, registerStatus, 'error');
+          }
         }
+      } else if (isNifValid == 'null' && mounted) {
+        showToast(context, 'Este NIF/Utilizador não está registado.', 'error');
+      } else {
+        showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
       }
-    } else if (isNifValid == 'null' && mounted) {
-      showToast(context, 'Este NIF/Utilizador não está registado.', 'error');
-    } else {
-      showToast(context, 'Houve um erro ao registar o dispositivo', 'error');
+      setState(() {
+        _isSending = false;
+      });
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      setState(() {
+        _isSending = false;
+      });
     }
-    setState(() {
-      _isSending = false;
-    });
   }
 
   Future<bool> _showConfirmationDialog() async {

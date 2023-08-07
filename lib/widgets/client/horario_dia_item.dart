@@ -56,19 +56,30 @@ class HorarioDiaItem extends ConsumerWidget {
                       margin: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 1),
                       child: Card(
-                        color: eventsForDay[index].cor,
-                        shape: const BeveledRectangleBorder(),
-                        elevation: 0,
+                        color: Theme.of(context).colorScheme.surface,
+                        shape: ContinuousRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                        elevation: 0.2,
                         margin: const EdgeInsets.all(0),
                         child: ListTile(
+                          contentPadding: const EdgeInsets.all(0),
+                          leading: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.only(right: 16),
+                                  width: 10,
+                                  color: eventsForDay[index].cor),
+                            ],
+                          ),
                           title: Text(
                             descricaoFormatada,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall!
                                 .copyWith(
-                                  color: getTextColorOnBackground(
-                                      eventsForDay[index].cor),
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                 ),
                           ),
                           subtitle: Padding(
@@ -78,8 +89,8 @@ class HorarioDiaItem extends ConsumerWidget {
                                 Icon(
                                   Icons.access_time_filled_rounded,
                                   size: 16,
-                                  color: getTextColorOnBackground(
-                                      eventsForDay[index].cor),
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
                                 ),
                                 const SizedBox(
                                   width: 4,
@@ -90,8 +101,9 @@ class HorarioDiaItem extends ConsumerWidget {
                                       .textTheme
                                       .bodyMedium!
                                       .copyWith(
-                                        color: getTextColorOnBackground(
-                                            eventsForDay[index].cor),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface,
                                       ),
                                 ),
                               ],

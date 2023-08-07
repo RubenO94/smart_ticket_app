@@ -41,6 +41,7 @@ class FichaAvaliacao {
   final String descricao;
   final String dataAvalicao;
   final int idDesempenhoNivel;
+  final int pontuacaoTotal;
   final List<Pergunta> perguntasList;
   final List<Resposta> respostasList;
 
@@ -49,6 +50,7 @@ class FichaAvaliacao {
     required this.descricao,
     required this.dataAvalicao,
     required this.idDesempenhoNivel,
+    required this.pontuacaoTotal,
     required this.perguntasList,
     required this.respostasList,
   });

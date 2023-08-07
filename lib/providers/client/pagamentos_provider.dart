@@ -1,20 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 
 class PagamentosNotifier extends StateNotifier<List<Pagamento>> {
   PagamentosNotifier() : super([]);
 
-  void setPagamentos(List<Pagamento> pagamentosPendentes) {
-    state = pagamentosPendentes;
+  void setPagamentos(List<Pagamento> pagamentos) {
+    state = pagamentos;
   }
 }
 
 final pagamentosProvider =
     StateNotifierProvider<PagamentosNotifier, List<Pagamento>>(
-        (ref) => PagamentosNotifier());
+  (ref) => PagamentosNotifier(),
+);
 
-final pagamentosNotificationsProvider = Provider<int>((ref) {
-  final pagamentosPendentes = ref.watch(pagamentosProvider);
+final pagamentosPendentesProvider = Provider<List<Pagamento>>((ref) {
+  final pagamentos = ref.watch(pagamentosProvider);
+  final pagamentosPendentes =
+      pagamentos.where((element) => element.pendente).toList();
+  return pagamentosPendentes;
+});
 
-  return pagamentosPendentes.length;
+final pagamentosPagosProvider = Provider<List<Pagamento>>((ref) {
+  final pagamentos = ref.watch(pagamentosProvider);
+  final pagamentosPagos =
+      pagamentos.where((element) => !element.pendente).toList();
+  return pagamentosPagos;
 });

@@ -3,7 +3,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:badges/badges.dart' as badges;
 
-import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
@@ -181,6 +181,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: Colors.white,
             ),
             badges.Badge(
+              showBadge: alertasQuantity > 0 ? true : false,
               badgeStyle: badges.BadgeStyle(padding: EdgeInsets.all(6)),
               badgeAnimation: badges.BadgeAnimation.fade(),
               position: badges.BadgePosition.topEnd(top: -16, end: -16),

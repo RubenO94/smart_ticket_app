@@ -7,17 +7,20 @@ class Pagamento {
   final int idTarifaLinha;
   final String plano;
   final double valor;
+  final String dataPagamento;
+  final String idDocumento;
+  final bool pendente;
 
-  Pagamento({
-    required this.dataInicio,
-    required this.dataFim,
-    required this.desconto,
-    required this.desconto1,
-    required this.idClienteTarifaLinha,
-    required this.idTarifaLinha,
-    required this.plano,
-    required this.valor,
-  });
+  Pagamento(
+      {required this.dataInicio,
+      required this.dataFim,
+      required this.desconto,
+      required this.desconto1,
+      required this.idClienteTarifaLinha,
+      required this.idTarifaLinha,
+      required this.plano,
+      required this.valor,
+      required this.dataPagamento,
+      required this.idDocumento,
+      required this.pendente});
 }
-
-

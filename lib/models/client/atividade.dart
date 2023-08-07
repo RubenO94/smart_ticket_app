@@ -12,6 +12,9 @@ class Atividade {
   final String cor;
 
   Color getColor() {
+    if (cor == '#F0F8FF' || cor == '#00FFFF') {
+      return const Color(0xFF95BD20);
+    }
     return Color(int.parse(cor.replaceAll("#", ""), radix: 16) + 0xFF000000);
   }
 }

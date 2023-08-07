@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:smart_ticket/models/others/alerta.dart';
+import 'package:smart_ticket/models/global/alerta.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/models/client/atividade.dart';
 import 'package:smart_ticket/models/client/atividade_letiva.dart';
 import 'package:smart_ticket/models/client/aula.dart';
-import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
-import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/models/employee/turma.dart';
+import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -460,6 +461,7 @@ class ApiService {
                   descricao: e['Aula'],
                   dataAvalicao: listAlunos[0]['strDataAvaliacao'],
                   idDesempenhoNivel: listAlunos[0]['nIDDesempenhoNivel'],
+                  pontuacaoTotal: listAlunos[0]['nPontuacaoAvaliacao'],
                   perguntasList: listaPerguntas,
                   respostasList: listaRespostas,
                 );
@@ -471,6 +473,7 @@ class ApiService {
               descricao: 'null',
               dataAvalicao: 'null',
               idDesempenhoNivel: 0,
+              pontuacaoTotal: 0,
               perguntasList: [],
               respostasList: [],
             );
@@ -718,13 +721,22 @@ class ApiService {
     return false;
   }
 
-  Future<bool> getPagamentos() async {
-    const endPoint = '/GetPagamentos';
+  Future<bool> getPagamentos(bool isAgregados) async {
+    late String endPoint;
+
+    if (isAgregados) {
+      endPoint = '/GetPagamentosAgregados';
+    } else {
+      endPoint = '/GetPagamentos';
+    }
+
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
           client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
+
         if (data.isNotEmpty) {
           final List<Pagamento> pagamentos = data.map((e) {
             final valorString = e['Valor'];
@@ -734,43 +746,75 @@ class ApiService {
             final valor = valorNumerico ?? 0.0;
 
             return Pagamento(
-              dataInicio: e['DataInicio'],
-              dataFim: e['DataFim'],
-              desconto: double.parse(
-                      e['Desconto'].replaceAll(',', '').replaceAll('%', '')) /
-                  100,
-              desconto1: double.parse(
-                      e['Desconto1'].replaceAll(',', '').replaceAll('%', '')) /
-                  100,
-              idClienteTarifaLinha: e['IDClienteTarifaLinha'],
-              idTarifaLinha: e['IDTarifaLinha'],
-              plano: e['Plano'],
-              valor: valor,
-            );
+                dataInicio: e['DataInicio'],
+                dataFim: e['DataFim'],
+                desconto: double.parse(
+                        e['Desconto'].replaceAll(',', '').replaceAll('%', '')) /
+                    100,
+                desconto1: double.parse(e['Desconto1']
+                        .replaceAll(',', '')
+                        .replaceAll('%', '')) /
+                    100,
+                idClienteTarifaLinha: e['IDClienteTarifaLinha'],
+                idTarifaLinha: e['IDTarifaLinha'],
+                plano: e['Plano'],
+                valor: valor,
+                dataPagamento: e['PagamentoDataHora'],
+                idDocumento: e['PagamentoIDDocumento'],
+                pendente: e['Pendente']);
           }).toList();
-          ref.read(pagamentosProvider.notifier).setPagamentos(pagamentos);
-          if (pagamentos.isNotEmpty) {
-            final isPagamentosPlural = pagamentos.length > 1 ? true : false;
-            if (isPagamentosPlural) {
-              ref.read(alertasProvider.notifier).addAlerta(
-                    Alerta(
-                        message:
-                            'Tem ${pagamentos.length} pagamentos por regularizar.',
-                        type: 'Pagamentos',
-                        quantity: pagamentos.length),
-                  );
-            } else {
-              ref.read(alertasProvider.notifier).addAlerta(
-                    Alerta(
-                        message:
-                            'Tem ${pagamentos.length} pagamento por regularizar.',
-                        type: 'Pagamentos',
-                        quantity: pagamentos.length),
-                  );
+          if (isAgregados) {
+            ref
+                .read(pagamentosAgregadosProvider.notifier)
+                .setPagamentosAgregados(pagamentos);
+
+            final int length =
+                pagamentos.where((element) => element.pendente).toList().length;
+            if (length > 0) {
+              final isPagamentosPlural = pagamentos.length > 1 ? true : false;
+              if (isPagamentosPlural) {
+                ref.read(alertasProvider.notifier).addAlerta(
+                      Alerta(
+                          message:
+                              'Tem $length pagamentos de Agregados por regularizar.',
+                          type: 'Pagamentos',
+                          quantity: length),
+                    );
+              } else {
+                ref.read(alertasProvider.notifier).addAlerta(
+                      Alerta(
+                          message:
+                              'Tem $length pagamento de Agregados por regularizar.',
+                          type: 'Pagamentos',
+                          quantity: length),
+                    );
+              }
+            }
+          } else {
+            ref.read(pagamentosProvider.notifier).setPagamentos(pagamentos);
+
+            final int length =
+                pagamentos.where((element) => element.pendente).toList().length;
+            if (length > 0) {
+              final isPagamentosPlural = pagamentos.length > 1 ? true : false;
+
+              if (isPagamentosPlural) {
+                ref.read(alertasProvider.notifier).addAlerta(
+                      Alerta(
+                          message: 'Tem $length pagamentos por regularizar.',
+                          type: 'Pagamentos',
+                          quantity: length),
+                    );
+              } else {
+                ref.read(alertasProvider.notifier).addAlerta(
+                      Alerta(
+                          message: 'Tem $length pagamento por regularizar.',
+                          type: 'Pagamentos',
+                          quantity: length),
+                    );
+              }
             }
           }
-        } else {
-          ref.read(pagamentosProvider.notifier).setPagamentos([]);
         }
         return true;
       }

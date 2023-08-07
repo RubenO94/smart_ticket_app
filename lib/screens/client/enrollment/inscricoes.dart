@@ -8,6 +8,7 @@ import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
 import 'package:smart_ticket/widgets/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/title_appbar.dart';
 
 class InscricoesScreen extends ConsumerStatefulWidget {
   const InscricoesScreen({super.key});
@@ -131,8 +132,10 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('As Minhas Inscrições'),
-        centerTitle: true,
+        title: const TitleAppBAr(
+          icon: Icons.app_registration_rounded,
+          title: 'Inscrições',
+        ),
       ),
       body: Column(
           mainAxisAlignment: MainAxisAlignment.start,

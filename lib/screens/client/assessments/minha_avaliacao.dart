@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
-
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 
 class MinhaAvaliacaoScreen extends StatelessWidget {
   const MinhaAvaliacaoScreen(
@@ -22,27 +21,27 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
 
     final categoriasUnicas = perguntasPorCategoria.keys.toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Resultados da Avaliação'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: DefaultTabController(
-              length: categoriasUnicas.length,
+    return DefaultTabController(
+      length: categoriasUnicas.length,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Resultados da Avaliação'),
+          bottom: TabBar(
+            isScrollable: true,
+            tabs: [
+              for (final categoria in categoriasUnicas)
+                Tab(
+                  text: categoria,
+                ),
+            ],
+          ),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
               child: Column(
                 children: [
-                  TabBar(
-                    isScrollable: true,
-                    tabs: [
-                      for (final categoria in categoriasUnicas)
-                        Tab(
-                          text: categoria,
-                        ),
-                    ],
-                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 16),
@@ -85,74 +84,64 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          Container(
-            width: double.infinity,
-            color: Theme.of(context).colorScheme.surface,
-            padding: const EdgeInsets.only(bottom: 48, left: 16, top: 16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  'Legenda:',
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  '3 - Muito Bom',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                Text(
-                  '2 - Bom',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                Text(
-                  '1 - A Melhorar',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                Text(
-                  '0 - Matéria não lecionada',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                ),
-              ],
+            Container(
+              width: double.infinity,
+              color: Theme.of(context).colorScheme.surface,
+              padding: const EdgeInsets.only(bottom: 48, left: 16, top: 16),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    'Legenda:',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    '3 - Muito Bom',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  Text(
+                    '2 - Bom',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  Text(
+                    '1 - A Melhorar',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  Text(
+                    '0 - Matéria não lecionada',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            color: Theme.of(context).colorScheme.primary,
-            padding:
-                const EdgeInsets.only(left: 8, right: 16, top: 24, bottom: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'Transita para nível: ${nivel.strDescricao}',
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
+            Container(
+              color: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.only(
+                  left: 8, right: 16, top: 24, bottom: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'Transita para nível: ${nivel.strDescricao}',
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -186,8 +175,10 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                 ),
                 child: Text(
                   resposta.classificacao.toString(),
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
                 ),
               ),
             ),

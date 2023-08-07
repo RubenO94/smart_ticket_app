@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/screens/client/payments/pagamentos_toggle.dart';
+import 'package:smart_ticket/widgets/client/pagamento_pago_item.dart';
 import 'package:smart_ticket/widgets/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/title_appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -9,7 +12,7 @@ import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/widgets/client/pagamento_item.dart';
+import 'package:smart_ticket/widgets/client/pagamento_pendente_item.dart';
 
 class PagamentosScreen extends ConsumerStatefulWidget {
   const PagamentosScreen({super.key});
@@ -18,37 +21,13 @@ class PagamentosScreen extends ConsumerStatefulWidget {
   ConsumerState<PagamentosScreen> createState() => _PagamentosScreenState();
 }
 
-class _PagamentosScreenState extends ConsumerState<PagamentosScreen>
-    with WidgetsBindingObserver {
+class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
   List<Pagamento> _pagamentosPendentes = [];
   List<int> _pagamentosSelecionados = [];
   double _total = 0;
   bool _isLoading = false;
   bool _isPagos = false;
 
-  void _addPagamento(int idClienteTarifaLinha) {
-    setState(() {
-      _pagamentosSelecionados.add(idClienteTarifaLinha);
-      final valor = _pagamentosPendentes
-          .firstWhere(
-              (element) => element.idClienteTarifaLinha == idClienteTarifaLinha)
-          .valor;
-      _total += valor;
-    });
-  }
-
-  void _removePagamento(int idClienteTarifa) {
-    setState(() {
-      _pagamentosSelecionados.remove(idClienteTarifa);
-      final valor = _pagamentosPendentes
-          .firstWhere(
-              (element) => element.idClienteTarifaLinha == idClienteTarifa)
-          .valor;
-      if (_total - valor >= 0) {
-        _total -= valor;
-      }
-    });
-  }
 
   void _efetuarPagamento() async {
     setState(() {
@@ -84,36 +63,19 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen>
     });
   }
 
-  void refreshPagamentosPendentes() {
-    ref.read(apiServiceProvider).getPagamentos();
-    setState(() {
-      _pagamentosSelecionados.clear();
-      _total = 0;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      refreshPagamentosPendentes();
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _pagamentosPendentes = ref.watch(pagamentosProvider);
+    _pagamentosPendentes = ref.watch(pagamentosPagosProvider);
 
     if (_pagamentosPendentes.isEmpty) {
       return Scaffold(
@@ -141,54 +103,31 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen>
           ));
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pagamentos'),
-      ),
-      body: _isLoading
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    'Estamos a processar os pagamentos, aguarde...',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground),
-                  ),
-                ],
-              ),
-            )
-          : Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const TitleAppBAr(
+              icon: Icons.payment_rounded, title: 'Pagamentos'),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(125),
+            child: Column(
               children: [
+                const TabBar(
+                  isScrollable: true,
+                  tabs: [
+                    Tab(
+                      text: 'Meus Pagamentos',
+                      icon: Icon(Icons.person),
+                    ),
+                    Tab(
+                      text: 'Pagamentos de Agregados',
+                      icon: Icon(Icons.family_restroom_rounded),
+                    ),
+                  ],
+                ),
                 Row(
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _isPagos = false;
-                          });
-                        },
-                        child: Container(
-                          color: !_isPagos
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).colorScheme.surfaceVariant,
-                          child: MenuToggleButton(
-                              context: context,
-                              icon: Icons.report_gmailerrorred_sharp,
-                              label: 'Pendente',
-                              selected: !_isPagos,
-                              color: Theme.of(context).colorScheme.tertiary),
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
@@ -202,76 +141,67 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen>
                               : Theme.of(context).colorScheme.surfaceVariant,
                           child: MenuToggleButton(
                               context: context,
-                              icon: Icons.check_circle,
+                              icon: Icons.fact_check_outlined,
                               label: 'Pago',
                               selected: _isPagos,
                               color: Theme.of(context).colorScheme.primary),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 24, bottom: 16, right: 16, left: 16),
-                  child: Text(
-                    'Selecione os pagamentos que deseja realizar',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: _pagamentosPendentes.length,
-                    itemBuilder: (context, index) => PagamentoItem(
-                        pagamento: _pagamentosPendentes[index],
-                        addPagamento: _addPagamento,
-                        removePagamento: _removePagamento),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 24, right: 24),
-                  child: RichText(
-                    textAlign: TextAlign.end,
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Total: ',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall!
-                              .copyWith(fontWeight: FontWeight.bold),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isPagos = false;
+                          });
+                        },
+                        child: Container(
+                          color: !_isPagos
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).colorScheme.surfaceVariant,
+                          child: MenuToggleButton(
+                              context: context,
+                              icon: Icons.access_time_filled_rounded,
+                              label: 'Pendente',
+                              selected: !_isPagos,
+                              color: Theme.of(context).colorScheme.tertiary),
                         ),
-                        TextSpan(
-                          text: '${_total.toStringAsFixed(2)}€',
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
-      persistentFooterButtons: [
-        FloatingActionButton.extended(
-          foregroundColor: _isLoading || _pagamentosSelecionados.isEmpty
-              ? Theme.of(context).disabledColor
-              : null,
-          backgroundColor: _isLoading || _pagamentosSelecionados.isEmpty
-              ? Theme.of(context).colorScheme.surfaceVariant
-              : null,
-          disabledElevation: 0,
-          icon: const Icon(Icons.payments_rounded),
-          label: const Text('Efetuar Pagamento'),
-          onPressed: _isLoading || _pagamentosSelecionados.isEmpty
-              ? null
-              : _efetuarPagamento,
+          ),
         ),
-      ],
-      persistentFooterAlignment: AlignmentDirectional.centerEnd,
+        body: TabBarView(
+          children: [
+            PagamentosToggleScreen(isAgregados: false, isPendentes: !_isPagos),
+            PagamentosToggleScreen(isAgregados: true, isPendentes: !_isPagos),
+          ],
+        ),
+        persistentFooterButtons: _isPagos
+            ? null
+            : [
+                FloatingActionButton.extended(
+                  shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(6)),
+                  foregroundColor: _isLoading || _pagamentosSelecionados.isEmpty
+                      ? Theme.of(context).disabledColor
+                      : null,
+                  backgroundColor: _isLoading || _pagamentosSelecionados.isEmpty
+                      ? Theme.of(context).colorScheme.surfaceVariant
+                      : null,
+                  disabledElevation: 0,
+                  icon: const Icon(Icons.payments_rounded),
+                  label: const Text('Efetuar Pagamento'),
+                  onPressed: _isLoading || _pagamentosSelecionados.isEmpty
+                      ? null
+                      : _efetuarPagamento,
+                ),
+              ],
+        persistentFooterAlignment: AlignmentDirectional.centerEnd,
+      ),
     );
   }
 }

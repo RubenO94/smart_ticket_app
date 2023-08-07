@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/others/alerta.dart';
+import 'package:smart_ticket/models/global/alerta.dart';
 
 class AlertaItem extends StatelessWidget {
   const AlertaItem({super.key, required this.alerta});

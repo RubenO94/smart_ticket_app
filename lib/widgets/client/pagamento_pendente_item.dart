@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/resources/utils.dart';
 
-class PagamentoItem extends StatefulWidget {
-  const PagamentoItem(
+class PagamentoPendenteItem extends StatefulWidget {
+  const PagamentoPendenteItem(
       {super.key,
       required this.pagamento,
       required this.addPagamento,
       required this.removePagamento});
   final Pagamento pagamento;
-  final void Function(int idClienteTarifaLinha) addPagamento;
-  final void Function(int idClienteTarifaLinha) removePagamento;
+  final void Function(int idClienteTarifaLinha, double valor) addPagamento;
+  final void Function(int idClienteTarifaLinha, double valor) removePagamento;
 
   @override
-  State<PagamentoItem> createState() => _PagamentoItemState();
+  State<PagamentoPendenteItem> createState() => _PagamentoPendenteItemState();
 }
 
-class _PagamentoItemState extends State<PagamentoItem> {
+class _PagamentoPendenteItemState extends State<PagamentoPendenteItem> {
   bool isSelected = false;
 
   @override
@@ -25,19 +25,21 @@ class _PagamentoItemState extends State<PagamentoItem> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Card(
         color: Theme.of(context).cardColor,
-        elevation: 6,
+        elevation: 3,
         shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: CheckboxListTile(
           value: isSelected,
           onChanged: (value) {
             setState(() {
               if (value!) {
-                widget.addPagamento(widget.pagamento.idClienteTarifaLinha);
+                widget.addPagamento(widget.pagamento.idClienteTarifaLinha,
+                    widget.pagamento.valor);
               }
               if (!value) {
-                widget.removePagamento(widget.pagamento.idClienteTarifaLinha);
+                widget.removePagamento(widget.pagamento.idClienteTarifaLinha,
+                    widget.pagamento.valor);
               }
               isSelected = value;
             });

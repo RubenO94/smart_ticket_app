@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/others/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 
 class FichasAvalicaoNotifier extends StateNotifier<List<FichaAvaliacao>> {

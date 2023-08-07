@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/models/global/perfil.dart';
 
 class PerfilNotifier extends StateNotifier<Perfil> {
   PerfilNotifier()

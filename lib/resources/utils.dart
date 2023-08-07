@@ -10,14 +10,14 @@ String formattedDate(String timeStampString) {
   final regex = RegExp(r'/Date\((\d+)\+\d+\)/');
   final match = regex.firstMatch(timeStampString);
   if (match == null) {
-    return '';
+    return 'sem informação';
   }
 
   final timestamp = int.parse(match.group(1)!);
   final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
   final formato = DateFormat('dd/MMM/yyyy', 'pt_PT');
-
-  return formato.format(dateTime);
+  final result = formato.format(dateTime);
+  return result;
 }
 
 String getCurrentDateInApiFormat() {

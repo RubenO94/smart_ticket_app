@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/others/perfil.dart';
+import 'package:smart_ticket/models/global/perfil.dart';
 
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
-import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';
 import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos.dart';
@@ -66,8 +65,8 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
 
   @override
   Widget build(BuildContext context) {
-    pagamentosPendentes = ref.watch(pagamentosNotificationsProvider);
-    avaliacoesCount = ref.watch(avaliacoesNotificacoesProvider);
+    pagamentosPendentes = ref.watch(pagamentosPendentesAlertaQuantityProvider);
+    avaliacoesCount = ref.watch(avaliacoesAlertaQuantityProvider);
     if (widget.janela.id == 300 && pagamentosPendentes == 0 ||
         widget.janela.id == 100 && avaliacoesCount == 0) {
       haveNotifications = false;

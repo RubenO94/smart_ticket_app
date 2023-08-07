@@ -21,11 +21,11 @@ class AulaItem extends StatelessWidget {
         onDelete(aula);
       },
       child: Card(
-        color: Theme.of(context).colorScheme.secondary,
-        elevation: 1,
+        color: Theme.of(context).colorScheme.surface,
+        elevation: 0.2,
         margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: ListTile(
           visualDensity: VisualDensity.standard,
@@ -44,12 +44,12 @@ class AulaItem extends StatelessWidget {
           ),
           title: Text(
             'Aula: ${aula.aula}',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           subtitle: Text(
             ' Data de inscirção: ${formattedDate(aula.dataInscricao)}',
             style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 12,
                 fontWeight: FontWeight.w800),
           ),
@@ -57,7 +57,7 @@ class AulaItem extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Icon(
               Icons.delete_forever_rounded,
-              color: Theme.of(context).colorScheme.onSecondary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),

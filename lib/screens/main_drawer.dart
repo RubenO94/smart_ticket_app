@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
+import 'package:smart_ticket/screens/register.dart';
+import 'package:smart_ticket/screens/splash.dart';
 
 class MainDrawer extends ConsumerWidget {
   const MainDrawer({super.key});
@@ -24,16 +28,34 @@ class MainDrawer extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.settings_applications_rounded),
-                const SizedBox(
-                  width: 8,
+                Row(
+                  children: [
+                    const Icon(Icons.settings_applications_rounded),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      'Configurações',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                  ],
                 ),
-                Text(
-                  'Configurações',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
-                ),
+                IconButton(
+                  onPressed: () async {
+                    await ref.read(secureStorageProvider).deleteAllSecureData();
+                    if (context.mounted) {
+                      // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
+                      SystemNavigator.pop();
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    size: 32,
+                  ),
+                )
               ],
             ),
             const SizedBox(

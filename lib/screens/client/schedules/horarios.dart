@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
 import 'package:smart_ticket/widgets/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/title_appbar.dart';
 
 class HorariosScreen extends ConsumerStatefulWidget {
   const HorariosScreen({super.key});
@@ -20,7 +21,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
       length: 6,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Horários'),
+          title: const TitleAppBAr(icon: Icons.access_time, title: 'Horários'),
           bottom: const TabBar(
             isScrollable: true,
             tabs: [
