@@ -6,17 +6,11 @@ import 'package:smart_ticket/widgets/client/pagamento_pago_item.dart';
 import 'package:smart_ticket/widgets/mensagem_centro.dart';
 
 class PagamentosPagosScreen extends ConsumerWidget {
-  const PagamentosPagosScreen({super.key, required this.isAgregados});
-  final bool isAgregados;
+  const PagamentosPagosScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    late final List<Pagamento> pagamentosPagos;
-    if (isAgregados) {
-      pagamentosPagos = [];
-    } else {
-      pagamentosPagos = ref.watch(pagamentosPagosProvider);
-    }
+    final List<Pagamento> pagamentosPagos = ref.watch(pagamentosPagosProvider);
     if (pagamentosPagos.isEmpty) {
       return const MenssagemCentro(
         widget: Icon(

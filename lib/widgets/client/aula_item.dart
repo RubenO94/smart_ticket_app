@@ -29,7 +29,7 @@ class AulaItem extends StatelessWidget {
         ),
         child: ListTile(
           visualDensity: VisualDensity.standard,
-          contentPadding: const EdgeInsets.all(0),
+          contentPadding: const EdgeInsets.only(right: 16),
           leading: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

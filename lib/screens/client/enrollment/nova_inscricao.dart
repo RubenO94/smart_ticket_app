@@ -283,6 +283,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
         ),
         persistentFooterButtons: [
           FloatingActionButton.extended(
+            shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(6)),
             foregroundColor: aulaSelecionada == null
                 ? Theme.of(context).disabledColor
                 : null,

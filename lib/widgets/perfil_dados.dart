@@ -5,9 +5,8 @@ import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/perfil_dados_item.dart';
 
 class PerfilDados extends StatefulWidget {
-  const PerfilDados({super.key, required this.perfil, required this.cliente});
+  const PerfilDados({super.key, required this.perfil});
   final Perfil perfil;
-  final Cliente cliente;
 
   @override
   State<PerfilDados> createState() => _PerfilDadosState();
@@ -27,8 +26,8 @@ class _PerfilDadosState extends State<PerfilDados> {
 
   @override
   Widget build(BuildContext context) {
-    Widget contentDados =
-        PerfilDadosWidget(perfil: widget.perfil, cliente: widget.cliente);
+    Widget contentDados = PerfilDadosWidget(
+        perfil: widget.perfil, cliente: widget.perfil.cliente);
     Widget contentAgregados = PerfilAgregados(widget: widget);
 
     if (_isDadosFormOpen) {
@@ -134,7 +133,7 @@ class PerfilDadosForm extends StatelessWidget {
         child: Column(
           children: [
             TextFormField(
-              initialValue: widget.cliente.nif,
+              initialValue: widget.perfil.cliente.nif,
               decoration: const InputDecoration(
                   labelText: 'NIF', border: OutlineInputBorder()),
             ),
@@ -142,7 +141,7 @@ class PerfilDadosForm extends StatelessWidget {
               height: 24,
             ),
             TextFormField(
-              initialValue: widget.cliente.cartaoCidadao,
+              initialValue: widget.perfil.cliente.cartaoCidadao,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CARTÃO DE CIDADÃO',
@@ -192,7 +191,7 @@ class PerfilDadosForm extends StatelessWidget {
                           labelText: 'DATA DE NASCIMENTO',
                           border: OutlineInputBorder(),
                         ),
-                        child: Text(widget.cliente.dataNascimento),
+                        child: Text(widget.perfil.cliente.dataNascimento),
                       ),
                     ),
                   ),
@@ -238,7 +237,8 @@ class PerfilDadosForm extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    showToast(context, 'Um teste com uma mensagem maior', 'success');
+                    showToast(
+                        context, 'Um teste com uma mensagem maior', 'success');
                   },
                   icon: Icon(Icons.save),
                   label: Text('Guardar'),
@@ -265,7 +265,7 @@ class PerfilAgregados extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final agregado in widget.cliente.listaAgregados)
+        for (final agregado in widget.perfil.cliente.listaAgregados)
           Card(
             elevation: 0,
             color: Theme.of(context).colorScheme.background.withOpacity(0.1),

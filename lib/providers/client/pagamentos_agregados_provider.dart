@@ -1,16 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 
-class PagamentosAgregadosNotifier extends StateNotifier<List<Pagamento>> {
+class PagamentosAgregadosNotifier
+    extends StateNotifier<List<AgregadoPagamento>> {
   PagamentosAgregadosNotifier() : super([]);
 
-  void setPagamentosAgregados(List<Pagamento> pagamentosAgregados) {
+  void setPagamentosAgregados(List<AgregadoPagamento> pagamentosAgregados) {
     state = pagamentosAgregados;
   }
 }
 
+class AgregadoSelecionadoNotifier extends StateNotifier<AgregadoPagamento> {
+  AgregadoSelecionadoNotifier()
+      : super(
+          AgregadoPagamento(
+            nome: '',
+            pagamentos: [],
+          ),
+        );
+
+  void setAgregadoSelecionado(AgregadoPagamento agregadoSelecionado) {
+    state = agregadoSelecionado;
+  }
+}
+
 final pagamentosAgregadosProvider =
-    StateNotifierProvider<PagamentosAgregadosNotifier, List<Pagamento>>(
+    StateNotifierProvider<PagamentosAgregadosNotifier, List<AgregadoPagamento>>(
         (ref) => PagamentosAgregadosNotifier());
 
 final pagamentosAgregadosAlertasProvider = Provider<int>((ref) {
@@ -19,16 +34,18 @@ final pagamentosAgregadosAlertasProvider = Provider<int>((ref) {
   return pagamentosPendentes.length;
 });
 
-final pagamentosAgregadosPendentesProvider = Provider<List<Pagamento>>((ref) {
-  final List<Pagamento> pagamentos = ref.watch(pagamentosAgregadosProvider);
-  final pagamentosPendentes =
-      pagamentos.where((element) => element.pendente).toList();
-  return pagamentosPendentes;
+final agregadoSelecionadoProvider =
+    StateNotifierProvider<AgregadoSelecionadoNotifier, AgregadoPagamento>(
+        (ref) => AgregadoSelecionadoNotifier());
+
+final agregadoSelecionadoPendentesProvider = Provider<List<Pagamento>>((ref) {
+  final agregado = ref.watch(agregadoSelecionadoProvider);
+
+  return agregado.pagamentos.where((element) => element.pendente).toList();
 });
 
-final pagamentosAgregadosPagosProvider = Provider<List<Pagamento>>((ref) {
-  final List<Pagamento> pagamentos = ref.watch(pagamentosAgregadosProvider);
-  final pagamentosPagos =
-      pagamentos.where((element) => !element.pendente).toList();
-  return pagamentosPagos;
+final agregadoSelecionadoPagosProvider = Provider<List<Pagamento>>((ref) {
+  final agregado = ref.watch(agregadoSelecionadoProvider);
+
+  return agregado.pagamentos.where((element) => !element.pendente).toList();
 });

@@ -47,7 +47,7 @@ final avaliacoesAlertaQuantityProvider = Provider<int>(
 final pagamentosPendentesAlertaQuantityProvider = Provider<int>((ref) {
   final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
   final pagamentosAgregadosPendentes =
-      ref.watch(pagamentosAgregadosPendentesProvider);
+      ref.watch(pagamentosAgregadosAlertasProvider);
 
-  return pagamentosPendentes.length + pagamentosAgregadosPendentes.length;
+  return pagamentosPendentes.length + pagamentosAgregadosPendentes;
 });

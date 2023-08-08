@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/screens/home.dart';
 import 'package:smart_ticket/screens/offline.dart';
 import 'package:smart_ticket/screens/register.dart';
@@ -40,9 +41,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => HomeScreen(perfil: perfil),
           ));
+          return;
         }
       }
-    } else if (mounted) {
+    }
+
+    if (mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const RegisterScreen(),
       ));

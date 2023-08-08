@@ -721,14 +721,8 @@ class ApiService {
     return false;
   }
 
-  Future<bool> getPagamentos(bool isAgregados) async {
-    late String endPoint;
-
-    if (isAgregados) {
-      endPoint = '/GetPagamentosAgregados';
-    } else {
-      endPoint = '/GetPagamentos';
-    }
+  Future<bool> getPagamentos() async {
+    const String endPoint = '/GetPagamentos';
 
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
@@ -761,58 +755,30 @@ class ApiService {
                 valor: valor,
                 dataPagamento: e['PagamentoDataHora'],
                 idDocumento: e['PagamentoIDDocumento'],
-                pendente: e['Pendente']);
+                pendente: e['Pendente'],
+                pessoaRelacionada: 'utilizador');
           }).toList();
-          if (isAgregados) {
-            ref
-                .read(pagamentosAgregadosProvider.notifier)
-                .setPagamentosAgregados(pagamentos);
+          ref.read(pagamentosProvider.notifier).setPagamentos(pagamentos);
 
-            final int length =
-                pagamentos.where((element) => element.pendente).toList().length;
-            if (length > 0) {
-              final isPagamentosPlural = pagamentos.length > 1 ? true : false;
-              if (isPagamentosPlural) {
-                ref.read(alertasProvider.notifier).addAlerta(
-                      Alerta(
-                          message:
-                              'Tem $length pagamentos de Agregados por regularizar.',
-                          type: 'Pagamentos',
-                          quantity: length),
-                    );
-              } else {
-                ref.read(alertasProvider.notifier).addAlerta(
-                      Alerta(
-                          message:
-                              'Tem $length pagamento de Agregados por regularizar.',
-                          type: 'Pagamentos',
-                          quantity: length),
-                    );
-              }
-            }
-          } else {
-            ref.read(pagamentosProvider.notifier).setPagamentos(pagamentos);
+          final int length =
+              pagamentos.where((element) => element.pendente).toList().length;
+          if (length > 0) {
+            final isPagamentosPlural = pagamentos.length > 1 ? true : false;
 
-            final int length =
-                pagamentos.where((element) => element.pendente).toList().length;
-            if (length > 0) {
-              final isPagamentosPlural = pagamentos.length > 1 ? true : false;
-
-              if (isPagamentosPlural) {
-                ref.read(alertasProvider.notifier).addAlerta(
-                      Alerta(
-                          message: 'Tem $length pagamentos por regularizar.',
-                          type: 'Pagamentos',
-                          quantity: length),
-                    );
-              } else {
-                ref.read(alertasProvider.notifier).addAlerta(
-                      Alerta(
-                          message: 'Tem $length pagamento por regularizar.',
-                          type: 'Pagamentos',
-                          quantity: length),
-                    );
-              }
+            if (isPagamentosPlural) {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message: 'Tem $length pagamentos por regularizar.',
+                        type: 'Pagamentos',
+                        quantity: length),
+                  );
+            } else {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message: 'Tem $length pagamento por regularizar.',
+                        type: 'Pagamentos',
+                        quantity: length),
+                  );
             }
           }
         }
@@ -821,6 +787,95 @@ class ApiService {
     } catch (e) {
       return false;
     }
+    return false;
+  }
+
+  Future<bool> getPagamentosAgregados() async {
+    const String endPoint = '/GetPagamentosAgregados';
+
+    try {
+      final response = await executeRequest((client, baseUrl, headers) =>
+          client.get(Uri.parse(baseUrl + endPoint), headers: headers));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+
+        if (data.isNotEmpty) {
+          List<AgregadoPagamento> agregados = data.map((agregado) {
+            final List<Pagamento> pagamentos = [];
+
+            agregado['listPagamentosPendentes'].forEach(
+              (e) {
+                final valorString = e['Valor'];
+                final valorNumerico = double.tryParse(valorString
+                    .replaceAll(RegExp(r'[^\d,.]'), '')
+                    .replaceAll(',', '.'));
+                final valor = valorNumerico ?? 0.0;
+
+                pagamentos.add(
+                  Pagamento(
+                      dataInicio: e['DataInicio'],
+                      dataFim: e['DataFim'],
+                      desconto: double.parse(e['Desconto']
+                              .replaceAll(',', '')
+                              .replaceAll('%', '')) /
+                          100,
+                      desconto1: double.parse(e['Desconto1']
+                              .replaceAll(',', '')
+                              .replaceAll('%', '')) /
+                          100,
+                      idClienteTarifaLinha: e['IDClienteTarifaLinha'],
+                      idTarifaLinha: e['IDTarifaLinha'],
+                      plano: e['Plano'],
+                      valor: valor,
+                      dataPagamento: e['PagamentoDataHora'],
+                      idDocumento: e['PagamentoIDDocumento'],
+                      pendente: e['Pendente'],
+                      pessoaRelacionada: agregado['strAgregado']),
+                );
+              },
+            );
+
+            return AgregadoPagamento(
+              nome: agregado['strAgregado'],
+              pagamentos: pagamentos,
+            );
+          }).toList();
+
+          ref
+              .read(pagamentosAgregadosProvider.notifier)
+              .setPagamentosAgregados(agregados);
+
+          // final int length =
+          //     agregados.where((element) => element.pagamentos.where((pagamento) => pagamento.pendente).toList()).toList().length;
+          // if (length > 0) {
+          //   final isPagamentosPlural = pagamentos.length > 1 ? true : false;
+          //   if (isPagamentosPlural) {
+          //     ref.read(alertasProvider.notifier).addAlerta(
+          //           Alerta(
+          //               message:
+          //                   'Tem $length pagamentos de Agregados por regularizar.',
+          //               type: 'Pagamentos',
+          //               quantity: length),
+          //         );
+          //   } else {
+          //     ref.read(alertasProvider.notifier).addAlerta(
+          //           Alerta(
+          //               message:
+          //                   'Tem $length pagamento de Agregados por regularizar.',
+          //               type: 'Pagamentos',
+          //               quantity: length),
+          //         );
+          //   }
+          // }
+        }
+        return true;
+      }
+    } catch (e) {
+      // throw new Exception('Error: ' + e.toString());
+      return false;
+    }
+
     return false;
   }
 

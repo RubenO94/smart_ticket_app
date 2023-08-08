@@ -103,7 +103,10 @@ class FichaClienteScreen extends ConsumerWidget {
           const SizedBox(
             height: 24,
           ),
-          Expanded(child: PerfilDados(perfil: perfil, cliente: cliente)),
+          Expanded(
+              child: PerfilDados(
+            perfil: perfil,
+          )),
         ],
       ),
     );

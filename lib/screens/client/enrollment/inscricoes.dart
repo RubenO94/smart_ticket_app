@@ -188,6 +188,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             _isInscritas ? contentInscritas : contentPendentes,
           ]),
       floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
         onPressed: () {
           Navigator.push(
             context,

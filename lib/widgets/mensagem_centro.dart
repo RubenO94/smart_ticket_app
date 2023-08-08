@@ -26,6 +26,7 @@ class MenssagemCentro extends StatelessWidget {
                 .textTheme
                 .titleMedium!
                 .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                textAlign: TextAlign.center,
           ),
         ],
       ),

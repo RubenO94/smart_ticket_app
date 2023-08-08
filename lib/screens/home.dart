@@ -169,7 +169,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           letIndexChange: (value) => true,
           onTap: (index) {
             //TODO: Nagevação Bottom
-            print(index);
             _changeScreen(index);
             if (_currentPageIndex == 4) {
               _scaffoldKey.currentState!.openDrawer();

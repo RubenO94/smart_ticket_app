@@ -11,8 +11,7 @@ import 'package:smart_ticket/widgets/mensagem_centro.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PagamentosPendentesScreen extends ConsumerStatefulWidget {
-  const PagamentosPendentesScreen({super.key, required this.isAgregados});
-  final bool isAgregados;
+  const PagamentosPendentesScreen({super.key});
 
   @override
   ConsumerState<PagamentosPendentesScreen> createState() =>
@@ -25,21 +24,6 @@ class _PagamentosPendentesScreenState
   double _total = 0;
   bool _isLoading = false;
   bool _isPagos = false;
-
-  void _addPagamento(int idClienteTarifaLinha, double valor) {
-    setState(() {
-      _pagamentosSelecionados.add(idClienteTarifaLinha);
-      _total += valor;
-    });
-  }
-
-  void _removePagamento(int idClienteTarifa, double valor) {
-    setState(() {
-      if (_total - valor >= 0) {
-        _total -= valor;
-      }
-    });
-  }
 
   void _efetuarPagamento() async {
     setState(() {
@@ -76,7 +60,7 @@ class _PagamentosPendentesScreenState
   }
 
   void refreshPagamentosPendentes() {
-    ref.read(apiServiceProvider).getPagamentos(widget.isAgregados);
+    ref.read(apiServiceProvider).getPagamentos();
     setState(() {
       _pagamentosSelecionados.clear();
       _total = 0;
@@ -105,56 +89,14 @@ class _PagamentosPendentesScreenState
       );
     }
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 24, bottom: 16, right: 16, left: 16),
-          child: Text(
-            'Selecione os pagamentos que deseja realizar',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
-          ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      child: ListView.builder(
+        itemCount: pagamentosPendentes.length,
+        itemBuilder: (context, index) => PagamentoPendenteItem(
+          pagamento: pagamentosPendentes[index],
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: pagamentosPendentes.length,
-            itemBuilder: (context, index) => PagamentoPendenteItem(
-              pagamento: pagamentosPendentes[index],
-              addPagamento: _addPagamento,
-              removePagamento: _removePagamento,
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 24,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 24, right: 24),
-          child: RichText(
-            textAlign: TextAlign.end,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Total: ',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                TextSpan(
-                  text: '${_total.toStringAsFixed(2)}€',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
 
 class PagamentoPagoItem extends StatelessWidget {
@@ -9,12 +10,14 @@ class PagamentoPagoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 0.2,
+      color: Theme.of(context).cardColor,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       shape: ContinuousRectangleBorder(
         borderRadius: BorderRadius.circular(6),
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.only(right: 16),
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -101,12 +104,24 @@ class PagamentoPagoItem extends StatelessWidget {
             ),
           ],
         ),
-        trailing: IconButton(
-          onPressed: () {
-            //TODO: Criar botoão para download PDF do pagamento efetuado.
-          },
-          icon: const Icon(Icons.download_for_offline_rounded),
-        ),
+        trailing: pagamento.idDocumento.isEmpty
+            ? IconButton(
+                onPressed: () {
+                  showToast(context, 'PDF insdisponível para download', 'warning');
+                },
+                icon: const Icon(
+                  Icons.file_download_off_rounded,
+                ),
+              )
+            : IconButton(
+                onPressed: () {
+                  showToast(context, 'PDF disponível para download', 'success');
+                },
+                icon: Icon(
+                  Icons.download_for_offline_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
       ),
     );
   }
