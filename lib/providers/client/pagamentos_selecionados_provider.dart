@@ -20,3 +20,11 @@ class PagamentosSelecionadosNotifier extends StateNotifier<List<Pagamento>> {
 final pagamentosSelecionadosProvider =
     StateNotifierProvider<PagamentosSelecionadosNotifier, List<Pagamento>>(
         (ref) => PagamentosSelecionadosNotifier());
+
+final listaIDPagamentosSelecionadosProvider = Provider<List<int>>((ref) {
+  final pagamentosSelecionados = ref.watch(pagamentosSelecionadosProvider);
+  final listaIDs = pagamentosSelecionados.map((e) {
+    return e.idClienteTarifaLinha;
+  }).toList();
+  return listaIDs;
+});

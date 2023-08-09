@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/client/pagamento.dart';
+
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pago_item.dart';
 import 'package:smart_ticket/widgets/client/selecionar_agregado_dropdown.dart';
-import 'package:smart_ticket/widgets/mensagem_centro.dart';
+import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
 
 class PagamentosPagosAgregadoScreen extends ConsumerWidget {
   const PagamentosPagosAgregadoScreen({super.key});
@@ -18,7 +18,7 @@ class PagamentosPagosAgregadoScreen extends ConsumerWidget {
     if (agregados.isEmpty) {
       return const MenssagemCentro(
           widget: Icon(
-            Icons.person_search,
+            Icons.search_off_rounded,
             size: 64,
           ),
           mensagem: 'Não existe agregados associado a esta conta');
@@ -36,7 +36,7 @@ class PagamentosPagosAgregadoScreen extends ConsumerWidget {
       content = const Expanded(
         child: MenssagemCentro(
             widget: Icon(
-              Icons.person_search,
+              Icons.search_off_rounded,
               size: 64,
             ),
             mensagem: 'Não existe histórico de pagamentos para este elemento.'),
@@ -47,7 +47,7 @@ class PagamentosPagosAgregadoScreen extends ConsumerWidget {
       content = const Expanded(
         child: MenssagemCentro(
             widget: Icon(
-              Icons.sms_failed_rounded,
+              Icons.report_gmailerrorred_rounded,
               size: 64,
             ),
             mensagem:

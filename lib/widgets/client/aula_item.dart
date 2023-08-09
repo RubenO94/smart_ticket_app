@@ -47,7 +47,9 @@ class AulaItem extends StatelessWidget {
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           subtitle: Text(
-            ' Data de inscirção: ${formattedDate(aula.dataInscricao)}',
+            aula.pendente
+                ? ' Data do pedido: ${formattedDate(aula.dataInscricao)}'
+                : ' Data de inscirção: ${formattedDate(aula.dataInscricao)}',
             style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 12,

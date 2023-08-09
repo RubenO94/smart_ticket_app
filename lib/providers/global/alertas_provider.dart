@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/models/global/alerta.dart';
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
@@ -44,8 +45,21 @@ final avaliacoesAlertaQuantityProvider = Provider<int>(
   },
 );
 
+final pagamentosAgregadosAlertasProvider = Provider<int>((ref) {
+  final List<AgregadoPagamento> agregados =
+      ref.watch(pagamentosAgregadosProvider);
+  int totalLength = 0;
+
+  for (final agregado in agregados) {
+    totalLength +=
+        agregado.pagamentos.where((element) => element.pendente).length;
+  }
+  return totalLength;
+});
+
 final pagamentosPendentesAlertaQuantityProvider = Provider<int>((ref) {
   final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
+
   final pagamentosAgregadosPendentes =
       ref.watch(pagamentosAgregadosAlertasProvider);
 

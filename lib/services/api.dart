@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -662,7 +663,7 @@ class ApiService {
     };
   }
 
-  Future<bool> deleteInscricao(int idAulaInscricao) async {
+  Future<Map<String, dynamic>> deleteInscricao(int idAulaInscricao) async {
     final endPoint = '/DelInscricao?nIDAulaInscricao=$idAulaInscricao';
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
@@ -670,14 +671,24 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        if (data['nResultado'] == 1) {
-          return true;
-        }
+        final mensagem = data['strDescricao'] ?? '';
+
+        return {
+          'resultado': data['nResultado'],
+          'mensagem': mensagem,
+        };
       }
     } catch (e) {
-      return false;
+      return {
+        'resultado': 0,
+        'mensagem': 'Erro: ${e.toString()}',
+      };
     }
-    return false;
+    return {
+      'resultado': 0,
+      'mensagem':
+          'Não foi possível conectar com o servidor. Por favor, verifique a sua ligação á internet ou tente mais tarde.',
+    };
   }
 
   Future<bool> getHorarios() async {
@@ -846,28 +857,34 @@ class ApiService {
               .read(pagamentosAgregadosProvider.notifier)
               .setPagamentosAgregados(agregados);
 
-          // final int length =
-          //     agregados.where((element) => element.pagamentos.where((pagamento) => pagamento.pendente).toList()).toList().length;
-          // if (length > 0) {
-          //   final isPagamentosPlural = pagamentos.length > 1 ? true : false;
-          //   if (isPagamentosPlural) {
-          //     ref.read(alertasProvider.notifier).addAlerta(
-          //           Alerta(
-          //               message:
-          //                   'Tem $length pagamentos de Agregados por regularizar.',
-          //               type: 'Pagamentos',
-          //               quantity: length),
-          //         );
-          //   } else {
-          //     ref.read(alertasProvider.notifier).addAlerta(
-          //           Alerta(
-          //               message:
-          //                   'Tem $length pagamento de Agregados por regularizar.',
-          //               type: 'Pagamentos',
-          //               quantity: length),
-          //         );
-          //   }
-          // }
+          int totalLength = 0;
+
+          for (final agregado in agregados) {
+            final pendentes = agregado.pagamentos
+                .where((element) => element.pendente)
+                .toList();
+            totalLength += pendentes.length;
+          }
+          if (totalLength > 0) {
+            final isPagamentosPlural = totalLength > 1 ? true : false;
+            if (isPagamentosPlural) {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message:
+                            'Tem $totalLength pagamentos de Agregados por regularizar.',
+                        type: 'Agregados',
+                        quantity: totalLength),
+                  );
+            } else {
+              ref.read(alertasProvider.notifier).addAlerta(
+                    Alerta(
+                        message:
+                            'Tem $totalLength pagamento de Agregados por regularizar.',
+                        type: 'Agregados',
+                        quantity: totalLength),
+                  );
+            }
+          }
         }
         return true;
       }
@@ -909,5 +926,53 @@ class ApiService {
       return false;
     }
     return false;
+  }
+
+  Future<String> getDownloadDocumento(String idDocumento) async {
+    final endPoint = '/DownloadDocumento?strIDDocumento=$idDocumento';
+
+    try {
+      final baseUrl =
+          await ref.read(secureStorageProvider).readSecureData('WSApp');
+      final token = await ref.read(tokenProvider.future);
+      final deviceId = await ref.read(deviceIdProvider.future);
+      final headers = {
+        'Content-Type': 'application/json',
+        'DeviceId': deviceId,
+        'Token': token,
+        'Idioma': 'pt-PT',
+      };
+      final streamSubscription = http
+          .get(Uri.parse(baseUrl + endPoint), headers: headers)
+          .asStream()
+          .listen(
+        (response) {
+          if (response.statusCode == 200) {
+            dynamic data = response.body;
+            print(data.toString());
+          }
+        },
+      );
+      streamSubscription.cancel();
+    } catch (e) {
+      return 'Erro: ${e.toString()}';
+    }
+    return 'Erro';
+  }
+
+  Stream<int> teste() {
+    final controler = StreamController<int>();
+    int count = 1;
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      controler.sink.add(count);
+      count++;
+    });
+
+    if (count == 10) {
+      controler.close();
+    }
+
+    return controler.stream;
   }
 }

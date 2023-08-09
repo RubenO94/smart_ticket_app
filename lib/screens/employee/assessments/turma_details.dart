@@ -6,7 +6,7 @@ import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
-import 'package:smart_ticket/screens/offline.dart';
+import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
 
 

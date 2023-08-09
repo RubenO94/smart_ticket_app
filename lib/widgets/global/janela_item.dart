@@ -9,7 +9,7 @@ import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos.dart';
 import 'package:smart_ticket/screens/client/enrollment/inscricoes.dart';
 import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
-import 'package:smart_ticket/screens/splash.dart';
+import 'package:smart_ticket/screens/global/splash.dart';
 
 class JanelaItem extends ConsumerStatefulWidget {
   const JanelaItem({super.key, required this.janela, required this.tipoPerfil});
@@ -22,8 +22,6 @@ class JanelaItem extends ConsumerStatefulWidget {
 
 class _JanelaItemState extends ConsumerState<JanelaItem> {
   bool haveNotifications = false;
-  int pagamentosPendentes = 0;
-  int avaliacoesCount = 0;
 
   Widget _onScreenChange() {
     if (widget.tipoPerfil == 1) {
@@ -65,8 +63,8 @@ class _JanelaItemState extends ConsumerState<JanelaItem> {
 
   @override
   Widget build(BuildContext context) {
-    pagamentosPendentes = ref.watch(pagamentosPendentesAlertaQuantityProvider);
-    avaliacoesCount = ref.watch(avaliacoesAlertaQuantityProvider);
+    final pagamentosPendentes = ref.watch(pagamentosPendentesAlertaQuantityProvider);
+    final avaliacoesCount = ref.watch(avaliacoesAlertaQuantityProvider);
     if (widget.janela.id == 300 && pagamentosPendentes == 0 ||
         widget.janela.id == 100 && avaliacoesCount == 0) {
       haveNotifications = false;

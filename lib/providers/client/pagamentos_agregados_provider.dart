@@ -28,11 +28,6 @@ final pagamentosAgregadosProvider =
     StateNotifierProvider<PagamentosAgregadosNotifier, List<AgregadoPagamento>>(
         (ref) => PagamentosAgregadosNotifier());
 
-final pagamentosAgregadosAlertasProvider = Provider<int>((ref) {
-  final pagamentosPendentes = ref.watch(pagamentosAgregadosProvider);
-
-  return pagamentosPendentes.length;
-});
 
 final agregadoSelecionadoProvider =
     StateNotifierProvider<AgregadoSelecionadoNotifier, AgregadoPagamento>(

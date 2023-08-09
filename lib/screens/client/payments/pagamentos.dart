@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/client/pagamentos_selecionados_provider.dart';
 import 'package:smart_ticket/screens/client/payments/carrinho_checkout.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_toggle.dart';
-import 'package:smart_ticket/widgets/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 

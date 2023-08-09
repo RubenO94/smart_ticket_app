@@ -13,7 +13,7 @@ void showToast(BuildContext context, String message, String type) {
         Icons.error,
         color: foreground,
       );
-      return;
+      break;
     case 'warning':
       background = Theme.of(context).colorScheme.tertiary;
       foreground = Theme.of(context).colorScheme.onTertiary;
@@ -21,6 +21,7 @@ void showToast(BuildContext context, String message, String type) {
         Icons.report,
         color: foreground,
       );
+      break;
   }
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(

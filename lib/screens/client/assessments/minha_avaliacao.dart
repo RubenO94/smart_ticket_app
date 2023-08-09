@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
+import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class MinhaAvaliacaoScreen extends StatelessWidget {
   const MinhaAvaliacaoScreen(
@@ -25,15 +28,33 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
       length: categoriasUnicas.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Resultados da Avaliação'),
-          bottom: TabBar(
-            isScrollable: true,
-            tabs: [
-              for (final categoria in categoriasUnicas)
-                Tab(
-                  text: categoria,
-                ),
-            ],
+          title: const TitleAppBAr(
+              icon: Icons.assignment_turned_in,
+              title: 'Resultados da Avaliação'),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: Container(
+              color: Theme.of(context).colorScheme.primary,
+              padding: const EdgeInsets.only(
+                  left: 8, right: 16, top: 24, bottom: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Pontuação Total: ${avaliacao.pontuacaoTotal}',
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Transita para: ${nivel.strDescricao}',
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         body: Column(
@@ -42,6 +63,15 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
+                  TabBar(
+                    isScrollable: true,
+                    tabs: [
+                      for (final categoria in categoriasUnicas)
+                        Tab(
+                          text: categoria,
+                        ),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 20, vertical: 16),
@@ -61,7 +91,7 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                         const SizedBox(
                           width: 48,
                         ),
-                        Text('Resultado',
+                        Text('Pontuação',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
@@ -76,8 +106,10 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                     child: TabBarView(
                       children: [
                         for (final categoria in categoriasUnicas)
-                          _buildCategoriaCard(categoria,
-                              perguntasPorCategoria[categoria]!, context),
+                          AvaliacaoCategoriaCard(
+                              categoria: categoria,
+                              perguntas: perguntasPorCategoria[categoria]!,
+                              respostas: avaliacao.respostasList)
                       ],
                     ),
                   ),
@@ -86,7 +118,10 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
             ),
             Container(
               width: double.infinity,
-              color: Theme.of(context).colorScheme.surface,
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  border: Border(
+                      top: BorderSide(color: Theme.of(context).dividerColor))),
               padding: const EdgeInsets.only(bottom: 48, left: 16, top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -96,47 +131,17 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                   Text(
                     'Legenda:',
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface),
+                        color:
+                            Theme.of(context).colorScheme.onSecondaryContainer),
                   ),
                   const SizedBox(
                     height: 12,
                   ),
-                  Text(
-                    '3 - Muito Bom',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(
-                    '2 - Bom',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(
-                    '1 - A Melhorar',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                  Text(
-                    '0 - Matéria não lecionada',
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              color: Theme.of(context).colorScheme.primary,
-              padding: const EdgeInsets.only(
-                  left: 8, right: 16, top: 24, bottom: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Transita para nível: ${nivel.strDescricao}',
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  const AvaliacaoLegendaItem(texto: '3 - Muito Bom'),
+                  const AvaliacaoLegendaItem(texto: '2 - Bom'),
+                  const AvaliacaoLegendaItem(texto: '1 - A Melhorar'),
+                  const AvaliacaoLegendaItem(
+                      texto: '0 - Matéria não lecionada'),
                 ],
               ),
             ),
@@ -146,46 +151,4 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoriaCard(
-      String categoria, List<Pergunta> perguntas, BuildContext context) {
-    return ListView.builder(
-      itemCount: perguntas.length,
-      itemBuilder: (context, index) {
-        final pergunta = perguntas[index];
-        final resposta = avaliacao.respostasList.firstWhere(
-          (resposta) =>
-              resposta.idDesempenhoLinha == pergunta.idDesempenhoLinha,
-          orElse: () => Resposta(
-            idDesempenhoLinha: pergunta.idDesempenhoLinha,
-            classificacao: 0,
-          ),
-        );
-        return Column(
-          children: [
-            ListTile(
-              title: Text(
-                pergunta.descricao,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              trailing: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                child: Text(
-                  resposta.classificacao.toString(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-                ),
-              ),
-            ),
-            const Divider(),
-          ],
-        );
-      },
-    );
-  }
 }

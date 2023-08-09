@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:smart_ticket/providers/global/theme_provider.dart';
-import 'package:smart_ticket/screens/splash.dart';
+import 'package:smart_ticket/screens/global/splash.dart';
 import 'package:smart_ticket/resources/theme.dart';
 
 void main() {
@@ -24,7 +24,9 @@ class MyApp extends ConsumerWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
     final themeMode = ref.watch(themeProvider);
+
     return MaterialApp(
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,

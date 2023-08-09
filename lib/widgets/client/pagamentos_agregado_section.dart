@@ -14,14 +14,21 @@ class PagamentoAgregadoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double subtotal = 0;
+    for (Pagamento pagamento in pagamentosDoAgregado) {
+      subtotal += pagamento.valor;
+    }
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Pagamentos de ${agregado.toUpperCase()}',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            agregado.toUpperCase(),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).colorScheme.secondary),
           ),
         ),
         ListView.builder(
@@ -44,6 +51,17 @@ class PagamentoAgregadoSection extends StatelessWidget {
               ),
             );
           },
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16, right: 16),
+          child: Text(
+            'Subtotal: ${subtotal.toStringAsFixed(2)} €',
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+            textAlign: TextAlign.end,
+          ),
         ),
         const Divider(),
       ],

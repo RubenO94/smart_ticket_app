@@ -9,9 +9,11 @@ class Alerta {
 
   IconData getIconDataForType() {
     switch (type) {
-      case "Pagamentos":
+      case 'Agregados':
+        return Icons.family_restroom_rounded;
+      case 'Pagamentos':
         return Icons.payments_rounded;
-      case "Mensagens":
+      case 'Mensagens':
         return Icons.message;
       case 'Avaliações':
         return Icons.assignment_turned_in_rounded;

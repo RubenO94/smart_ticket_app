@@ -4,7 +4,7 @@ import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pendente_item.dart';
 import 'package:smart_ticket/widgets/client/selecionar_agregado_dropdown.dart';
-import 'package:smart_ticket/widgets/mensagem_centro.dart';
+import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
 
 class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
   const PagamentosPendentesAgregadoScreen({super.key});
@@ -19,7 +19,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
     if (agregados.isEmpty) {
       return const MenssagemCentro(
           widget: Icon(
-            Icons.person_search,
+            Icons.search_off_rounded,
             size: 64,
           ),
           mensagem: 'Não existe agregados associado a esta conta');
@@ -37,7 +37,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
       content = const Expanded(
         child: MenssagemCentro(
             widget: Icon(
-              Icons.person_search,
+              Icons.check_circle_outline_rounded,
               size: 64,
             ),
             mensagem: 'Não existe pagamentos pendentes para este elemento.'),
@@ -48,7 +48,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
       content = const Expanded(
         child: MenssagemCentro(
             widget: Icon(
-              Icons.sms_failed_rounded,
+              Icons.report_gmailerrorred_rounded,
               size: 64,
             ),
             mensagem:

@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/screens/home.dart';
+import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
-import 'package:smart_ticket/widgets/about_app.dart';
+import 'package:smart_ticket/widgets/global/about_app.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});

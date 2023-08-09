@@ -7,8 +7,8 @@ import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
-import 'package:smart_ticket/widgets/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class InscricoesScreen extends ConsumerStatefulWidget {
   const InscricoesScreen({super.key});
@@ -28,7 +28,9 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
         return AlertDialog(
           title: const Text('Tem a certeza?'),
           content: Text(
-            'Deseja descartar este pedido de inscrição?',
+            aula.pendente
+                ? 'Deseja descartar este pedido de inscrição?'
+                : 'Deseja anular a inscrição na aula ${aula.aula}?',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           actions: [
@@ -39,7 +41,10 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
               child: const Text('Não'),
             ),
             TextButton(
-              onPressed: () => _onSubmitDelete(aula),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                _onSubmitDelete(aula);
+              },
               child: const Text('Sim'),
             ),
           ],
@@ -55,18 +60,24 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
 
   void _onSubmitDelete(Aula aula) async {
     final apiService = ref.read(apiServiceProvider);
-    final isRequestSuccessful =
-        await apiService.deleteInscricao(aula.idAulaInscricao!);
-    if (isRequestSuccessful && mounted) {
+    final response = await apiService.deleteInscricao(aula.idAulaInscricao!);
+    if (response['resultado'] == 1 && response['mensagem'] == '' && mounted) {
       ref.read(inscricoesProvider.notifier).removeAula(aula);
-      Navigator.of(context).pop(true);
-      showToast(context, 'O seu pedido de inscrição foi removido com sucesso!',
-          'success');
+      showToast(context, 'Pedido descartado com sucesso!', 'success');
       return;
-    }
-    if (mounted) {
-      showToast(context, 'Não foi possível remover a inscrição!', 'error');
-      Navigator.of(context).pop(false);
+    } else if (mounted) {
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Erro!'),
+          content: Text(response['mensagem']),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'))
+          ],
+        ),
+      );
     }
   }
 

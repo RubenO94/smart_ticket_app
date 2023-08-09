@@ -51,3 +51,9 @@ final perfilProvider = StateNotifierProvider<PerfilNotifier, Perfil>(
     return PerfilNotifier();
   },
 );
+
+final nomeUtilizadorProvider = Provider<String>((ref) {
+  final perfil = ref.watch(perfilProvider);
+
+  return '${perfil.numeroCliente} | ${perfil.name}';
+});

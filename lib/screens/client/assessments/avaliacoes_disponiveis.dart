@@ -5,7 +5,7 @@ import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/client/avaliacoes_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
-import 'package:smart_ticket/widgets/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class AvaliacoesDisponiveisScreen extends ConsumerWidget {
   const AvaliacoesDisponiveisScreen({super.key});

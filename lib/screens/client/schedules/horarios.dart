@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
-import 'package:smart_ticket/widgets/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class HorariosScreen extends ConsumerStatefulWidget {
   const HorariosScreen({super.key});

@@ -33,7 +33,7 @@ class AlertaItem extends StatelessWidget {
           onPressed: () {
             //TODO: Adicionar menu para notificação
           },
-          icon: const Icon(Icons.keyboard_arrow_down_rounded),
+          icon: const Icon(Icons.keyboard_arrow_right_rounded),
         ),
       ),
     );

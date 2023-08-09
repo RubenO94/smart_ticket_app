@@ -1,12 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/data/dummy_data.dart';
+
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
-import 'package:smart_ticket/widgets/perfil_dados.dart';
-import 'package:smart_ticket/widgets/perfil_dados_item.dart';
+import 'package:smart_ticket/widgets/global/perfil_dados.dart';
 
 class FichaClienteScreen extends ConsumerWidget {
   const FichaClienteScreen({super.key});
@@ -82,7 +80,7 @@ class FichaClienteScreen extends ConsumerWidget {
                           width: 4,
                         ),
                         Text(
-                          cliente.estado.toUpperCase(),
+                          perfil.cliente.estado.toUpperCase(),
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall!

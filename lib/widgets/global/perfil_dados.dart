@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/widgets/perfil_dados_item.dart';
+import 'package:smart_ticket/widgets/global/perfil_dados_item.dart';
 
 class PerfilDados extends StatefulWidget {
   const PerfilDados({super.key, required this.perfil});

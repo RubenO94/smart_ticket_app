@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
 
-class PagamentoPagoItem extends StatelessWidget {
+class PagamentoPagoItem extends ConsumerWidget {
   const PagamentoPagoItem({super.key, required this.pagamento});
   final Pagamento pagamento;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 0.2,
       color: Theme.of(context).cardColor,
@@ -107,19 +109,19 @@ class PagamentoPagoItem extends StatelessWidget {
         trailing: pagamento.idDocumento.isEmpty
             ? IconButton(
                 onPressed: () {
-                  showToast(context, 'PDF insdisponível para download', 'warning');
+                  showToast(
+                      context, 'PDF insdisponível para download', 'warning');
                 },
                 icon: const Icon(
                   Icons.file_download_off_rounded,
                 ),
               )
             : IconButton(
-                onPressed: () {
+                onPressed: () async {
                   showToast(context, 'PDF disponível para download', 'success');
                 },
-                icon: Icon(
-                  Icons.download_for_offline_rounded,
-                  color: Theme.of(context).colorScheme.primary,
+                icon: const Icon(
+                  Icons.download_rounded,
                 ),
               ),
       ),

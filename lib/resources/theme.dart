@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color primaryLight = const Color(0xFF95BD20);
-Color primaryDark = Color.fromARGB(255, 156, 218, 94);
+Color primaryDark = const Color.fromARGB(255, 156, 218, 94);
 
 final darkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
   seedColor: primaryDark,
   background: const Color(0xFF212121),
   primary: primaryDark,
-  tertiary: Color.fromARGB(255, 219, 141, 39),
+  tertiary: const Color.fromARGB(255, 219, 141, 39),
   onPrimary: Colors.white,
 );
 
@@ -18,7 +18,7 @@ final lightColorScheme = ColorScheme.fromSeed(
   seedColor: primaryLight,
   background: const Color(0xF5F5F5F5),
   primary: primaryLight,
-  tertiary: Color.fromARGB(255, 226, 131, 6),
+  tertiary: const Color.fromARGB(255, 226, 131, 6),
 );
 
 final theme = ThemeData().copyWith(

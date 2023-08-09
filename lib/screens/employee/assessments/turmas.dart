@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/employee/turmas_provider.dart';
 
-import 'package:smart_ticket/screens/offline.dart';
+import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/widgets/employee/turma_item.dart';
 
 import '../../../models/employee/turma.dart';

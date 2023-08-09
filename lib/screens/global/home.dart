@@ -5,15 +5,12 @@ import 'package:badges/badges.dart' as badges;
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
-import 'package:smart_ticket/providers/global/theme_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/screens/admin_settings.dart';
-import 'package:smart_ticket/resources/utils.dart';
-import 'package:smart_ticket/screens/entidade_info.dart';
-import 'package:smart_ticket/screens/ficha_cliente.dart';
-import 'package:smart_ticket/screens/main_drawer.dart';
-import 'package:smart_ticket/screens/menu_principal.dart';
-import 'package:smart_ticket/screens/notificacoes.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/screens/global/entidade_info.dart';
+import 'package:smart_ticket/screens/global/ficha_cliente.dart';
+import 'package:smart_ticket/screens/global/main_drawer.dart';
+import 'package:smart_ticket/screens/global/menu_principal.dart';
+import 'package:smart_ticket/screens/global/notificacoes.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key, required this.perfil});
@@ -25,7 +22,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
   int _currentPageIndex = 2;
@@ -48,62 +44,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.dispose();
   }
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const AdminSettingsScreen(),
-        ),
-      );
-    }
-  }
-
-  void _developerDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('SmartTicket App'),
-        content: Form(
-          key: _formKey,
-          child: TextFormField(
-            obscureText: true,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(6)),
-              ),
-              prefixIcon: Icon(Icons.lock_person_rounded),
-              labelText: 'Password',
-            ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'O Campo Password não pode ser vazio!';
-              }
-              if (value != adminPassword) {
-                return 'Password Incorreta';
-              }
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                _submit();
-              },
-              child: const Text('Entrar')),
-        ],
-      ),
-    );
-  }
-
-  void _toggleTheme(bool isDark) {
-    if (isDark) {
-      ref.read(themeProvider.notifier).setTheme(ThemeMode.dark);
-      return;
-    }
-    ref.read(themeProvider.notifier).setTheme(ThemeMode.light);
-  }
-
   void _changeScreen(int index) {
     setState(() {
       _currentPageIndex = index;
@@ -118,13 +58,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     if (_currentPageIndex == 0) {
-      activeScreen = FichaClienteScreen();
+      activeScreen = const FichaClienteScreen();
     }
     if (_currentPageIndex == 1) {
-      activeScreen = NotificacoesScreen();
+      activeScreen = const NotificacoesScreen();
     }
     if (_currentPageIndex == 3) {
-      activeScreen = EntidadeInfoScreen();
+      activeScreen = const EntidadeInfoScreen();
     }
 
     return Scaffold(
@@ -156,8 +96,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         ),
         body: RefreshIndicator(
           child: activeScreen,
-          onRefresh: () {
-            return Future(() => showToast(context, 'teste', 'error'));
+          onRefresh: () async {
+            return await ref.read(apiDataProvider.future);
           },
         ),
         bottomNavigationBar: CurvedNavigationBar(
@@ -181,12 +121,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
             badges.Badge(
               showBadge: alertasQuantity > 0 ? true : false,
-              badgeStyle: badges.BadgeStyle(padding: EdgeInsets.all(6)),
-              badgeAnimation: badges.BadgeAnimation.fade(),
+              badgeStyle: const badges.BadgeStyle(padding: EdgeInsets.all(6)),
+              badgeAnimation: const badges.BadgeAnimation.fade(),
               position: badges.BadgePosition.topEnd(top: -16, end: -16),
               badgeContent: Text(
                 alertasQuantity.toString(),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
               child: const Icon(
                 Icons.notifications_active_rounded,
