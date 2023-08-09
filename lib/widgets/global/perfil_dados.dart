@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/resources/data.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/widgets/global/perfil_dados_item.dart';
 
@@ -150,6 +151,16 @@ class PerfilDadosForm extends StatelessWidget {
             const SizedBox(
               height: 36,
             ),
+            TextFormField(
+              initialValue: widget.perfil.email,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'ENDEREÇO DE EMAIL',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
             Row(
               children: [
                 Expanded(
@@ -159,14 +170,17 @@ class PerfilDadosForm extends StatelessWidget {
                       value: selected,
                       items: _sexOptions.map((sex) {
                         return DropdownMenuItem<String>(
-                          value: sex,
-                          child: Text(
-                            sex,
-                            style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground),
-                          ),
-                        );
+                            value: sex,
+                            child: Text(
+                              sex,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelLarge!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground),
+                            ));
                       }).toList(),
                       onChanged: (value) {},
                       decoration: InputDecoration(
@@ -201,7 +215,106 @@ class PerfilDadosForm extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 64),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.localidade,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'LOCALIDADE',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.morada,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'MORADA',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.morada2,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'MORADA 2',
+              ),
+            ),
+             const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.codigoPostal,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'CODIGO POSTAL',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            DropdownButtonFormField<Map<String, String>>(
+              value: listaPaises
+                  .firstWhere((element) => element['nome'] == 'Portugal'),
+              items: listaPaises.map((pais) {
+                return DropdownMenuItem<Map<String, String>>(
+                    value: pais,
+                    child: Text(
+                      '${pais['codigo']} - ${pais['nome']}',
+                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ));
+              }).toList(),
+              onChanged: (value) {},
+              decoration: InputDecoration(
+                  labelText: 'PAIS', border: OutlineInputBorder()),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.telefone,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'TELEFONE',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.telemovel,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'TELEMÓVEL',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.contatoEmergencia,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'CONTATO DE EMERGÊNCIA',
+              ),
+            ),
+            const SizedBox(
+              height: 36,
+            ),
+            TextFormField(
+              initialValue: widget.perfil.cliente.contatoEmergencia2,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'CONTATO DE EMERGÊNCIA 2',
+              ),
+            ),
+            const SizedBox(height: 48),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
