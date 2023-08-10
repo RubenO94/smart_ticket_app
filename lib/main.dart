@@ -7,6 +7,9 @@ import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/screens/global/splash.dart';
 import 'package:smart_ticket/resources/theme.dart';
 
+
+const serviceVersion = '1'; // Versão atual da aplicação (Tem de ser compativel com a versão recebida da API)
+
 void main() {
   runApp(
     const ProviderScope(

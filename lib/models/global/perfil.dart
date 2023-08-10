@@ -27,6 +27,16 @@ class Agregado {
   Agregado({required this.agregado, required this.relacao});
 }
 
+class NovoAgregado {
+  const NovoAgregado({
+    required this.nif,
+    required this.comprovativo,
+  });
+
+  final String nif;
+  final Anexo comprovativo;
+}
+
 class Cliente {
   final String cartaoCidadao;
   final String categoria;
@@ -44,6 +54,8 @@ class Cliente {
   final String telefone;
   final String telemovel;
   final List<Agregado> listaAgregados;
+  final List<String> preenchimentoObrigatorio;
+  final List<String> comprovativoObrigatorio;
 
   Cliente({
     required this.listaAgregados,
@@ -62,7 +74,64 @@ class Cliente {
     required this.telemovel,
     required this.contatoEmergencia,
     required this.contatoEmergencia2,
+    required this.preenchimentoObrigatorio,
+    required this.comprovativoObrigatorio,
   });
+}
+
+class CLienteAlteracao {
+  final String cartaoCidadao;
+  final String codigoPostal;
+  final Anexo comprovativo;
+  final String contatoEmergencia;
+  final String contatoEmergencia2;
+  final String dataNascimento;
+  final String email;
+  final String localidade;
+  final String morada;
+  final String morada2;
+  final String nif;
+  final String pais;
+  final String sexo;
+  final String telefone;
+  final String telemovel;
+
+  CLienteAlteracao({
+    required this.email,
+    required this.cartaoCidadao,
+    required this.nif,
+    required this.dataNascimento,
+    required this.sexo,
+    required this.pais,
+    required this.localidade,
+    required this.codigoPostal,
+    required this.morada,
+    required this.morada2,
+    required this.telefone,
+    required this.telemovel,
+    required this.contatoEmergencia,
+    required this.contatoEmergencia2,
+    required this.comprovativo,
+  });
+}
+
+class Funcionario {
+  const Funcionario({
+    required this.categoria,
+    required this.morada,
+    required this.morada2,
+    required this.codigoPostal,
+    required this.localidade,
+    required this.telefone,
+    required this.telemovel,
+  });
+  final String categoria;
+  final String morada;
+  final String morada2;
+  final String codigoPostal;
+  final String localidade;
+  final String telefone;
+  final String telemovel;
 }
 
 class Entidade {
@@ -94,30 +163,10 @@ class Janela {
   final IconData icon;
 }
 
-IconData getIcon(int id, int tipoPerfil) {
-  if (tipoPerfil == 1) {
-    switch (id) {
-      case 100:
-        return Icons.assignment;
-      case 200:
-        return Icons.app_registration_rounded;
-      case 300:
-        return Icons.payment_rounded;
-
-      case 400:
-        return Icons.access_time;
-
-      default:
-        return Icons.device_unknown_rounded;
-    }
-  } else {
-    switch (id) {
-      case 100:
-        return Icons.assignment_add;
-      default:
-        return Icons.device_unknown_rounded;
-    }
-  }
+class Anexo {
+  const Anexo({required this.fileName, required this.base64});
+  final String fileName;
+  final String base64;
 }
 
 class Perfil {

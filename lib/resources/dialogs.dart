@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 
+/// Exibe um snackbar de notificação com base no [tipo].
+///
+/// Esta função exibe um snackbar de notificação com uma mensagem especificada
+/// e um ícone correspondente com base no tipo fornecido. O [context] é necessário
+/// para acessar o tema e outras configurações do Flutter.
+///
+/// - [context]: O contexto de onde o snackbar será exibido.
+/// - [message]: A mensagem a ser exibida no snackbar.
+/// - [type]: O tipo de snackbar ('error' para erro, 'warning' para aviso, outros valores por defeito será 'success' de sucesso.
 void showToast(BuildContext context, String message, String type) {
+  // Cores e ícones padrão
   Color background = Theme.of(context).colorScheme.primaryContainer;
   Color foreground = Theme.of(context).colorScheme.onPrimaryContainer;
   Icon icon = const Icon(Icons.check);
 
+  // Configuração de cores e ícones com base no tipo
   switch (type) {
     case 'error':
       background = Theme.of(context).colorScheme.error;
@@ -23,6 +34,8 @@ void showToast(BuildContext context, String message, String type) {
       );
       break;
   }
+
+  // Limpar snackbar existente e exibir um novo
   ScaffoldMessenger.of(context).clearSnackBars();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

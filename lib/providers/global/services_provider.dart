@@ -2,17 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/services/api.dart';
-
 import 'package:smart_ticket/services/secure_storage.dart';
 
+/// Provider que fornece acesso ao armazenamento.
 final secureStorageProvider = Provider((ref) => SecureStorageService());
 
+/// Provider que fornece uma instância do cliente HTTP.
 final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 
+/// Provider que fornece uma instância do serviço da API.
 final apiServiceProvider = Provider((ref) => ApiService(ref));
 
+/// Provider que verifica e fornece um sinalizador se os dados essenciais da API foram carregados.
 final apiDataProvider = FutureProvider<bool>((ref) async {
   final apiService = ref.watch(apiServiceProvider);
   final perfil = ref.watch(perfilProvider);
@@ -22,8 +26,7 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
     if (hasNiveis && hasTurmas) {
       return true;
     }
-  }
-  if (perfil.userType == 1) {
+  } else if (perfil.userType == 1) {
     final hasNiveis = await apiService.getNiveis();
     final hasAulasInscricoes = await apiService.getAulasInscricoes();
     final hasAtividades = await apiService.getAtividades();
@@ -45,23 +48,21 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
   return false;
 });
 
+/// Função para gerar a senha necessária na obtenção do token.
 String generatePassword() {
   DateTime now = DateTime.now();
   String formattedDate = now.year.toString() +
       now.month.toString().padLeft(2, '0') +
       now.day.toString().padLeft(2, '0');
-
   String reversedUsername = 'SmartTicketWSApp'.split('').reversed.join();
-
   String reversedDate = formattedDate.split('').reversed.join();
-
   return reversedDate + reversedUsername;
 }
 
+/// Provider que obtém e fornece o token necessário para fazer chamadas à API.
 final tokenProvider = FutureProvider<String>((ref) async {
   const username = 'SmartTicketWSApp';
   final password = generatePassword();
-
   final client = ref.read(httpClientProvider);
   final baseUrl = await ref.read(secureStorageProvider).readSecureData('WSApp');
   final Uri url = Uri.parse(

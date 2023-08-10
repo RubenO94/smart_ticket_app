@@ -51,6 +51,8 @@ dependencies:
   curved_navigation_bar: ^1.0.3
   flutter_localizations:
     sdk: flutter
+  file_picker: ^5.3.3
+  path_provider: ^2.1.0
 
 
 dev_dependencies:

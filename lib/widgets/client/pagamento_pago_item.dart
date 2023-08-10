@@ -118,7 +118,10 @@ class PagamentoPagoItem extends ConsumerWidget {
               )
             : IconButton(
                 onPressed: () async {
-                  showToast(context, 'PDF disponível para download', 'success');
+                  final response = await ref
+                      .read(apiServiceProvider)
+                      .getDownloadDocumento(pagamento.idDocumento);
+                  print(response);
                 },
                 icon: const Icon(
                   Icons.download_rounded,

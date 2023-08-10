@@ -1,17 +1,26 @@
-enum Estado {
-  inativo,
-  ativo,
-  devedor,
-  contencioso,
-  credito,
-  banido,
-  suspenso,
-}
+///Lista de campos existentes na ficha de utilizador
+const List<String> listaCampos = [
+  'strCartaoCidadao',
+  'strCategoria',
+  'strCodigoPostal',
+  'strContatoEmergencia',
+  'strContatoEmergencia2',
+  'strDataNascimento',
+  'strEstado',
+  'strLocalidade',
+  'strMorada',
+  'strMorada2',
+  'strNIF',
+  'strPais',
+  'strSexo',
+  'strTelefone',
+  'strTelemovel',
+];
 
-
-
+/// Lista de Generos existentes na ficha de utilizador
 const List<String> listaGeneros = ['Masculino', 'Feminino'];
 
+/// Lista de Paises existentes na ficha de utilizador
 const List<Map<String, String>> listaPaises = [
   {'codigo': 'AF', 'nome': 'Afeganistão'},
   {'codigo': 'ZA', 'nome': 'África do Sul'},

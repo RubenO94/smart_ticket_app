@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:smart_ticket/models/global/alerta.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
@@ -34,25 +37,41 @@ import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/employee/turmas_provider.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class ApiService {
   ApiService(this.ref);
   final Ref ref;
 
-//Função genérica para fazer requisições ao servidor:
+  /// Executa uma requisição genérica ao servidor.
+  ///
+  /// Esta função permite executar uma requisição genérica ao servidor fornecendo
+  /// uma função [requestFunction] que é responsável por realizar a requisição HTTP
+  /// com o cliente fornecido, a URL base e os headers fornecidos.
+  ///
+  /// - [requestFunction]: Uma função que executa a requisição HTTP.
+  ///
+  /// Retorna o resultado da requisição após o processamento realizado pela
+  /// [requestFunction].
   Future<T> executeRequest<T>(
-      Future<T> Function(
-              http.Client client, String baseUrl, Map<String, String> headers)
-          requestFunction) async {
+    Future<T> Function(
+      http.Client client,
+      String baseUrl,
+      Map<String, String> headers,
+    ) requestFunction,
+  ) async {
     final client = ref.read(httpClientProvider);
     final storage = ref.read(secureStorageProvider);
     final baseUrl = await storage.readSecureData('WSApp');
+
     if (baseUrl.isEmpty) {
       const licenseUrl = 'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc';
       return requestFunction(client, licenseUrl, {});
     }
+
     final token = await ref.read(tokenProvider.future);
     final deviceId = await ref.read(deviceIdProvider.future);
+
     final headers = {
       'Content-Type': 'application/json',
       'DeviceId': deviceId,
@@ -70,22 +89,38 @@ class ApiService {
     return await requestFunction(client, baseUrl, headers);
   }
 
-//Restantes chamadas:
+  /// Obtém a URL base do Web Service associada ao NIF fornecido.
+  ///
+  /// Esta função obtém a URL base do WSApp associada a um determinado NIF e
+  /// software. A URL base é armazenada no SecureStorage [FlutterSecureStorage] e utilizada nas
+  /// requisições subsequentes.
+  ///
+  /// - [nif]: O número de identificação fiscal.
+  ///
+  /// Retorna uma [Future] que indica o resultado da operação:
+  /// - 'success': A URL base foi obtida e armazenada com sucesso.
+  /// - 'errorUnknown': Ocorreu um erro desconhecido durante a obtenção da URL.
+  /// - 'null': A URL base obtida é nula.
   Future<String> getWSApp(String nif) async {
     if (nif.isNotEmpty) {
       final endPoint = '/GetWSApp?strNIF=$nif&strSoftware=08';
 
       try {
-        final response = await executeRequest((client, baseUrl, headers) =>
-            client.get(
-                Uri.parse(
-                    'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc$endPoint'),
-                headers: headers));
+        final response =
+            await executeRequest((client, baseUrl, headers) => client.get(
+                  Uri.parse(
+                    'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc$endPoint',
+                  ),
+                  headers: headers,
+                ));
+
         if (response.statusCode != 200) {
           return 'errorUnknown';
         }
+
         final Map<String, dynamic> data = json.decode(response.body);
         final String? baseUrl = data['strDescricao'];
+
         if (baseUrl != null) {
           final storage = ref.read(secureStorageProvider);
           await storage.writeSecureData('WSApp', baseUrl);
@@ -100,6 +135,13 @@ class ApiService {
     return 'errorUnknown';
   }
 
+  /// Verifica se o dispositivo está ativado.
+  ///
+  /// Esta função verifica se o dispositivo está associado ao Serviço
+  ///
+  /// Retorna uma [Future<bool>] que indica se o dispositivo está ativado:
+  /// - `true`: O dispositivo está ativado.
+  /// - `false`: O dispositivo não está ativado ou ocorreu um erro durante a verificação.
   Future<bool> isDeviceActivated() async {
     const endPoint = '/IsDeviceActivated';
 
@@ -122,6 +164,14 @@ class ApiService {
     return false;
   }
 
+  /// Regista um dispositivo associado a um NIF e um email.
+  ///
+  /// Esta função regista um dispositivo associado a um NIF (Número de Identificação
+  /// Fiscal) e a um email. O registo é efetuado através da comunicação com o servidor.
+  ///
+  /// Retorna uma [Future<String>] com o resultado do registo:
+  /// - `'true'`: O registo foi bem-sucedido.
+  /// - Uma descrição do erro se o registo não for bem-sucedido ou ocorrer um erro.
   Future<String> registerDevice(String nif, String email) async {
     final endPoint = '/RegisterDevice?strNif=$nif&strEmail=$email';
 
@@ -143,6 +193,13 @@ class ApiService {
     return 'Ocorreu um erro ao tentar concetar com o servidor';
   }
 
+  /// Ativa um dispositivo com o código de ativação fornecido.
+  ///
+  /// Esta função ativa um dispositivo usando um código de ativação específico.
+  ///
+  /// Retorna uma [Future<bool>] indicando se o dispositivo foi ativado com sucesso:
+  /// - `true`: O dispositivo foi ativado com sucesso.
+  /// - `false`: O dispositivo não foi ativado ou ocorreu um erro durante o processo.
   Future<bool> activateDevice(String activationCode) async {
     final endPoint = '/ActivateDevice?strCodigoAtivacao=$activationCode';
     try {
@@ -162,6 +219,13 @@ class ApiService {
     return false;
   }
 
+  /// Obtém o perfil do utilizador a partir do servidor.
+  ///
+  /// Esta função obtém e processa os dados do perfil do utilizador a partir do servidor.
+  ///
+  /// Retorna uma [Future<bool>] indicando se o perfil foi obtido com sucesso:
+  /// - `true`: O perfil foi obtido com sucesso e as informações foram atualizadas no provider.
+  /// - `false`: O perfil não foi obtido ou ocorreu um erro durante o processo.
   Future<bool> getPerfil() async {
     const endPoint = '/GetPerfil';
     try {
@@ -175,6 +239,9 @@ class ApiService {
 
         //converte dataCliente['lAgregados'] pata List<Agregado>
         List<Agregado> lAgregados = [];
+        List<String> preenchimentoObrigatorio = [];
+        List<String> comprovativoObrigatorio = [];
+
         dataCliente['lAgregados'].forEach((element) {
           lAgregados.add(
             Agregado(
@@ -182,8 +249,19 @@ class ApiService {
                 relacao: element['strRelacao']),
           );
         });
+
+        dataCliente['lCamposObrigaPreenchimento'].forEach((element) {
+          preenchimentoObrigatorio.add(element);
+        });
+
+        dataCliente['lCamposObrigaComprovativo'].forEach((element) {
+          comprovativoObrigatorio.add(element);
+        });
+
         final Cliente cliente = Cliente(
           listaAgregados: lAgregados,
+          comprovativoObrigatorio: comprovativoObrigatorio,
+          preenchimentoObrigatorio: preenchimentoObrigatorio,
           categoria: dataCliente['strCategoria'],
           cartaoCidadao: dataCliente['strCartaoCidadao'],
           nif: dataCliente['strNIF'],
@@ -219,7 +297,7 @@ class ApiService {
             Janela(
               id: element['nIDMenuPrincipal'],
               name: element['strMenuPrincipal'],
-              icon: getIcon(
+              icon: getIconJanela(
                   element['nIDMenuPrincipal'], dataPerfil['eTipoPerfil']),
             ),
           );
@@ -246,6 +324,13 @@ class ApiService {
     return false;
   }
 
+  /// Obtém a lista de turmas.
+  ///
+  /// Esta função obtém a lista de turmas do servidor e atualiza o provider correspondente.
+  ///
+  /// Retorna uma [Future<bool>] indicando se as turmas foram obtidas com sucesso:
+  /// - `true`: As turmas foram obtidas com sucesso e a lista foi atualizada no provider.
+  /// - `false`: As turmas não puderam ser obtidas ou ocorreu um erro durante o processo.
   Future<bool> getTurmas() async {
     const endPoint = '/GetTurmas';
     try {
@@ -273,6 +358,14 @@ class ApiService {
     return false;
   }
 
+  /// Obtém a lista de alunos para uma determinada aula e/ou cliente.
+  ///
+  /// Esta função obtém a lista de alunos do servidor com base no ID da aula e/ou ID do cliente,
+  /// e atualiza o provider correspondente com as informações obtidas.
+  ///
+  /// Retorna uma [Future<bool>] indicando se os alunos foram obtidos com sucesso:
+  /// - `true`: Os alunos foram obtidos com sucesso e a lista foi atualizada no provider.
+  /// - `false`: Os alunos não puderam ser obtidos ou ocorreu um erro durante o processo.
   Future<bool> getAlunos(String idAula, String? idCliente) async {
     late final String endPoint;
     if (idCliente == null || idCliente.isEmpty) {
@@ -339,6 +432,14 @@ class ApiService {
     return false;
   }
 
+  /// Obtém a lista de níveis de desempenho existentes numa Avaliação.
+  ///
+  /// Esta função obtém a lista de níveis de desempenho,
+  /// e atualiza o provider correspondente com as informações obtidas.
+  ///
+  /// Retorna uma [Future<bool>] indicando se os níveis foram obtidos com sucesso:
+  /// - `true`: Os níveis foram obtidos com sucesso e a lista foi atualizada no provider.
+  /// - `false`: Os níveis não puderam ser obtidos ou ocorreu um erro durante o processo.
   Future<bool> getNiveis() async {
     const endPoint = '/GetNiveis';
     try {
@@ -365,6 +466,21 @@ class ApiService {
     return false;
   }
 
+  /// Envia uma avaliação para o servidor.
+  ///
+  /// Esta função envia uma avaliação, incluindo as respostas
+  /// dadas pelo aluno, o ID do nivel de desempenho, o ID da aula e o ID da atividade
+  /// letiva.
+  ///
+  /// - [clienteId]: O ID do cliente (aluno) que está associado à avaliação.
+  /// - [respostas]: Uma lista de respostas dadas pelo professor.
+  /// - [idDesempenhoLinha]: O ID do nível de desempenho associado à avaliação.
+  /// - [idAula]: O ID da aula associada à avaliação.
+  /// - [atividadeLetiva]: O ID da atividade letiva associada à aula.
+  ///
+  /// Retorna uma [Future<bool>] indicando se a avaliação foi enviada com sucesso:
+  /// - `true`: A avaliação foi enviada com sucesso para o servidor.
+  /// - `false`: A avaliação não pôde ser enviada ou ocorreu um erro durante o processo.
   Future<bool> postAvaliacao(int clienteId, List<Resposta> respostas,
       int idDesempenhoLinha, int idAula, int atividadeLetiva) async {
     const endPoint = '/SetAvaliacao';
@@ -396,6 +512,15 @@ class ApiService {
     return false;
   }
 
+  /// Obtém informações sobre as inscrições e fichas de avaliação associadas ao cliente.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter informações sobre
+  /// as inscrições em aulas e fichas de avaliação associadas ao cliente.
+  ///
+  /// Retorna uma [Future<bool>] indicando se as informações foram obtidas com sucesso:
+  /// - `true`: As informações foram obtidas com sucesso e as inscrições e fichas de
+  ///   avaliação foram atualizadas no aplicativo.
+  /// - `false`: As informações não puderam ser obtidas ou ocorreu um erro durante o processo.
   Future<bool> getAulasInscricoes() async {
     const endPoint = '/GetAulasInscricoes';
     try {
@@ -532,6 +657,15 @@ class ApiService {
     return false;
   }
 
+  /// Obtém as atividades letivas disponíveis.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter informações sobre
+  /// as atividades letivas disponíveis.
+  ///
+  /// Retorna uma [Future<bool>] indicando se as informações foram obtidas com sucesso:
+  /// - `true`: As informações foram obtidas com sucesso e as atividades letivas
+  ///   foram atualizadas no aplicativo.
+  /// - `false`: As informações não puderam ser obtidas ou ocorreu um erro durante o processo.
   Future<bool> getAtividadesLetivas() async {
     const endPoint = '/GetAtividadesLetivas';
     try {
@@ -560,6 +694,15 @@ class ApiService {
     return false;
   }
 
+  /// Obtém informações sobre as atividades disponíveis.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter informações sobre
+  /// as atividades disponíveis.
+  ///
+  /// Retorna uma [Future<bool>] indicando se as informações foram obtidas com sucesso:
+  /// - `true`: As informações foram obtidas com sucesso e as atividades
+  ///   foram atualizadas no aplicativo.
+  /// - `false`: As informações não puderam ser obtidas ou ocorreu um erro durante o processo.
   Future<bool> getAtividades() async {
     const endPoint = '/GetAtividades';
     try {
@@ -588,6 +731,15 @@ class ApiService {
     return false;
   }
 
+  /// Obtém informações sobre as aulas disponíveis para uma atividade específica.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter informações sobre
+  /// as aulas disponíveis para um periodo letivo e atividade específica.
+  ///
+  /// Retorna uma [Future<bool>] indicando se as informações foram obtidas com sucesso:
+  /// - `true`: As informações foram obtidas com sucesso e as aulas disponíveis
+  ///   foram atualizadas no aplicativo.
+  /// - `false`: As informações não puderam ser obtidas ou ocorreu um erro durante o processo.
   Future<bool> getAulasDisponiveis(
       int idAtividadeLetiva, int idAtividade) async {
     final endPoint =
@@ -628,6 +780,14 @@ class ApiService {
     return false;
   }
 
+  /// Realiza a inscrição do cliente numa aula específica.
+  ///
+  /// Esta função faz uma solicitação ao servidor para realizar a inscrição do cliente
+  /// numa aula específica de um periodo letivo.
+  ///
+  /// Retorna um [Map<String, dynamic>] com os seguintes valores:
+  /// - `'id'`: O ID da inscrição realizada. Será maior que 0 se a inscrição for bem-sucedida.
+  /// - `'mensagem'`: Uma mensagem descritiva relacionada à inscrição (pode ser uma mensagem de erro).
   Future<Map<String, dynamic>> setInscricao(
       int idAtividadeLetiva, int idAula) async {
     final endPoint =
@@ -663,6 +823,14 @@ class ApiService {
     };
   }
 
+  /// Remove a inscrição do cliente de uma aula.
+  ///
+  /// Esta função faz uma solicitação ao servidor para remover a inscrição
+  /// de uma aula específica.
+  ///
+  /// Retorna um [Map<String, dynamic>] com os seguintes valores:
+  /// - `'resultado'`: O resultado da operação. Será maior que 0 se a remoção for bem-sucedida.
+  /// - `'mensagem'`: Uma mensagem descritiva relacionada à operação (pode ser uma mensagem de erro).
   Future<Map<String, dynamic>> deleteInscricao(int idAulaInscricao) async {
     final endPoint = '/DelInscricao?nIDAulaInscricao=$idAulaInscricao';
     try {
@@ -691,6 +859,13 @@ class ApiService {
     };
   }
 
+  /// Obtém os horários das atividades do calendário.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter os horários das atividades
+  /// do calendário. Os dados são processados e convertidos numa lista de objetos [Horario].
+  ///
+  /// Retorna `true` se a operação for bem-sucedida e os horários forem obtidos corretamente,
+  /// caso contrário, retorna `false`.
   Future<bool> getHorarios() async {
     const endPoint = '/GetCalendario';
     try {
@@ -732,6 +907,14 @@ class ApiService {
     return false;
   }
 
+  /// Obtém os dados dos pagamentos do cliente.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter os dados dos pagamentos.
+  /// Os dados são processados e convertidos numa lista de objetos [Pagamento].
+  ///Adiciona á lista de objetos [Alerta] um alerta com a quantidade de pagamentos pendentes existentes.
+  ///
+  /// Retorna `true` se a operação for bem-sucedida e os dados dos pagamentos forem obtidos
+  /// corretamente, caso contrário, retorna `false`.
   Future<bool> getPagamentos() async {
     const String endPoint = '/GetPagamentos';
 
@@ -801,6 +984,14 @@ class ApiService {
     return false;
   }
 
+  /// Obtém os pagamentos de agregados associados ao cliente.
+  ///
+  /// Esta função faz uma solicitação ao servidor para obter os dados dos pagamentos
+  /// agregados. Os dados são processados e convertidos numa lista de objetos [AgregadoPagamento].
+  /// Adiciona á lista de objetos [Alerta] um alerta com a quantidade de pagamentos pendentes existentes.
+  ///
+  /// Retorna `true` se a operação for bem-sucedida e os dados dos pagamentos agregados
+  /// forem obtidos corretamente, caso contrário, retorna `false`.
   Future<bool> getPagamentosAgregados() async {
     const String endPoint = '/GetPagamentosAgregados';
 
@@ -889,13 +1080,20 @@ class ApiService {
         return true;
       }
     } catch (e) {
-      // throw new Exception('Error: ' + e.toString());
       return false;
     }
 
     return false;
   }
 
+  /// Envia um pedido de pagamento para o servidor.
+  ///
+  /// Esta função envia um pedido de pagamento para o servidor com o ID do cliente e
+  /// a lista de IDs de tarifas-linha a serem pagas. Os dados são processados
+  /// e a resposta é verificada para um URL de redirecionamento.
+  ///
+  /// Retorna `true` se o pedido de pagamento for bem-sucedido e o URL de redirecionamento
+  /// for obtido corretamente, caso contrário, retorna `false`.
   Future<bool> postPagamento(int idCliente, List<int> idTarifaList) async {
     const endPoint = '/SetPagamento';
     final body = {
@@ -932,47 +1130,27 @@ class ApiService {
     final endPoint = '/DownloadDocumento?strIDDocumento=$idDocumento';
 
     try {
-      final baseUrl =
-          await ref.read(secureStorageProvider).readSecureData('WSApp');
-      final token = await ref.read(tokenProvider.future);
-      final deviceId = await ref.read(deviceIdProvider.future);
-      final headers = {
-        'Content-Type': 'application/json',
-        'DeviceId': deviceId,
-        'Token': token,
-        'Idioma': 'pt-PT',
-      };
-      final streamSubscription = http
-          .get(Uri.parse(baseUrl + endPoint), headers: headers)
-          .asStream()
-          .listen(
-        (response) {
-          if (response.statusCode == 200) {
-            dynamic data = response.body;
-            print(data.toString());
-          }
-        },
+      final response = await executeRequest(
+        (client, baseUrl, headers) =>
+            client.get(Uri.parse(baseUrl + endPoint), headers: headers),
       );
-      streamSubscription.cancel();
+
+      if (response.statusCode == 200) {
+        final String data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          Uint8List bytes = base64.decode(data);
+
+          final String fileName = 'fatura_${generateRandomString(5)}';
+          Directory documentsDir = await getApplicationDocumentsDirectory();
+          String filePath = '${documentsDir.path}/$fileName.pdf';
+          final File file = File(filePath);
+          await file.writeAsBytes(bytes);
+          return 'ok';
+        }
+      }
     } catch (e) {
       return 'Erro: ${e.toString()}';
     }
     return 'Erro';
-  }
-
-  Stream<int> teste() {
-    final controler = StreamController<int>();
-    int count = 1;
-
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      controler.sink.add(count);
-      count++;
-    });
-
-    if (count == 10) {
-      controler.close();
-    }
-
-    return controler.stream;
   }
 }

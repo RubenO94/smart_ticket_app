@@ -19,17 +19,20 @@ class AlertasNotifier extends StateNotifier<List<Alerta>> {
   }
 }
 
+/// Provider que fornece a lista de alertas.
 final alertasProvider = StateNotifierProvider<AlertasNotifier, List<Alerta>>(
-    (ref) => AlertasNotifier());
+  (ref) => AlertasNotifier(),
+);
 
+/// Provider que calcula a quantidade total de alertas.
 final alertasQuantityProvider = Provider<int>(
   (ref) {
     final alertas = ref.watch(alertasProvider);
-
     return alertas.length;
   },
 );
 
+/// Provider que calcula a quantidade de alertas relacionados a avaliações.
 final avaliacoesAlertaQuantityProvider = Provider<int>(
   (ref) {
     int count = 0;
@@ -45,23 +48,28 @@ final avaliacoesAlertaQuantityProvider = Provider<int>(
   },
 );
 
-final pagamentosAgregadosAlertasProvider = Provider<int>((ref) {
-  final List<AgregadoPagamento> agregados =
-      ref.watch(pagamentosAgregadosProvider);
-  int totalLength = 0;
+/// Provider que calcula a quantidade total de alertas de pagamentos pendentes dos agregados.
+final pagamentosAgregadosAlertasProvider = Provider<int>(
+  (ref) {
+    final List<AgregadoPagamento> agregados =
+        ref.watch(pagamentosAgregadosProvider);
+    int totalLength = 0;
 
-  for (final agregado in agregados) {
-    totalLength +=
-        agregado.pagamentos.where((element) => element.pendente).length;
-  }
-  return totalLength;
-});
+    for (final agregado in agregados) {
+      totalLength +=
+          agregado.pagamentos.where((element) => element.pendente).length;
+    }
+    return totalLength;
+  },
+);
 
-final pagamentosPendentesAlertaQuantityProvider = Provider<int>((ref) {
-  final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
+/// Provider que calcula a quantidade total de alertas de pagamentos pendentes do cliente.
+final pagamentosPendentesAlertaQuantityProvider = Provider<int>(
+  (ref) {
+    final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
+    final pagamentosAgregadosPendentes =
+        ref.watch(pagamentosAgregadosAlertasProvider);
 
-  final pagamentosAgregadosPendentes =
-      ref.watch(pagamentosAgregadosAlertasProvider);
-
-  return pagamentosPendentes.length + pagamentosAgregadosPendentes;
-});
+    return pagamentosPendentes.length + pagamentosAgregadosPendentes;
+  },
+);
