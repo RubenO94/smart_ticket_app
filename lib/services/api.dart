@@ -891,7 +891,7 @@ class ApiService {
               wednesday: e['bWednesday'],
               thursday: e['bThursday'],
               inscrito: e['bInscrito'],
-              cor: color ?? Colors.green,
+              cor: color ?? Colors.transparent,
             );
           }).toList();
 
@@ -1126,6 +1126,16 @@ class ApiService {
     return false;
   }
 
+  /// Obtém o conteúdo de um documento PDF para download com base no ID do documento.
+  ///
+  /// Esta função realiza uma solicitação HTTP GET para o endpoint de download de documentos
+  /// e retorna o conteúdo do documento como uma string base64.
+  ///
+  /// Parâmetros:
+  /// - [idDocumento]: O ID do documento a ser baixado.
+  ///
+  /// Retorna uma [Future] que resolve em uma [String] contendo o conteúdo do documento em base64,
+  /// ou uma mensagem de erro se ocorrer algum problema durante a solicitação.
   Future<String> getDownloadDocumento(String idDocumento) async {
     final endPoint = '/DownloadDocumento?strIDDocumento=$idDocumento';
 
@@ -1138,19 +1148,12 @@ class ApiService {
       if (response.statusCode == 200) {
         final String data = json.decode(response.body);
         if (data.isNotEmpty) {
-          Uint8List bytes = base64.decode(data);
-
-          final String fileName = 'fatura_${generateRandomString(5)}';
-          Directory documentsDir = await getApplicationDocumentsDirectory();
-          String filePath = '${documentsDir.path}/$fileName.pdf';
-          final File file = File(filePath);
-          await file.writeAsBytes(bytes);
-          return 'ok';
+          return data;
         }
       }
     } catch (e) {
       return 'Erro: ${e.toString()}';
     }
-    return 'Erro';
+    return 'error';
   }
 }

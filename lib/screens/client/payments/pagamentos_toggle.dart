@@ -5,8 +5,11 @@ import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_pendentes_agregado.dart';
 
 class PagamentosToggleScreen extends StatelessWidget {
-  const PagamentosToggleScreen(
-      {super.key, required this.isAgregados, required this.isPagos});
+  const PagamentosToggleScreen({
+    super.key,
+    required this.isAgregados,
+    required this.isPagos,
+  });
   final bool isAgregados;
   final bool isPagos;
 

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:badges/badges.dart' as badges;
+
 import 'package:smart_ticket/providers/client/pagamentos_selecionados_provider.dart';
 import 'package:smart_ticket/screens/client/payments/carrinho_checkout.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_toggle.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
 
 class PagamentosScreen extends ConsumerStatefulWidget {
   const PagamentosScreen({super.key});
@@ -22,7 +23,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
 
   void _irParaCarrinho() {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => CarrinhoCheckoutScreen(),
+      builder: (context) => const CarrinhoCheckoutScreen(),
     ));
   }
 
@@ -40,6 +41,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
   Widget build(BuildContext context) {
     List<Pagamento> pagamentosSelecionados =
         ref.watch(pagamentosSelecionadosProvider);
+    final valorTotal = ref.watch(valorTotalPagamentosSelecionadosProvider);
 
     return DefaultTabController(
       length: 2,
@@ -114,7 +116,10 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
         ),
         body: TabBarView(
           children: [
-            PagamentosToggleScreen(isAgregados: false, isPagos: _isPagos),
+            PagamentosToggleScreen(
+              isAgregados: false,
+              isPagos: _isPagos,
+            ),
             PagamentosToggleScreen(isAgregados: true, isPagos: _isPagos),
           ],
         ),
@@ -140,23 +145,37 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
                             },
                       child: const Icon(Icons.delete),
                     ),
-                    FloatingActionButton(
-                      heroTag: 'carrinho01',
-                      shape: const CircleBorder(),
-                      foregroundColor:
-                          _isLoading || pagamentosSelecionados.isEmpty
-                              ? Theme.of(context).disabledColor
-                              : null,
-                      backgroundColor:
-                          _isLoading || pagamentosSelecionados.isEmpty
-                              ? Theme.of(context).colorScheme.surfaceVariant
-                              : null,
-                      disabledElevation: 0,
-                      onPressed: _isLoading || pagamentosSelecionados.isEmpty
-                          ? null
-                          : _irParaCarrinho,
-                      child: const Icon(Icons.shopping_cart_checkout_rounded),
-                    ),
+                    badges.Badge(
+                      badgeAnimation: const badges.BadgeAnimation.scale(
+                          animationDuration: Duration(milliseconds: 500),),
+                      position: badges.BadgePosition.custom(start: -16, top: -32),
+                      badgeStyle: badges.BadgeStyle(
+                          shape: badges.BadgeShape.instagram,
+                          padding: const EdgeInsets.all(16),
+                          badgeColor: Theme.of(context).colorScheme.onPrimaryContainer),
+                      badgeContent: Text(
+                        '${valorTotal.toStringAsFixed(2)} €',
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.primaryContainer, fontWeight: FontWeight.bold),
+                      ),
+                      child: FloatingActionButton(
+                        heroTag: 'carrinho01',
+                        shape: const CircleBorder(),
+                        foregroundColor:
+                            _isLoading || pagamentosSelecionados.isEmpty
+                                ? Theme.of(context).disabledColor
+                                : null,
+                        backgroundColor:
+                            _isLoading || pagamentosSelecionados.isEmpty
+                                ? Theme.of(context).colorScheme.surfaceVariant
+                                : null,
+                        disabledElevation: 0,
+                        onPressed: _isLoading || pagamentosSelecionados.isEmpty
+                            ? null
+                            : _irParaCarrinho,
+                        child: const Icon(Icons.shopping_cart_checkout_rounded),
+                      ),
+                    )
                   ],
                 ),
               ),
