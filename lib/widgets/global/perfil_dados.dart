@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/widgets/custom_dialog.dart';
 import 'package:smart_ticket/widgets/global/editar_perfil_form.dart';
 import 'package:smart_ticket/widgets/global/perfil_dados_list.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class PerfilDados extends StatefulWidget {
   const PerfilDados({super.key, required this.perfil});
@@ -15,13 +19,29 @@ class PerfilDados extends StatefulWidget {
 class _PerfilDadosState extends State<PerfilDados> {
   bool _isEditarPerfilFormOpen = false;
   bool _isAgregadosOpen = false;
+  bool _isSending = false;
+  String _enteredNif = '';
+
+  final _formKey = GlobalKey<FormState>();
+
+  void _submitAgregado() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isSending = true;
+      });
+      await Future.delayed(Duration(seconds: 2));
+      _formKey.currentState!.save();
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+    }
+  }
 
   void _cancelarForm() {
     setState(() {
       _isEditarPerfilFormOpen = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -58,10 +78,63 @@ class _PerfilDadosState extends State<PerfilDados> {
                 setState(() {
                   _isAgregadosOpen = true;
                 });
-                await showDialog(
+                final dialogResult = await showDialog(
+                  barrierDismissible: false,
                   context: context,
-                  builder: (context) => AlertDialog(content: Text('AGREGADOS')),
+                  builder: (context) => AlertDialog(
+                    title: const TitleAppBAr(
+                        icon: Icons.person_add_alt_1_rounded,
+                        title: 'Adicionar Novo Agregado'),
+                    content: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                              'Por favor, insira o NIF correspondente ao agregado que deseja adicionar à sua lista.'),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              labelText: 'NUMERO DE IDENTIFICAÇÃO FISCAL',
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Este campo não pode ser vazio.';
+                              }
+                              if (!isValidNIF(value)) {
+                                return 'Este nif é inválido';
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) {
+                              _enteredNif = newValue!;
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: _isSending ? null : _submitAgregado,
+                        child: const Text('Confirmar'),
+                      ),
+                    ],
+                  ),
                 );
+                if (!dialogResult) {
+                  showToast(context, 'Teste erro', 'error');
+                } else {
+                  showToast(context, 'Teste sucesso', 'success');
+                }
               },
               icon: Icon(
                 Icons.person_add_alt_rounded,
@@ -118,7 +191,7 @@ class PerfilAgregados extends StatelessWidget {
         for (final agregado in widget.perfil.cliente.listaAgregados)
           Card(
             elevation: 0,
-            color: Theme.of(context).colorScheme.background.withOpacity(0.1),
+            color: Colors.transparent,
             shape: ContinuousRectangleBorder(
                 borderRadius: BorderRadius.circular(6)),
             child: Padding(
