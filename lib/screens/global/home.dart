@@ -7,7 +7,7 @@ import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/screens/global/entidade_info.dart';
-import 'package:smart_ticket/screens/global/ficha_cliente.dart';
+import 'package:smart_ticket/screens/global/ficha_utilizador.dart';
 import 'package:smart_ticket/screens/global/main_drawer.dart';
 import 'package:smart_ticket/screens/global/menu_principal.dart';
 import 'package:smart_ticket/screens/global/notificacoes.dart';
@@ -58,7 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
 
     if (_currentPageIndex == 0) {
-      activeScreen = const FichaClienteScreen();
+      activeScreen = const FichaUtilizadorScreen();
     }
     if (_currentPageIndex == 1) {
       activeScreen = const NotificacoesScreen();

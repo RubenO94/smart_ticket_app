@@ -6,17 +6,17 @@ class DownloadFaturaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        border:
-            Border.all(color: Theme.of(context).colorScheme.primaryContainer),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: GestureDetector(
-        onTap: createPdf,
+    return GestureDetector(
+      onTap: createPdf,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          border:
+              Border.all(color: Theme.of(context).colorScheme.primaryContainer),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        padding: const EdgeInsets.all(4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

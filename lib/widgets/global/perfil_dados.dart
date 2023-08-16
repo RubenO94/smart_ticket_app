@@ -26,11 +26,11 @@ class _PerfilDadosState extends State<PerfilDados> {
 
   void _submitAgregado() async {
     if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
       setState(() {
         _isSending = true;
       });
-      await Future.delayed(Duration(seconds: 2));
-      _formKey.currentState!.save();
+
       if (mounted) {
         Navigator.of(context).pop(true);
       }
@@ -84,7 +84,7 @@ class _PerfilDadosState extends State<PerfilDados> {
                   builder: (context) => AlertDialog(
                     title: const TitleAppBAr(
                         icon: Icons.person_add_alt_1_rounded,
-                        title: 'Adicionar Novo Agregado'),
+                        title: 'Novo Agregado'),
                     content: Form(
                       key: _formKey,
                       child: Column(

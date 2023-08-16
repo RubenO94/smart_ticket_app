@@ -1156,4 +1156,51 @@ class ApiService {
     }
     return 'error';
   }
+
+  Future<bool> postPerfilCliente(CLienteAlteracao alteracao) async {
+    const endPoint = '/SetPerfilCliente';
+
+    final body = {
+      'strEmail': alteracao.email,
+      'strNIF': alteracao.nif,
+      'strDataNascimento': alteracao.dataNascimento,
+      'strSexo': alteracao.sexo,
+      'strMorada': alteracao.morada,
+      'strMorada2': alteracao.morada2,
+      'strCodigoPostal': alteracao.dataNascimento,
+      'strLocalidade': alteracao.dataNascimento,
+      'strPais': alteracao.dataNascimento,
+      'strTelefone': alteracao.dataNascimento,
+      'strTelemovel': alteracao.dataNascimento,
+      'strContatoEmergencia': alteracao.dataNascimento,
+      'strContatoEmergencia2': alteracao.dataNascimento,
+      'strCartaoCidadao': alteracao.dataNascimento,
+      'obComprovativo': {
+        'strFilename': alteracao.comprovativo.fileName,
+        'strBase64': alteracao.comprovativo.base64
+      }
+    };
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data['nResultado'] != 0) {
+          return true;
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+
+    return false;
+  }
 }

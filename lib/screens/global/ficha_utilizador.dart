@@ -5,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/widgets/global/perfil_dados.dart';
+import 'package:smart_ticket/widgets/global/utilizador_estado_badge.dart';
 
-class FichaClienteScreen extends ConsumerWidget {
-  const FichaClienteScreen({super.key});
+class FichaUtilizadorScreen extends ConsumerWidget {
+  const FichaUtilizadorScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,36 +65,7 @@ class FichaClienteScreen extends ConsumerWidget {
                   const SizedBox(
                     height: 8,
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.circular(6)),
-                    child: Row(
-                      children: [
-                        Icon(Icons.check,
-                            size: 13,
-                            weight: 800,
-                            color: Theme.of(context).colorScheme.onSecondary),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          perfil.cliente.estado.toUpperCase(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall!
-                              .copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSecondary),
-                        )
-                      ],
-                    ),
-                  ),
+                  const UtilizadorEstadoBadge(),
                 ],
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -62,7 +63,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             final perfil = ref.read(perfilProvider);
             final isDataloaded = await ref.read(apiDataProvider.future);
             if (isDataloaded && mounted) {
-               setState(() {
+              setState(() {
                 _isSending = false;
               });
               print('Passou');
@@ -209,36 +210,75 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(Icons.mobile_friendly_rounded),
-            SizedBox(
-              width: 8,
-            ),
-            Text('Registo de  Dispositivo')
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        colors: [
+          Theme.of(context).colorScheme.onPrimary, // Branco
+          Theme.of(context).colorScheme.primary, // Verde mais claro
+        ],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      )),
+      child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 80),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Image.asset(
+                    'assets/images/seta.png',
+                    fit: BoxFit.contain,
+                    width: 48,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Text(
+                    'smart',
+                    style: GoogleFonts.robotoCondensed(
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold)),
+                  ),
+                  Text(
+                    'Ticket',
+                    style: GoogleFonts.robotoCondensed(
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .displaySmall!
+                            .copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 48,
+              ),
               Card(
                 color: Theme.of(context).colorScheme.surface,
                 shape: const ContinuousRectangleBorder(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(10),
+                    Radius.circular(6),
                   ),
                 ),
                 elevation: 0,
                 child: Container(
                   padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 24, bottom: 24),
+                      left: 16, right: 16, top: 48, bottom: 24),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -247,6 +287,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           decoration: const InputDecoration(
                             label: Text('NIF / Utilizador'),
                             border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.person),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -265,6 +306,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           decoration: const InputDecoration(
                             label: Text('Endereço de Email'),
                             border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.email),
                           ),
                           keyboardType: TextInputType.emailAddress,
                           textCapitalization: TextCapitalization.none,
@@ -281,25 +323,33 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             _enteredEmail = newValue!;
                           },
                         ),
+                        const SizedBox(
+                          height: 24,
+                        ),
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                            elevation: MaterialStatePropertyAll(0.5),
+                            padding: const MaterialStatePropertyAll(
+                                EdgeInsets.symmetric(horizontal: 24, vertical: 16)),
+                            shape: MaterialStatePropertyAll(
+                              ContinuousRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                            ),
+                          ),
+                          onPressed: _isSending ? null : _saveCredentials,
+                          icon: const Icon(Icons.phone_android_rounded),
+                          label: _isSending
+                              ? CircularProgressIndicator(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                )
+                              : const Text('Registar'),
+                        ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              FloatingActionButton.extended(
-                shape: const ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                foregroundColor: Theme.of(context).colorScheme.onSecondary,
-                onPressed: _isSending ? null : _saveCredentials,
-                label: _isSending
-                    ? CircularProgressIndicator(
-                        color: Theme.of(context).colorScheme.onSecondary,
-                      )
-                    : const Text('Registar'),
               ),
               const SizedBox(
                 height: 80,

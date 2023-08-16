@@ -1,19 +1,30 @@
-import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/global/perfil.dart';
-import 'package:smart_ticket/resources/data.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'dart:convert';
+import 'dart:io';
 
-class EditarPerfilForm extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as path;
+
+import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+
+import 'package:smart_ticket/resources/data.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
+
+class EditarPerfilForm extends ConsumerStatefulWidget {
   const EditarPerfilForm(
       {super.key, required this.perfil, required this.cancelarForm});
   final Perfil perfil;
   final void Function() cancelarForm;
 
   @override
-  State<EditarPerfilForm> createState() => _EditarPerfilFormState();
+  ConsumerState<EditarPerfilForm> createState() => _EditarPerfilFormState();
 }
 
-class _EditarPerfilFormState extends State<EditarPerfilForm> {
+class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
   final _formKey = GlobalKey<FormState>();
   final List<String> _sexOptions = ['Masculino', 'Feminino'];
 
@@ -31,34 +42,178 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
   String _enteredTelemovel = '';
   String _enteredContatoEmergencia = '';
   String _enteredContatoEmergencia2 = '';
+  String _base64File = '';
+  String _fileName = '';
+  bool _comprovativoNecessario = false;
+
+  Future<String> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      final selectedFile = File(result.files.single.path!);
+      List<int> fileBytes = selectedFile.readAsBytesSync();
+      _base64File = base64Encode(fileBytes);
+      final fileName = path.basename(result.files.single.name);
+      _fileName = fileName;
+      return fileName;
+    }
+    return '';
+  }
 
   void _saveForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      if (_comprovativoNecessario) {
+        final dialogResult = await showDialog(
+            context: context,
+            builder: (context) {
+              String fileName = _fileName;
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return AlertDialog(
+                    title: const TitleAppBAr(
+                        icon: Icons.insert_drive_file_sharp,
+                        title: 'Anexar Comprovativo'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            final result = await _pickFile();
+                            setState(() {
+                              fileName = result;
+                            });
+                          },
+                          icon: const Icon(Icons.file_upload_outlined),
+                          label: const Text('Anexar arquivo'),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: fileName.isEmpty
+                              ? Text(
+                                  'Nenhum arquivo selecionado',
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                  textAlign: TextAlign.center,
+                                )
+                              : RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text: 'Arquivo selecionado: \n',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge!
+                                            .copyWith(
+                                                fontWeight: FontWeight.bold),
+                                      ),
+                                      TextSpan(
+                                        text: fileName,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: fileName.isEmpty
+                            ? null
+                            : () => Navigator.of(context).pop(true),
+                        child: const Text('Enviar'),
+                      ),
+                    ],
+                  );
+                },
+              );
+            });
+        if (dialogResult) {
+          final CLienteAlteracao alteracao = CLienteAlteracao(
+            email: _enteredEMAIL.trim().isEmpty
+                ? widget.perfil.email
+                : _enteredEMAIL,
+            cartaoCidadao: _enteredCC.trim().isEmpty
+                ? widget.perfil.cliente.cartaoCidadao
+                : _enteredCC,
+            nif: _enteredNIF,
+            dataNascimento: _enteredDataNascimento.trim().isEmpty
+                ? widget.perfil.cliente.dataNascimento
+                : _enteredDataNascimento,
+            sexo: _enteredSexo.trim().isEmpty
+                ? widget.perfil.cliente.sexo
+                : _enteredSexo,
+            pais: _enteredPais,
+            localidade: _enteredLocalidade.trim().isEmpty
+                ? widget.perfil.cliente.localidade
+                : _enteredLocalidade,
+            codigoPostal: _enteredCodigoPostal.trim().isEmpty
+                ? widget.perfil.cliente.codigoPostal
+                : _enteredCodigoPostal,
+            morada: _enteredMorada.trim().isEmpty
+                ? widget.perfil.cliente.morada
+                : _enteredMorada,
+            morada2: _enteredMorada2.trim().isEmpty
+                ? widget.perfil.cliente.morada2
+                : _enteredMorada2,
+            telefone: _enteredTelefone.trim().isEmpty
+                ? widget.perfil.cliente.telefone
+                : _enteredTelefone,
+            telemovel: _enteredTelemovel.trim().isEmpty
+                ? widget.perfil.cliente.telemovel
+                : _enteredTelemovel,
+            contatoEmergencia: _enteredContatoEmergencia.trim().isEmpty
+                ? widget.perfil.cliente.contatoEmergencia
+                : _enteredContatoEmergencia,
+            contatoEmergencia2: _enteredContatoEmergencia2.trim().isEmpty
+                ? widget.perfil.cliente.contatoEmergencia2
+                : _enteredContatoEmergencia2,
+            comprovativo: Anexo(fileName: _fileName, base64: _base64File),
+          );
 
-      final CLienteAlteracao alteracao = CLienteAlteracao(
-        email: _enteredEMAIL,
-        cartaoCidadao: _enteredCC,
-        nif: _enteredNIF,
-        dataNascimento: _enteredDataNascimento,
-        sexo: _enteredSexo,
-        pais: _enteredPais,
-        localidade: _enteredLocalidade,
-        codigoPostal: _enteredCodigoPostal,
-        morada: _enteredMorada,
-        morada2: _enteredMorada2,
-        telefone: _enteredTelefone,
-        telemovel: _enteredTelemovel,
-        contatoEmergencia: _enteredContatoEmergencia,
-        contatoEmergencia2: _enteredContatoEmergencia2,
-        comprovativo: const Anexo(fileName: '', base64: ''),
-      );
+          final result =
+              await ref.read(apiServiceProvider).postPerfilCliente(alteracao);
+
+          if (result && mounted) {
+            showToast(context, 'sucesso', 'success');
+          } else {
+            showToast(context, 'erro', 'error');
+          }
+        }
+      }
     }
   }
 
-  String? _validator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Este campo não pode ser vazio';
+  String? _validator(String? value, String? campo) {
+    if (campo != null) {
+      if (widget.perfil.cliente.comprovativoObrigatorio.contains(campo)) {
+        _comprovativoNecessario = true;
+      }
+      final isRequired =
+          widget.perfil.cliente.preenchimentoObrigatorio.contains(campo);
+      if (isRequired) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Este campo não pode ser vazio';
+        }
+      }
     }
     return null;
   }
@@ -97,7 +252,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 labelText: 'NIF',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'strNIF'),
               onSaved: (newValue) {
                 _enteredNIF = newValue!;
               },
@@ -111,7 +266,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'CARTÃO DE CIDADÃO',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'CartaoCidadao'),
               onSaved: (newValue) {
                 _enteredCC = newValue!;
               },
@@ -125,7 +280,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'ENDEREÇO DE EMAIL',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'strEmail'),
               onSaved: (newValue) {
                 _enteredEMAIL = newValue!;
               },
@@ -158,7 +313,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                         _enteredSexo = value!;
                       },
                       decoration: const InputDecoration(
-                          labelText: 'SEXO', border: OutlineInputBorder()),
+                          labelText: 'GÊNERO', border: OutlineInputBorder()),
                     ),
                   ),
                 ),
@@ -211,7 +366,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'LOCALIDADE',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'strLocalidade'),
               onSaved: (newValue) {
                 _enteredLocalidade = newValue!;
               },
@@ -225,7 +380,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'MORADA',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'strMorada'),
               onSaved: (newValue) {
                 _enteredMorada = newValue!;
               },
@@ -239,7 +394,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'MORADA 2',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, null),
               onSaved: (newValue) {
                 _enteredMorada2 = newValue!;
               },
@@ -253,7 +408,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'CODIGO POSTAL',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, 'strCodigoPostal'),
               onSaved: (newValue) {
                 _enteredCodigoPostal = newValue!;
               },
@@ -297,7 +452,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'TELEFONE',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, null),
               onSaved: (newValue) {
                 _enteredTelefone = newValue!;
               },
@@ -311,7 +466,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'TELEMÓVEL',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, null),
               onSaved: (newValue) {
                 _enteredTelemovel = newValue!;
               },
@@ -325,7 +480,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'CONTATO DE EMERGÊNCIA',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, null),
               onSaved: (newValue) {
                 _enteredContatoEmergencia = newValue!;
               },
@@ -339,7 +494,7 @@ class _EditarPerfilFormState extends State<EditarPerfilForm> {
                 border: OutlineInputBorder(),
                 labelText: 'CONTATO DE EMERGÊNCIA 2',
               ),
-              validator: (value) => _validator(value),
+              validator: (value) => _validator(value, null),
               onSaved: (newValue) {
                 _enteredContatoEmergencia2 = newValue!;
               },
