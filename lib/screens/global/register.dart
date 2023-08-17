@@ -210,152 +210,216 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [
-          Theme.of(context).colorScheme.onPrimary, // Branco
-          Theme.of(context).colorScheme.primary, // Verde mais claro
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      )),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 80),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Image.asset(
-                    'assets/images/seta.png',
-                    fit: BoxFit.contain,
-                    width: 48,
-                  ),
-                  const SizedBox(
-                    width: 16,
-                  ),
-                  Text(
-                    'smart',
-                    style: GoogleFonts.robotoCondensed(
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onBackground,
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold)),
-                  ),
-                  Text(
-                    'Ticket',
-                    style: GoogleFonts.robotoCondensed(
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 48,
-                                fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 48,
-              ),
-              Card(
-                color: Theme.of(context).colorScheme.surface,
-                shape: const ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(6),
+    return Scaffold(
+
+     body: Container(
+      width: double.infinity,
+      height: double.infinity,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          colors: [
+            Theme.of(context).colorScheme.primary, // Branco
+            Theme.of(context).colorScheme.primary, // Verde mais claro
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        )),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 56),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.onPrimary)),
+                  child: Image.asset(
+                    'assets/images/seta-white.png',
+                    fit: BoxFit.scaleDown,
+                    width: 80,
                   ),
                 ),
-                elevation: 0,
-                child: Container(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 48, bottom: 24),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('NIF / Utilizador'),
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.person),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Este campo é obrigatório';
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) async {
-                            _enteredNIF = newValue!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            label: Text('Endereço de Email'),
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.email),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          textCapitalization: TextCapitalization.none,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Este campo é obrigatório';
-                            }
-                            if (!isValidEmail(value)) {
-                              return 'O endereço de email inserido é inválido';
-                            }
-                            return null;
-                          },
-                          onSaved: (newValue) {
-                            _enteredEmail = newValue!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 24,
-                        ),
-                        ElevatedButton.icon(
-                          style: ButtonStyle(
-                            elevation: MaterialStatePropertyAll(0.5),
-                            padding: const MaterialStatePropertyAll(
-                                EdgeInsets.symmetric(horizontal: 24, vertical: 16)),
-                            shape: MaterialStatePropertyAll(
-                              ContinuousRectangleBorder(
-                                borderRadius: BorderRadius.circular(6),
+                const SizedBox(
+                  height: 24,
+                ),
+                Card(
+                  color: Colors.transparent,
+                  shape: const ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(6),
+                    ),
+                  ),
+                  elevation: 0,
+                  child: Container(
+                    padding: const EdgeInsets.only(
+                        left: 16, right: 16, top: 48, bottom: 24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary),
+                            decoration: InputDecoration(
+                              label: const Text('NIF / Utilizador'),
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                              errorStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
+                                      color: Theme.of(context).colorScheme.error),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer),
                               ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer),
+                              ),
+                              focusColor: Theme.of(context).colorScheme.secondary,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary),
+                              ),
+                              prefixIconColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              prefixIcon: const Icon(Icons.person),
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Este campo é obrigatório';
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) async {
+                              _enteredNIF = newValue!;
+                            },
                           ),
-                          onPressed: _isSending ? null : _saveCredentials,
-                          icon: const Icon(Icons.phone_android_rounded),
-                          label: _isSending
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          TextFormField(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary),
+                            decoration: InputDecoration(
+                              label: const Text('Endereço de Email'),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer),
+                              ),
+                              focusColor: Theme.of(context).colorScheme.secondary,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary),
+                              ),
+                              prefixIconColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              prefixIcon: const Icon(Icons.email),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            textCapitalization: TextCapitalization.none,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Este campo é obrigatório';
+                              }
+                              if (!isValidEmail(value)) {
+                                return 'O endereço de email inserido é inválido';
+                              }
+                              return null;
+                            },
+                            onSaved: (newValue) {
+                              _enteredEmail = newValue!;
+                            },
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          _isSending
                               ? CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                 )
-                              : const Text('Registar'),
-                        ),
-                      ],
+                              : TextButton.icon(
+                                  style: ButtonStyle(
+                                    foregroundColor: MaterialStatePropertyAll(
+                                        Theme.of(context).colorScheme.onPrimary),
+                                    backgroundColor:
+                                        const MaterialStatePropertyAll(
+                                            Colors.transparent),
+                                    padding: const MaterialStatePropertyAll(
+                                        EdgeInsets.symmetric(
+                                            horizontal: 24, vertical: 16)),
+                                    shape: MaterialStatePropertyAll(
+                                      ContinuousRectangleBorder(
+                                          borderRadius: BorderRadius.circular(6),
+                                          side: BorderSide(
+                                              strokeAlign: 0.5,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary)),
+                                    ),
+                                  ),
+                                  onPressed: _isSending ? null : _saveCredentials,
+                                  icon: const Icon(Icons.phone_android_rounded),
+                                  label: const Text('Registar'),
+                                ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 80,
-              ),
-              const AboutApp(),
-            ],
+                const SizedBox(
+                  height: 100,
+                ),
+                const AboutApp(),
+              ],
+            ),
           ),
         ),
       ),

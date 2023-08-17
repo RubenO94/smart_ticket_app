@@ -43,13 +43,16 @@ class ContactItem extends StatelessWidget {
       },
       child: Row(
         children: [
-          Icon(icon, size: 12),
+          Icon(icon, size: 12, color: Theme.of(context).colorScheme.onPrimary),
           const SizedBox(
             width: 6,
           ),
           Text(
             contact,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ],
       ),
