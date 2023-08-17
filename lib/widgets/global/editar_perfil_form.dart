@@ -152,39 +152,39 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                 ? widget.perfil.email
                 : _enteredEMAIL,
             cartaoCidadao: _enteredCC.trim().isEmpty
-                ? widget.perfil.cliente.cartaoCidadao
+                ? widget.perfil.cliente!.cartaoCidadao
                 : _enteredCC,
             nif: _enteredNIF,
             dataNascimento: _enteredDataNascimento.trim().isEmpty
-                ? widget.perfil.cliente.dataNascimento
+                ? widget.perfil.cliente!.dataNascimento
                 : _enteredDataNascimento,
             sexo: _enteredSexo.trim().isEmpty
-                ? widget.perfil.cliente.sexo
+                ? widget.perfil.cliente!.sexo
                 : _enteredSexo,
             pais: _enteredPais,
             localidade: _enteredLocalidade.trim().isEmpty
-                ? widget.perfil.cliente.localidade
+                ? widget.perfil.cliente!.localidade
                 : _enteredLocalidade,
             codigoPostal: _enteredCodigoPostal.trim().isEmpty
-                ? widget.perfil.cliente.codigoPostal
+                ? widget.perfil.cliente!.codigoPostal
                 : _enteredCodigoPostal,
             morada: _enteredMorada.trim().isEmpty
-                ? widget.perfil.cliente.morada
+                ? widget.perfil.cliente!.morada
                 : _enteredMorada,
             morada2: _enteredMorada2.trim().isEmpty
-                ? widget.perfil.cliente.morada2
+                ? widget.perfil.cliente!.morada2
                 : _enteredMorada2,
             telefone: _enteredTelefone.trim().isEmpty
-                ? widget.perfil.cliente.telefone
+                ? widget.perfil.cliente!.telefone
                 : _enteredTelefone,
             telemovel: _enteredTelemovel.trim().isEmpty
-                ? widget.perfil.cliente.telemovel
+                ? widget.perfil.cliente!.telemovel
                 : _enteredTelemovel,
             contatoEmergencia: _enteredContatoEmergencia.trim().isEmpty
-                ? widget.perfil.cliente.contatoEmergencia
+                ? widget.perfil.cliente!.contatoEmergencia
                 : _enteredContatoEmergencia,
             contatoEmergencia2: _enteredContatoEmergencia2.trim().isEmpty
-                ? widget.perfil.cliente.contatoEmergencia2
+                ? widget.perfil.cliente!.contatoEmergencia2
                 : _enteredContatoEmergencia2,
             comprovativo: Anexo(fileName: _fileName, base64: _base64File),
           );
@@ -204,11 +204,11 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
 
   String? _validator(String? value, String? campo) {
     if (campo != null) {
-      if (widget.perfil.cliente.comprovativoObrigatorio.contains(campo)) {
+      if (widget.perfil.cliente!.comprovativoObrigatorio.contains(campo)) {
         _comprovativoNecessario = true;
       }
       final isRequired =
-          widget.perfil.cliente.preenchimentoObrigatorio.contains(campo);
+          widget.perfil.cliente!.preenchimentoObrigatorio.contains(campo);
       if (isRequired) {
         if (value == null || value.trim().isEmpty) {
           return 'Este campo não pode ser vazio';
@@ -229,7 +229,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
   @override
   Widget build(BuildContext context) {
     String? genero;
-    switch (widget.perfil.cliente.sexo) {
+    switch (widget.perfil.cliente!.sexo) {
       case 'M':
         genero = 'Masculino';
         break;
@@ -247,7 +247,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
         child: Column(
           children: [
             TextFormField(
-              initialValue: widget.perfil.cliente.nif,
+              initialValue: widget.perfil.cliente!.nif,
               decoration: const InputDecoration(
                 labelText: 'NIF',
                 border: OutlineInputBorder(),
@@ -261,7 +261,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 24,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.cartaoCidadao,
+              initialValue: widget.perfil.cliente!.cartaoCidadao,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CARTÃO DE CIDADÃO',
@@ -325,10 +325,10 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                         DateTime? dataEscolhida = await showDatePicker(
                           context: context,
                           initialDate:
-                              widget.perfil.cliente.dataNascimento.isEmpty
+                              widget.perfil.cliente!.dataNascimento.isEmpty
                                   ? DateTime.now()
                                   : convertStringToDate(
-                                      widget.perfil.cliente.dataNascimento),
+                                      widget.perfil.cliente!.dataNascimento),
                           firstDate: DateTime(1923),
                           lastDate: DateTime.now(),
                         );
@@ -347,7 +347,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                         ),
                         child: Text(_enteredDataNascimento.isNotEmpty
                             ? _enteredDataNascimento
-                            : widget.perfil.cliente.dataNascimento),
+                            : widget.perfil.cliente!.dataNascimento),
                       ),
                     ),
                   ),
@@ -361,7 +361,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.localidade,
+              initialValue: widget.perfil.cliente!.localidade,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'LOCALIDADE',
@@ -375,7 +375,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.morada,
+              initialValue: widget.perfil.cliente!.morada,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'MORADA',
@@ -389,7 +389,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.morada2,
+              initialValue: widget.perfil.cliente!.morada2,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'MORADA 2',
@@ -403,7 +403,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.codigoPostal,
+              initialValue: widget.perfil.cliente!.codigoPostal,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CODIGO POSTAL',
@@ -447,7 +447,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.telefone,
+              initialValue: widget.perfil.cliente!.telefone,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'TELEFONE',
@@ -461,7 +461,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.telemovel,
+              initialValue: widget.perfil.cliente!.telemovel,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'TELEMÓVEL',
@@ -475,7 +475,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.contatoEmergencia,
+              initialValue: widget.perfil.cliente!.contatoEmergencia,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CONTATO DE EMERGÊNCIA',
@@ -489,7 +489,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               height: 36,
             ),
             TextFormField(
-              initialValue: widget.perfil.cliente.contatoEmergencia2,
+              initialValue: widget.perfil.cliente!.contatoEmergencia2,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'CONTATO DE EMERGÊNCIA 2',

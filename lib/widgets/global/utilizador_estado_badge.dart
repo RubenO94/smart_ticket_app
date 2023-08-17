@@ -8,7 +8,7 @@ class UtilizadorEstadoBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final estado = ref.watch(
-      perfilProvider.select((value) => value.cliente.estado),
+      perfilProvider.select((value) => value.cliente!.estado),
     );
     final badgeIcon = ref.watch(utilizadorEstadoIconProvider);
     return Container(

@@ -57,7 +57,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final isNifValid = await apiService.getWSApp(_enteredNIF);
       if (isNifValid == 'success') {
         final isDeviceActivated = await apiService.isDeviceActivated();
-        if (isDeviceActivated && mounted) {
+        if (isDeviceActivated > 0 && mounted) {
           final hasPerfil = await apiService.getPerfil();
           if (hasPerfil) {
             final perfil = ref.read(perfilProvider);
@@ -211,17 +211,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-     body: Container(
-      width: double.infinity,
-      height: double.infinity,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
             gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.primary, // Branco
-            Theme.of(context).colorScheme.primary, // Verde mais claro
+            const Color.fromARGB(255, 21, 44, 31),
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.primaryContainer,
           ],
-          begin: Alignment.topLeft,
+          begin: Alignment.topCenter,
           end: Alignment.bottomRight,
         )),
         child: SingleChildScrollView(
@@ -233,7 +235,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
@@ -263,12 +265,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: Column(
                         children: [
                           TextFormField(
+                            cursorColor:
+                                Theme.of(context).colorScheme.onPrimary,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
                                 .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                             decoration: InputDecoration(
                               label: const Text('NIF / Utilizador'),
                               hintStyle: Theme.of(context)
@@ -289,24 +294,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   .textTheme
                                   .labelMedium!
                                   .copyWith(
-                                      color: Theme.of(context).colorScheme.error),
+                                      color:
+                                          Theme.of(context).colorScheme.error),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer),
+                                        .onPrimary),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer),
+                                        .onPrimary),
                               ),
-                              focusColor: Theme.of(context).colorScheme.secondary,
+                              focusColor:
+                                  Theme.of(context).colorScheme.secondary,
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                               ),
                               prefixIconColor:
                                   Theme.of(context).colorScheme.onPrimary,
@@ -326,12 +334,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             height: 16,
                           ),
                           TextFormField(
+                            cursorColor:
+                                Theme.of(context).colorScheme.onPrimary,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge!
                                 .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                             decoration: InputDecoration(
                               label: const Text('Endereço de Email'),
                               labelStyle: Theme.of(context)
@@ -345,19 +356,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 borderSide: BorderSide(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer),
+                                        .onPrimary),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .primaryContainer),
+                                        .onPrimary),
                               ),
-                              focusColor: Theme.of(context).colorScheme.secondary,
+                              focusColor:
+                                  Theme.of(context).colorScheme.secondary,
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onPrimary),
                               ),
                               prefixIconColor:
                                   Theme.of(context).colorScheme.onPrimary,
@@ -383,12 +396,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           _isSending
                               ? CircularProgressIndicator(
-                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
                                 )
                               : TextButton.icon(
                                   style: ButtonStyle(
                                     foregroundColor: MaterialStatePropertyAll(
-                                        Theme.of(context).colorScheme.onPrimary),
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
                                     backgroundColor:
                                         const MaterialStatePropertyAll(
                                             Colors.transparent),
@@ -397,7 +413,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                             horizontal: 24, vertical: 16)),
                                     shape: MaterialStatePropertyAll(
                                       ContinuousRectangleBorder(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           side: BorderSide(
                                               strokeAlign: 0.5,
                                               color: Theme.of(context)
@@ -405,7 +422,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                                   .onPrimary)),
                                     ),
                                   ),
-                                  onPressed: _isSending ? null : _saveCredentials,
+                                  onPressed:
+                                      _isSending ? null : _saveCredentials,
                                   icon: const Icon(Icons.phone_android_rounded),
                                   label: const Text('Registar'),
                                 ),

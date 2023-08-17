@@ -23,8 +23,7 @@ class MenuPrincipalScreen extends ConsumerWidget {
       children: [
         Container(
           padding: const EdgeInsets.only(left: 24, bottom: 16, top: 8),
-          width: double.infinity,
-          color: Theme.of(context).colorScheme.background.withOpacity(0.1),
+          color: Colors.transparent,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -65,9 +64,13 @@ class MenuPrincipalScreen extends ConsumerWidget {
                   ),
                   Text(
                     perfil.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 16,
                         ),
+                    softWrap: false,
                   ),
                 ],
               ),

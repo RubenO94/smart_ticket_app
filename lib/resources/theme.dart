@@ -24,6 +24,11 @@ final lightColorScheme = ColorScheme.fromSeed(
 final theme = ThemeData().copyWith(
   useMaterial3: true,
   scaffoldBackgroundColor: lightColorScheme.background,
+  textSelectionTheme: const TextSelectionThemeData(
+    cursorColor: Color(0xF5F5F5F5),
+    selectionHandleColor: Color(0xF5F5F5F5),
+    selectionColor: Color(0xF5F5F5F5),
+  ),
   colorScheme: lightColorScheme,
   textTheme: GoogleFonts.ubuntuCondensedTextTheme().copyWith(
     titleSmall: GoogleFonts.ubuntuCondensed(

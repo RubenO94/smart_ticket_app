@@ -188,7 +188,7 @@ class PerfilAgregados extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final agregado in widget.perfil.cliente.listaAgregados)
+        for (final agregado in widget.perfil.cliente!.listaAgregados)
           Card(
             elevation: 0,
             color: Colors.transparent,

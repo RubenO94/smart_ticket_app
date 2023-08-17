@@ -15,7 +15,7 @@ class PerfilDadosList extends ConsumerWidget {
     final Perfil perfil = ref.watch(perfilProvider);
     final Map<String, String> pais = listaPaises.firstWhere(
       (element) {
-        return element['codigo'] == perfil.cliente.pais;
+        return element['codigo'] == perfil.cliente!.pais;
       },
       orElse: () => {},
     );
@@ -29,7 +29,7 @@ class PerfilDadosList extends ConsumerWidget {
             ),
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'CATEGORIA', conteudo: perfil.cliente.categoria),
+                  titulo: 'CATEGORIA', conteudo: perfil.cliente!.categoria),
             ),
           ],
         ),
@@ -39,12 +39,12 @@ class PerfilDadosList extends ConsumerWidget {
           children: [
             Expanded(
               child:
-                  PerfilDadosItem(titulo: 'NIF', conteudo: perfil.cliente.nif),
+                  PerfilDadosItem(titulo: 'NIF', conteudo: perfil.cliente!.nif),
             ),
             Expanded(
               child: PerfilDadosItem(
                   titulo: 'CARTÃO DE CIDADÃO',
-                  conteudo: perfil.cliente.cartaoCidadao),
+                  conteudo: perfil.cliente!.cartaoCidadao),
             ),
           ],
         ),
@@ -53,29 +53,29 @@ class PerfilDadosList extends ConsumerWidget {
             Expanded(
               child: PerfilDadosItem(
                   titulo: 'DATA DE NASCIMENTO',
-                  conteudo: perfil.cliente.dataNascimento),
+                  conteudo: perfil.cliente!.dataNascimento),
             ),
             Expanded(
               child: PerfilDadosItem(
                   titulo: 'GÊNERO',
                   conteudo:
-                      perfil.cliente.sexo == 'M' ? 'Masculino' : 'Femenino'),
+                      perfil.cliente!.sexo == 'M' ? 'Masculino' : 'Femenino'),
             ),
           ],
         ),
         PerfilDadosItem(
             titulo: 'MORADA',
-            conteudo: '${perfil.cliente.morada}\n${perfil.cliente.morada2}'),
+            conteudo: '${perfil.cliente!.morada}\n${perfil.cliente!.morada2}'),
         Row(
           children: [
             Expanded(
               child: PerfilDadosItem(
                   titulo: 'CODÍGO POSTAL',
-                  conteudo: perfil.cliente.codigoPostal),
+                  conteudo: perfil.cliente!.codigoPostal),
             ),
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'LOCALIDADE', conteudo: perfil.cliente.localidade),
+                  titulo: 'LOCALIDADE', conteudo: perfil.cliente!.localidade),
             ),
           ],
         ),
@@ -84,20 +84,20 @@ class PerfilDadosList extends ConsumerWidget {
           children: [
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'TELEMÓVEL', conteudo: perfil.cliente.telemovel),
+                  titulo: 'TELEMÓVEL', conteudo: perfil.cliente!.telemovel),
             ),
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'TELEFONE', conteudo: perfil.cliente.telefone),
+                  titulo: 'TELEFONE', conteudo: perfil.cliente!.telefone),
             ),
           ],
         ),
         PerfilDadosItem(
             titulo: '1º CONTATO DE EMERGÊNCIA',
-            conteudo: perfil.cliente.contatoEmergencia),
+            conteudo: perfil.cliente!.contatoEmergencia),
         PerfilDadosItem(
             titulo: '2º CONTATO DE EMERGÊNCIA',
-            conteudo: perfil.cliente.contatoEmergencia2),
+            conteudo: perfil.cliente!.contatoEmergencia2),
       ],
     );
   }

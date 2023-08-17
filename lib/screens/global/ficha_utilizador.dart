@@ -50,6 +50,7 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                     perfil.name,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 14
                         ),
                   ),
                   const SizedBox(
@@ -65,6 +66,7 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                   const SizedBox(
                     height: 8,
                   ),
+                  if(perfil.userType == 1)
                   const UtilizadorEstadoBadge(),
                 ],
               ),
@@ -74,9 +76,11 @@ class FichaUtilizadorScreen extends ConsumerWidget {
             height: 24,
           ),
           Expanded(
-              child: PerfilDados(
-            perfil: perfil,
-          )),
+              child: perfil.userType == 0
+                  ? Container()
+                  : PerfilDados(
+                      perfil: perfil,
+                    )),
         ],
       ),
     );

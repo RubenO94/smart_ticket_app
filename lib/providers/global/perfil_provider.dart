@@ -30,30 +30,12 @@ class PerfilNotifier extends StateNotifier<Perfil> {
               id: '',
               name: '',
               email: '',
-              entity: '',
               photo: '',
               userType: -1,
               numeroCliente: '',
               janelas: [],
-              cliente: Cliente(
-                  comprovativoObrigatorio: [],
-                  preenchimentoObrigatorio: [],
-                  listaAgregados: [],
-                  categoria: '',
-                  cartaoCidadao: '',
-                  nif: '',
-                  dataNascimento: '',
-                  sexo: '',
-                  estado: '',
-                  pais: '',
-                  localidade: '',
-                  codigoPostal: '',
-                  morada: '',
-                  morada2: '',
-                  telefone: '',
-                  telemovel: '',
-                  contatoEmergencia: '',
-                  contatoEmergencia2: ''),
+              cliente: null,
+              funcionario: null,
               entidade: Entidade(
                   codigoPostal: '',
                   localidade: '',
@@ -88,7 +70,7 @@ final nomeUtilizadorProvider = Provider<String>((ref) {
 final utilizadorEstadoIconProvider = Provider<IconData>((ref) {
   final perfil = ref.watch(perfilProvider);
 
-  switch (perfil.cliente.estado) {
+  switch (perfil.cliente!.estado) {
     case 'Inativo':
       return Icons.disabled_by_default;
     case 'Ativo':

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +18,14 @@ class MainDrawer extends ConsumerStatefulWidget {
 
 class _MainDrawerState extends ConsumerState<MainDrawer> {
   final _formKey = GlobalKey<FormState>();
-  
+
   void _developerDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
         title: const Text('SmartTicket App'),
         content: Form(
           key: _formKey,
@@ -80,40 +84,43 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
         ref.watch(themeProvider) == ThemeMode.dark ?? false;
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.settings_applications_rounded),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Text(
-                      'Configurações',
-                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  onPressed: () async {
-                    await ref.read(secureStorageProvider).deleteAllSecureData();
-                    if (context.mounted) {
-                      // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
-                      SystemNavigator.pop();
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.logout_rounded,
-                    size: 32,
+            GestureDetector(
+              onLongPress: () => _developerDialog(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.settings_applications_rounded),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        'Configurações',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.onBackground),
+                      ),
+                    ],
                   ),
-                )
-              ],
+                  IconButton(
+                    onPressed: () async {
+                      await ref.read(secureStorageProvider).deleteAllSecureData();
+                      if (context.mounted) {
+                        // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
+                        SystemNavigator.pop();
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.logout_rounded,
+                      size: 32,
+                    ),
+                  )
+                ],
+              ),
             ),
             const SizedBox(
               height: 24,
@@ -129,10 +136,14 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                   width: 8,
                 ),
                 Switch(
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   key: ValueKey(isDarkModeEnabled),
                   thumbIcon: isDarkModeEnabled
                       ? const MaterialStatePropertyAll(
-                          Icon(Icons.dark_mode_rounded),
+                          Icon(
+                            Icons.dark_mode_rounded,
+                            color: Colors.white,
+                          ),
                         )
                       : const MaterialStatePropertyAll(
                           Icon(Icons.wb_sunny),
@@ -141,7 +152,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                   onChanged: (value) {
                     toggleTheme(value);
                   },
-                  activeColor: Theme.of(context).colorScheme.primary,
+                  activeColor: Theme.of(context).colorScheme.onInverseSurface,
                 ),
               ],
             ),

@@ -142,7 +142,7 @@ class ApiService {
   /// Retorna uma [Future<bool>] que indica se o dispositivo está ativado:
   /// - `true`: O dispositivo está ativado.
   /// - `false`: O dispositivo não está ativado ou ocorreu um erro durante a verificação.
-  Future<bool> isDeviceActivated() async {
+  Future<int> isDeviceActivated() async {
     const endPoint = '/IsDeviceActivated';
 
     try {
@@ -152,16 +152,15 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        if (data['nResultado'] == 1) {
-          return true;
+        if (data['nResultado'] > 0) {
+          return data['nResultado'];
         }
-        return false;
       }
     } catch (e) {
-      return false;
+      return 0;
     }
 
-    return false;
+    return 0;
   }
 
   /// Regista um dispositivo associado a um NIF e um email.
@@ -234,50 +233,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> dataPerfil = json.decode(response.body);
-        final Map<String, dynamic> dataCliente = dataPerfil['obCliente'];
+        final Map<String, dynamic> dataUtilizador =
+            dataPerfil['obCliente'] ?? dataPerfil['obFuncionario'];
         final Map<String, dynamic> dataEntidade = dataPerfil['obEntidade'];
-
-        //converte dataCliente['lAgregados'] pata List<Agregado>
-        List<Agregado> lAgregados = [];
-        List<String> preenchimentoObrigatorio = [];
-        List<String> comprovativoObrigatorio = [];
-
-        dataCliente['lAgregados'].forEach((element) {
-          lAgregados.add(
-            Agregado(
-                agregado: element['strAgregado'],
-                relacao: element['strRelacao']),
-          );
-        });
-
-        dataCliente['lCamposObrigaPreenchimento'].forEach((element) {
-          preenchimentoObrigatorio.add(element);
-        });
-
-        dataCliente['lCamposObrigaComprovativo'].forEach((element) {
-          comprovativoObrigatorio.add(element);
-        });
-
-        final Cliente cliente = Cliente(
-          listaAgregados: lAgregados,
-          comprovativoObrigatorio: comprovativoObrigatorio,
-          preenchimentoObrigatorio: preenchimentoObrigatorio,
-          categoria: dataCliente['strCategoria'],
-          cartaoCidadao: dataCliente['strCartaoCidadao'],
-          nif: dataCliente['strNIF'],
-          dataNascimento: dataCliente['strDataNascimento'],
-          sexo: dataCliente['strSexo'],
-          estado: dataCliente['strEstado'],
-          pais: dataCliente['strPais'],
-          localidade: dataCliente['strLocalidade'],
-          codigoPostal: dataCliente['strCodigoPostal'],
-          morada: dataCliente['strMorada'],
-          morada2: dataCliente['strMorada2'],
-          telefone: dataCliente['strTelefone'],
-          telemovel: dataCliente['strTelemovel'],
-          contatoEmergencia: dataCliente['strContatoEmergencia'],
-          contatoEmergencia2: dataCliente['strContatoEmergencia2'],
-        );
 
         final Entidade entidade = Entidade(
           codigoPostal: dataEntidade['strCodigoPostal'],
@@ -303,19 +261,88 @@ class ApiService {
           );
         });
 
-        final perfil = Perfil(
-          id: dataPerfil['strID'],
-          name: dataPerfil['strNome'],
-          email: dataPerfil['strEmail'],
-          entity: dataPerfil['obEntidade']['strNome'],
-          photo: dataPerfil['strFotoBase64'],
-          userType: dataPerfil['eTipoPerfil'],
-          numeroCliente: dataPerfil['strNumero'],
-          janelas: lJanelas,
-          cliente: cliente,
-          entidade: entidade,
-        );
-        ref.read(perfilProvider.notifier).setPerfil(perfil);
+        if (dataPerfil['obCliente'] != null) {
+          //converte dataCliente['lAgregados'] pata List<Agregado>
+          List<Agregado> lAgregados = [];
+          List<String> preenchimentoObrigatorio = [];
+          List<String> comprovativoObrigatorio = [];
+
+          dataUtilizador['lAgregados'].forEach((element) {
+            lAgregados.add(
+              Agregado(
+                  agregado: element['strAgregado'],
+                  relacao: element['strRelacao']),
+            );
+          });
+
+          dataUtilizador['lCamposObrigaPreenchimento'].forEach((element) {
+            preenchimentoObrigatorio.add(element);
+          });
+
+          dataUtilizador['lCamposObrigaComprovativo'].forEach((element) {
+            comprovativoObrigatorio.add(element);
+          });
+
+          final Cliente cliente = Cliente(
+            listaAgregados: lAgregados,
+            comprovativoObrigatorio: comprovativoObrigatorio,
+            preenchimentoObrigatorio: preenchimentoObrigatorio,
+            categoria: dataUtilizador['strCategoria'],
+            cartaoCidadao: dataUtilizador['strCartaoCidadao'],
+            nif: dataUtilizador['strNIF'],
+            dataNascimento: dataUtilizador['strDataNascimento'],
+            sexo: dataUtilizador['strSexo'],
+            estado: dataUtilizador['strEstado'],
+            pais: dataUtilizador['strPais'],
+            localidade: dataUtilizador['strLocalidade'],
+            codigoPostal: dataUtilizador['strCodigoPostal'],
+            morada: dataUtilizador['strMorada'],
+            morada2: dataUtilizador['strMorada2'],
+            telefone: dataUtilizador['strTelefone'],
+            telemovel: dataUtilizador['strTelemovel'],
+            contatoEmergencia: dataUtilizador['strContatoEmergencia'],
+            contatoEmergencia2: dataUtilizador['strContatoEmergencia2'],
+          );
+
+          final perfil = Perfil(
+            id: dataPerfil['strID'],
+            name: dataPerfil['strNome'],
+            email: dataPerfil['strEmail'],
+            photo: dataPerfil['strFotoBase64'],
+            userType: dataPerfil['eTipoPerfil'],
+            numeroCliente: dataPerfil['strNumero'],
+            janelas: lJanelas,
+            cliente: cliente,
+            funcionario: null,
+            entidade: entidade,
+          );
+          ref.read(perfilProvider.notifier).setPerfil(perfil);
+        } else {
+          final funcionario = Funcionario(
+            categoria: dataUtilizador['strCategoria'],
+            morada: dataUtilizador['strMorada'],
+            morada2: dataUtilizador['strMorada2'],
+            telefone: dataUtilizador['strTelefone'],
+            telemovel: dataUtilizador['strTelemovel'],
+            localidade: dataUtilizador['strLocalidade'],
+            codigoPostal: dataUtilizador['strCodigoPostal'],
+          );
+
+          final perfil = Perfil(
+            id: dataPerfil['strID'],
+            name: dataPerfil['strNome'],
+            email: dataPerfil['strEmail'],
+            photo: dataPerfil['strFotoBase64'],
+            userType: dataPerfil['eTipoPerfil'],
+            numeroCliente: dataPerfil['strNumero'],
+            janelas: lJanelas,
+            cliente: null,
+            funcionario: funcionario,
+            entidade: entidade,
+          );
+          ref.read(perfilProvider.notifier).setPerfil(perfil);
+        }
+
         return true;
       }
     } catch (e) {

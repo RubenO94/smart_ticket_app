@@ -70,8 +70,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     return Scaffold(
         key: _scaffoldKey,
         drawerEnableOpenDragGesture: false,
-        drawer: const Drawer(
-          child: MainDrawer(),
+        drawer: Drawer(
+          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(6),
+            ),
+          ),
+          child: const MainDrawer(),
         ),
         onDrawerChanged: (isOpened) {
           if (!isOpened) {
@@ -87,7 +93,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Theme.of(context).colorScheme.background.withOpacity(0.1),
           scrolledUnderElevation: 0.0,
           title: Text(
-            widget.perfil.entity,
+            widget.perfil.entidade.nome,
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
@@ -101,8 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           },
         ),
         bottomNavigationBar: CurvedNavigationBar(
-          backgroundColor:
-              Theme.of(context).colorScheme.background.withOpacity(0.1),
+          backgroundColor: Colors.transparent,
           color: Theme.of(context).colorScheme.primary,
           animationDuration: const Duration(milliseconds: 300),
           index: _currentPageIndex,
