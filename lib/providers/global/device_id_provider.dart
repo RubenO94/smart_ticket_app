@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider que fornece o ID do dispositivo.
 final deviceIdProvider = FutureProvider<String>((ref) async {
-
   //TODO: Retirar id estático e voltar ao getdeviceid;
   // return 'ae4448759d50bc39';
   if (Platform.isAndroid) {

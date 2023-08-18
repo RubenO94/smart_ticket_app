@@ -59,7 +59,7 @@ class Cliente {
   });
 }
 
-class CLienteAlteracao {
+class ClienteAlteracao {
   final String cartaoCidadao;
   final String codigoPostal;
   final Anexo comprovativo;
@@ -76,7 +76,7 @@ class CLienteAlteracao {
   final String telefone;
   final String telemovel;
 
-  CLienteAlteracao({
+  ClienteAlteracao({
     required this.email,
     required this.cartaoCidadao,
     required this.nif,

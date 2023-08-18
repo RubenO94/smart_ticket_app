@@ -66,11 +66,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               setState(() {
                 _isSending = false;
               });
-              print('Passou');
               Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (context) => HomeScreen(perfil: perfil),
               ));
-              print('Passou 2 vezes');
               setState(() {
                 _isSending = false;
               });
@@ -87,7 +85,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           if (registerStatus == 'true' && mounted) {
             final confirmationDialog = await _showConfirmationDialog();
             if (confirmationDialog && mounted) {
-              showToast(context, 'Sucesso! O seu dispositivo foi registrado.',
+              showToast(context, 'Sucesso! O seu dispositivo foi registado.',
                   'success');
               final hasPerfil = await apiService.getPerfil();
               if (hasPerfil) {
@@ -210,233 +208,244 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-          colors: [
-            const Color.fromARGB(255, 21, 44, 31),
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.primaryContainer,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomRight,
-        )),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 56),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.onPrimary)),
-                  child: Image.asset(
-                    'assets/images/seta-white.png',
-                    fit: BoxFit.scaleDown,
-                    width: 80,
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Card(
-                  color: Colors.transparent,
-                  shape: const ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(6),
+    return Theme(
+      data: ThemeData(
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: Color(0xF5F5F5F5),
+          selectionHandleColor: Color(0xF5F5F5F5),
+          selectionColor: Color(0xF5F5F5F5),
+        ),
+      ),
+      child: Scaffold(
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 21, 44, 31),
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.primaryContainer,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomRight,
+          )),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 16, top: 56),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: Theme.of(context).colorScheme.onPrimary)),
+                    child: Image.asset(
+                      'assets/images/seta-white.png',
+                      fit: BoxFit.scaleDown,
+                      width: 80,
                     ),
                   ),
-                  elevation: 0,
-                  child: Container(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, top: 48, bottom: 24),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            cursorColor:
-                                Theme.of(context).colorScheme.onPrimary,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                            decoration: InputDecoration(
-                              label: const Text('NIF / Utilizador'),
-                              hintStyle: Theme.of(context)
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Card(
+                    color: Colors.transparent,
+                    shape: const ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(6),
+                      ),
+                    ),
+                    elevation: 0,
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 48, bottom: 24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              cursorColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
                                   .copyWith(
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onPrimary),
-                              labelStyle: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
-                              errorStyle: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.error),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              focusColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              prefixIconColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              prefixIcon: const Icon(Icons.person),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Este campo é obrigatório';
-                              }
-                              return null;
-                            },
-                            onSaved: (newValue) async {
-                              _enteredNIF = newValue!;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          TextFormField(
-                            cursorColor:
-                                Theme.of(context).colorScheme.onPrimary,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                            decoration: InputDecoration(
-                              label: const Text('Endereço de Email'),
-                              labelStyle: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              focusColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimary),
-                              ),
-                              prefixIconColor:
-                                  Theme.of(context).colorScheme.onPrimary,
-                              prefixIcon: const Icon(Icons.email),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            textCapitalization: TextCapitalization.none,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Este campo é obrigatório';
-                              }
-                              if (!isValidEmail(value)) {
-                                return 'O endereço de email inserido é inválido';
-                              }
-                              return null;
-                            },
-                            onSaved: (newValue) {
-                              _enteredEmail = newValue!;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 24,
-                          ),
-                          _isSending
-                              ? CircularProgressIndicator(
-                                  color:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                )
-                              : TextButton.icon(
-                                  style: ButtonStyle(
-                                    foregroundColor: MaterialStatePropertyAll(
-                                        Theme.of(context)
+                              decoration: InputDecoration(
+                                label: const Text('NIF / Utilizador'),
+                                hintStyle: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .copyWith(
+                                        color: Theme.of(context)
                                             .colorScheme
                                             .onPrimary),
-                                    backgroundColor:
-                                        const MaterialStatePropertyAll(
-                                            Colors.transparent),
-                                    padding: const MaterialStatePropertyAll(
-                                        EdgeInsets.symmetric(
-                                            horizontal: 24, vertical: 16)),
-                                    shape: MaterialStatePropertyAll(
-                                      ContinuousRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          side: BorderSide(
-                                              strokeAlign: 0.5,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimary)),
-                                    ),
-                                  ),
-                                  onPressed:
-                                      _isSending ? null : _saveCredentials,
-                                  icon: const Icon(Icons.phone_android_rounded),
-                                  label: const Text('Registar'),
+                                labelStyle: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                errorStyle: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .error),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
                                 ),
-                        ],
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                                focusColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                                prefixIconColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                prefixIcon: const Icon(Icons.person),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Este campo é obrigatório';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) async {
+                                _enteredNIF = newValue!;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            TextFormField(
+                              cursorColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                              decoration: InputDecoration(
+                                label: const Text('Endereço de Email'),
+                                labelStyle: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                                focusColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary),
+                                ),
+                                prefixIconColor:
+                                    Theme.of(context).colorScheme.onPrimary,
+                                prefixIcon: const Icon(Icons.email),
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              textCapitalization: TextCapitalization.none,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Este campo é obrigatório';
+                                }
+                                if (!isValidEmail(value)) {
+                                  return 'O endereço de email inserido é inválido';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                _enteredEmail = newValue!;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 24,
+                            ),
+                            _isSending
+                                ? CircularProgressIndicator(
+                                    color:
+                                        Theme.of(context).colorScheme.onPrimary,
+                                  )
+                                : TextButton.icon(
+                                    style: ButtonStyle(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                          Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
+                                      backgroundColor:
+                                          const MaterialStatePropertyAll(
+                                              Colors.transparent),
+                                      padding: const MaterialStatePropertyAll(
+                                          EdgeInsets.symmetric(
+                                              horizontal: 24, vertical: 16)),
+                                      shape: MaterialStatePropertyAll(
+                                        ContinuousRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            side: BorderSide(
+                                                strokeAlign: 0.5,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary)),
+                                      ),
+                                    ),
+                                    onPressed:
+                                        _isSending ? null : _saveCredentials,
+                                    icon:
+                                        const Icon(Icons.phone_android_rounded),
+                                    label: const Text('Registar'),
+                                  ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 100,
-                ),
-                const AboutApp(),
-              ],
+                  const SizedBox(
+                    height: 100,
+                  ),
+                  const AboutApp(),
+                ],
+              ),
             ),
           ),
         ),

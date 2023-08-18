@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -47,20 +48,24 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
   bool _comprovativoNecessario = false;
 
   Future<String> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    PermissionStatus status = await Permission.manageExternalStorage.request();
+    if (status.isGranted) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      final selectedFile = File(result.files.single.path!);
-      List<int> fileBytes = selectedFile.readAsBytesSync();
-      _base64File = base64Encode(fileBytes);
-      final fileName = path.basename(result.files.single.name);
-      _fileName = fileName;
-      return fileName;
+      if (result != null) {
+        final selectedFile = File(result.files.single.path!);
+        List<int> fileBytes = selectedFile.readAsBytesSync();
+        _base64File = base64Encode(fileBytes);
+        final fileName = path.basename(result.files.single.name);
+        _fileName = fileName;
+        return fileName;
+      }
     }
     return '';
   }
 
   void _saveForm() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       if (_comprovativoNecessario) {
@@ -147,7 +152,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               );
             });
         if (dialogResult) {
-          final CLienteAlteracao alteracao = CLienteAlteracao(
+          final ClienteAlteracao alteracao = ClienteAlteracao(
             email: _enteredEMAIL.trim().isEmpty
                 ? widget.perfil.email
                 : _enteredEMAIL,
@@ -192,10 +197,20 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
           final result =
               await ref.read(apiServiceProvider).postPerfilCliente(alteracao);
 
-          if (result && mounted) {
-            showToast(context, 'sucesso', 'success');
+          //TODO: Melhorar a saida das mensagens de erro
+          if (result['resultado'] > 0 && mounted) {
+            widget.cancelarForm();
+            await showDialog(
+              context: context,
+              builder: (context) =>
+                  showMensagemDialog(context, 'Sucesso!', result['mensagem']),
+            );
           } else {
-            showToast(context, 'erro', 'error');
+            await showDialog(
+              context: context,
+              builder: (context) =>
+                  showMensagemDialog(context, 'Erro!', result['mensagem']),
+            );
           }
         }
       }
@@ -313,7 +328,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                         _enteredSexo = value!;
                       },
                       decoration: const InputDecoration(
-                          labelText: 'GÊNERO', border: OutlineInputBorder()),
+                          labelText: 'GÉNERO', border: OutlineInputBorder()),
                     ),
                   ),
                 ),
@@ -506,25 +521,6 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                 ElevatedButton.icon(
                   style: ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).colorScheme.secondary),
-                    foregroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).colorScheme.onSecondary),
-                    shape: MaterialStatePropertyAll(
-                      ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                    ),
-                  ),
-                  onPressed: widget.cancelarForm,
-                  icon: const Icon(Icons.cancel),
-                  label: const Text('Cancelar'),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                ElevatedButton.icon(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
                         Theme.of(context).colorScheme.primary),
                     foregroundColor: MaterialStatePropertyAll(
                         Theme.of(context).colorScheme.onPrimary),
@@ -537,6 +533,25 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                   onPressed: _saveForm,
                   icon: const Icon(Icons.save),
                   label: const Text('Guardar'),
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                ElevatedButton.icon(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.secondary),
+                    foregroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.onSecondary),
+                    shape: MaterialStatePropertyAll(
+                      ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                  onPressed: widget.cancelarForm,
+                  icon: const Icon(Icons.cancel),
+                  label: const Text('Cancelar'),
                 ),
               ],
             )

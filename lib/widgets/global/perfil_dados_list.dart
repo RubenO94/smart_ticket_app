@@ -57,7 +57,7 @@ class PerfilDadosList extends ConsumerWidget {
             ),
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'GÊNERO',
+                  titulo: 'GÉNERO',
                   conteudo:
                       perfil.cliente!.sexo == 'M' ? 'Masculino' : 'Femenino'),
             ),

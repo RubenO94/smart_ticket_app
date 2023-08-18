@@ -1184,7 +1184,34 @@ class ApiService {
     return 'error';
   }
 
-  Future<bool> postPerfilCliente(CLienteAlteracao alteracao) async {
+  /// Envia uma solicitação para atualizar o perfil de um cliente.
+  ///
+  /// Esta função envia os dados fornecidos em um objeto [ClienteAlteracao] para
+  /// um endpoint específico no servidor. Ela retorna um [Future] contendo um mapa
+  /// com informações sobre o resultado da operação.
+  ///
+  /// - Parâmetros:
+  ///   - [alteracao]: Um objeto [ClienteAlteracao] contendo as informações a serem
+  ///     atualizadas no perfil do cliente.
+  ///
+  /// - Retorna:
+  ///   Um [Future] contendo um [Map] com as chaves:
+  ///   - 'resultado': Um valor numérico indicando o resultado da operação.
+  ///   - 'mensagem': Uma mensagem descritiva relacionada ao resultado.
+  ///
+  /// Em caso de sucesso, 'resultado' será um valor positivo indicando sucesso,
+  /// e 'mensagem' conterá uma descrição relacionada à operação realizada.
+  ///
+  /// Em caso de erro, 'resultado' será 0 e 'mensagem' conterá uma mensagem de erro.
+  ///
+  /// Exemplo:
+  /// ```dart
+  /// final alteracao = ClienteAlteracao(/* ... */);
+  /// final resultado = await postPerfilCliente(alteracao);
+  /// print('Resultado: ${resultado['resultado']}, Mensagem: ${resultado['mensagem']}');
+  /// ```
+  Future<Map<String, dynamic>> postPerfilCliente(
+      ClienteAlteracao alteracao) async {
     const endPoint = '/SetPerfilCliente';
 
     final body = {
@@ -1219,15 +1246,63 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        if (data['nResultado'] != 0) {
-          return true;
-        }
+        return {
+          'resultado': data['nResultado'],
+          'mensagem': data['strDescricao'],
+        };
       }
     } catch (e) {
-      print(e.toString());
-      return false;
+      return {
+        'resultado': 0,
+        'mensagem': 'ERRO: ${e.toString()}',
+      };
     }
 
-    return false;
+    return {
+      'resultado': 0,
+      'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
+    };
+  }
+
+
+  Future<Map<String, dynamic>> postPerfilAssociarAgregado(
+      NovoAgregado novoAgregado) async {
+    const endPoint = '/SetPerfilAssociarAgregado';
+
+    final body = {
+      'strNIF': novoAgregado.nif,
+      'obComprovativo': {
+        'strFilename': novoAgregado.comprovativo.fileName,
+        'strBase64': novoAgregado.comprovativo.base64
+      }
+    };
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return {
+          'resultado': data['nResultado'],
+          'mensagem': data['strDescricao'],
+        };
+      }
+    } catch (e) {
+      return {
+        'resultado': 0,
+        'mensagem': 'ERRO: ${e.toString()}',
+      };
+    }
+
+    return {
+      'resultado': 0,
+      'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
+    };
   }
 }

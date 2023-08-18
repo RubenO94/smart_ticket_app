@@ -57,7 +57,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
           context,
           'O seu pedido foi adicionado á lista de pendentes com sucesso.',
           'success');
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     } else if (mounted) {
       final dialogResult = await showDialog(
         context: context,
@@ -111,7 +111,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                   isDense: true,
                   menuMaxHeight: 200,
                   decoration: const InputDecoration(
-                      labelText: 'Periodo Letivo',
+                      labelText: 'Período Letivo',
                       prefixIcon: Icon(Icons.calendar_month_rounded)),
                   value: null,
                   onChanged: (value) {
@@ -124,7 +124,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                   },
                   validator: (value) {
                     if (value == null) {
-                      return 'Selecione um Periodo Letivo';
+                      return 'Selecione um Período Letivo';
                     }
                     return null;
                   },
@@ -269,7 +269,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                             horizontal: 24.0, vertical: 48.0),
                         child: Center(
                           child: Text(
-                            'Por favor, selecione um periodo létivo e uma atividade',
+                            'Por favor, selecione um período letivo e uma atividade',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
@@ -283,7 +283,8 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
         ),
         persistentFooterButtons: [
           FloatingActionButton.extended(
-            shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            shape: ContinuousRectangleBorder(
+                borderRadius: BorderRadius.circular(6)),
             foregroundColor: aulaSelecionada == null
                 ? Theme.of(context).disabledColor
                 : null,

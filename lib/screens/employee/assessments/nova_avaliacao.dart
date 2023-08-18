@@ -7,7 +7,6 @@ import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-
 import 'conclusao_avaliacao.dart';
 
 class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
@@ -35,8 +34,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
 
   void loadPerguntas() {
     setState(() {
-      _respostas = widget.aluno.respostas;
-      _perguntasList = ref.read(perguntasNotifierProvider);
+      _respostas = [...widget.aluno.respostas];
     });
   }
 
@@ -54,7 +52,9 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
               child: const Text('Cancelar'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
               child: const Text('Confirmar'),
             ),
           ],
@@ -136,12 +136,6 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    loadPerguntas();
-  }
-
-  @override
   void dispose() {
     _pageController.dispose();
     _currentPageIndex = 0;
@@ -150,6 +144,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _perguntasList = ref.watch(perguntasNotifierProvider);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: _avaliacaoCompleted
