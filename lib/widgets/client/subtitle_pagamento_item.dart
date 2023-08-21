@@ -12,26 +12,10 @@ class SubtitlePagamentoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 8),
-        RichText(
-          text: TextSpan(children: [
-            TextSpan(
-              text: 'Valor:  ',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-            TextSpan(
-              text: '${pagamento.valor.toStringAsFixed(2)} €',
-              style: Theme.of(context).textTheme.labelLarge,
-            ),
-          ]),
-        ),
-        const SizedBox(height: 8),
         RichText(
           text: TextSpan(
             children: [
@@ -60,6 +44,7 @@ class SubtitlePagamentoItem extends StatelessWidget {
             ],
           ),
         ),
+        
       ],
     );
   }

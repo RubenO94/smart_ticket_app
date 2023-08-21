@@ -10,36 +10,39 @@ class TurmaItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3,
-      shape: const ContinuousRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
+      elevation: 0.2,
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
       ),
-      color: Theme.of(context).colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListTile(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: ((context) => TurmaDetails(
-                      idAula: turma.id,
-                    )),
+      child: ListTile(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: ((context) => TurmaDetails(
+                    idAula: turma.id,
+                  )),
+            ),
+          );
+        },
+        contentPadding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(right: 16),
+              width: 10,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ],
+        ),
+        title: Text(
+          turma.descricao,
+          style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontWeight: FontWeight.bold,
               ),
-            );
-          },
-          leading: Icon(
-            Icons.groups_2_rounded,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          title: Text(
-            turma.descricao,
-            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
         ),
       ),
     );

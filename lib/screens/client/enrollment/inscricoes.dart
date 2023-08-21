@@ -81,6 +81,21 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
     }
   }
 
+  void _novaInscricao() async {
+    final bool result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NovaInscricao(),
+      ),
+    );
+
+    if (result) {
+      setState(() {
+        _isInscritas = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Aula> aulasInscritas = ref.watch(aulasInscritasProvider);
@@ -200,14 +215,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
           ]),
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const NovaInscricao(),
-            ),
-          );
-        },
+        onPressed: _novaInscricao,
         child: const Icon(Icons.add),
       ),
     );

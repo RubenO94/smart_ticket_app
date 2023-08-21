@@ -1,27 +1,210 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as path;
 
 import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/global/editar_perfil_form.dart';
 import 'package:smart_ticket/widgets/global/perfil_dados_list.dart';
+import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
-class PerfilDados extends StatefulWidget {
+class PerfilDados extends ConsumerStatefulWidget {
   const PerfilDados({super.key, required this.perfil});
   final Perfil perfil;
 
   @override
-  State<PerfilDados> createState() => _PerfilDadosState();
+  ConsumerState<PerfilDados> createState() => _PerfilDadosState();
 }
 
-class _PerfilDadosState extends State<PerfilDados> {
+class _PerfilDadosState extends ConsumerState<PerfilDados> {
   bool _isEditarPerfilFormOpen = false;
   bool _isAgregadosOpen = false;
+  bool _isSending = false;
+  bool _isNifValid = false;
+  String _enteredNif = '';
+  String _base64File = '';
+  String _fileName = '';
+
+  final _formKey = GlobalKey<FormState>();
+
+  void _showAgregadoDialog() async {
+    setState(() {
+      _isAgregadosOpen = true;
+    });
+    final dialogResult = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          String fileName = _fileName;
+          bool isNifValid = _isNifValid;
+          return StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: const TitleAppBAr(
+                    icon: Icons.person_add_alt_1_rounded,
+                    title: 'Novo Agregado'),
+                content: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                          'Por favor, insira o NIF correspondente ao agregado que deseja adicionar à sua lista.'),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          labelText: 'NUMERO DE IDENTIFICAÇÃO FISCAL',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Este campo não pode ser vazio.';
+                          }
+                          if (!isValidNIF(value)) {
+                            return 'Este nif é inválido';
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          _enteredNif = newValue!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Text(
+                        'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          final result = await _pickFile();
+                          setState(() {
+                            fileName = result;
+                          });
+                        },
+                        icon: const Icon(Icons.file_upload_outlined),
+                        label: const Text('Anexar arquivo'),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: fileName.isEmpty
+                            ? Text(
+                                'Nenhum arquivo selecionado',
+                                style: Theme.of(context).textTheme.labelSmall,
+                                textAlign: TextAlign.center,
+                              )
+                            : RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'Arquivo selecionado: \n',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge!
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                    TextSpan(
+                                      text: fileName,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: _isSending || _base64File.isEmpty
+                        ? null
+                        : _submitAgregado,
+                    child: const Text('Confirmar'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Cancelar'),
+                  ),
+                ],
+              );
+            },
+          );
+        });
+    if (!dialogResult) {
+      showToast(context, 'Teste erro', 'error');
+    } else {
+      showToast(context, 'Teste sucesso', 'success');
+    }
+  }
+
+  Future<String> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      final selectedFile = File(result.files.single.path!);
+      List<int> fileBytes = selectedFile.readAsBytesSync();
+      _base64File = base64Encode(fileBytes);
+      final fileName = path.basename(result.files.single.name);
+      _fileName = fileName;
+      return fileName;
+    }
+    return '';
+  }
+
+  void _submitAgregado() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isNifValid = true;
+      });
+
+      _formKey.currentState!.save();
+      setState(() {
+        _isSending = true;
+      });
+      if (_base64File.isNotEmpty) {
+        final NovoAgregado agregado = NovoAgregado(
+          nif: _enteredNif,
+          comprovativo: Anexo(fileName: _fileName, base64: _base64File),
+        );
+        final resultado = await ref
+            .read(apiServiceProvider)
+            .postPerfilAssociarAgregado(agregado);
+        if (resultado['resultado'] > 0 && mounted) {
+          Navigator.of(context).pop(true);
+        } else if (mounted) {
+          Navigator.of(context).pop(false);
+        }
+      }
+    }
+  }
 
   void _cancelarForm() {
     setState(() {
       _isEditarPerfilFormOpen = false;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -53,16 +236,8 @@ class _PerfilDadosState extends State<PerfilDados> {
                   .copyWith(color: Theme.of(context).colorScheme.tertiary),
             ),
             trailing: IconButton(
-              onPressed: () async {
-                //TODO: adicionar um novo agregado.
-                setState(() {
-                  _isAgregadosOpen = true;
-                });
-                await showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(content: Text('AGREGADOS')),
-                );
-              },
+              onPressed: _showAgregadoDialog,
+              //TODO: adicionar um novo agregado.
               icon: Icon(
                 Icons.person_add_alt_rounded,
                 color: Theme.of(context).colorScheme.secondary,
@@ -115,10 +290,10 @@ class PerfilAgregados extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final agregado in widget.perfil.cliente.listaAgregados)
+        for (final agregado in widget.perfil.cliente!.listaAgregados)
           Card(
             elevation: 0,
-            color: Theme.of(context).colorScheme.background.withOpacity(0.1),
+            color: Colors.transparent,
             shape: ContinuousRectangleBorder(
                 borderRadius: BorderRadius.circular(6)),
             child: Padding(

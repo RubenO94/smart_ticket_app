@@ -65,3 +65,16 @@ void showToast(BuildContext context, String message, String type) {
     ),
   );
 }
+
+AlertDialog showMensagemDialog(
+    BuildContext context, String titulo, String mensagem) {
+  return AlertDialog(
+    shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    title: Text(titulo),
+    content: Text(mensagem),
+    actions: [
+      TextButton(
+          onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))
+    ],
+  );
+}

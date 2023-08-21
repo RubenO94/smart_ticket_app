@@ -25,7 +25,8 @@ class HorarioDiaItem extends ConsumerWidget {
             (dayOfWeek == 'Wednesday' && event.wednesday) ||
             (dayOfWeek == 'Thursday' && event.thursday) ||
             (dayOfWeek == 'Friday' && event.friday) ||
-            (dayOfWeek == 'Saturday' && event.saturday))
+            (dayOfWeek == 'Saturday' && event.saturday) ||
+            (dayOfWeek == 'Sunday' && event.sunday))
         .toList();
 
     // eventsForDay.sort((a, b) => int.parse(a.horaInicio.split(":")[0])

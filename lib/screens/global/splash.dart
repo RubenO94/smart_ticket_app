@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/main.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -8,6 +9,7 @@ import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/screens/global/register.dart';
+import 'package:smart_ticket/screens/global/update.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -32,7 +34,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final apiService = ref.read(apiServiceProvider);
 
     final isDeviceActivated = await apiService.isDeviceActivated();
-    if (isDeviceActivated) {
+    if (isDeviceActivated > 0 && isDeviceActivated == serviceVersion) {
       final hasPerfil = await apiService.getPerfil();
       if (hasPerfil) {
         final perfil = ref.read(perfilProvider);
@@ -44,6 +46,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           return;
         }
       }
+    }
+
+    if (isDeviceActivated > 0 &&
+        isDeviceActivated != serviceVersion &&
+        mounted) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const UpdateScreen(),
+      ));
+      return;
     }
 
     if (mounted) {

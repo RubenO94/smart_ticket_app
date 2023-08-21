@@ -1,25 +1,5 @@
 import 'package:flutter/material.dart';
 
-enum Estado {
-  inativo,
-  ativo,
-  devedor,
-  contencioso,
-  credito,
-  banido,
-  suspenso,
-}
-
-const Map<Estado, IconData> iconsEstado = {
-  Estado.inativo: Icons.disabled_by_default,
-  Estado.ativo: Icons.check_box,
-  Estado.devedor: Icons.credit_card_off_rounded,
-  Estado.contencioso: Icons.crisis_alert_rounded,
-  Estado.credito: Icons.credit_card_rounded,
-  Estado.banido: Icons.remove_circle,
-  Estado.suspenso: Icons.lock_clock_rounded,
-};
-
 class Agregado {
   final String agregado;
   final String relacao;
@@ -79,7 +59,7 @@ class Cliente {
   });
 }
 
-class CLienteAlteracao {
+class ClienteAlteracao {
   final String cartaoCidadao;
   final String codigoPostal;
   final Anexo comprovativo;
@@ -96,7 +76,7 @@ class CLienteAlteracao {
   final String telefone;
   final String telemovel;
 
-  CLienteAlteracao({
+  ClienteAlteracao({
     required this.email,
     required this.cartaoCidadao,
     required this.nif,
@@ -174,22 +154,22 @@ class Perfil {
     required this.id,
     required this.name,
     required this.email,
-    required this.entity,
     required this.photo,
     required this.userType,
     required this.numeroCliente,
     required this.janelas,
     required this.cliente,
+    required this.funcionario,
     required this.entidade,
   });
   final String id;
   final String name;
   final String email;
   final String numeroCliente;
-  final String entity;
   final String photo;
   final int userType;
   final List<Janela> janelas;
-  final Cliente cliente;
+  final Cliente? cliente;
+  final Funcionario? funcionario;
   final Entidade entidade;
 }

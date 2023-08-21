@@ -18,7 +18,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 6,
+      length: 7,
       child: Scaffold(
         appBar: AppBar(
           title: const TitleAppBAr(icon: Icons.access_time, title: 'Horários'),
@@ -31,6 +31,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
               Tab(text: 'Quinta'),
               Tab(text: 'Sexta'),
               Tab(text: 'Sábado'),
+              Tab(text: 'Domingo'),
             ],
           ),
         ),
@@ -107,6 +108,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                   HorarioDiaItem(dayOfWeek: 'Thursday', isPessoal: isPessoal),
                   HorarioDiaItem(dayOfWeek: 'Friday', isPessoal: isPessoal),
                   HorarioDiaItem(dayOfWeek: 'Saturday', isPessoal: isPessoal),
+                  HorarioDiaItem(dayOfWeek: 'Sunday', isPessoal: isPessoal),
                 ],
               ),
             ),

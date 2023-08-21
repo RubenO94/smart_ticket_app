@@ -28,3 +28,15 @@ final listaIDPagamentosSelecionadosProvider = Provider<List<int>>((ref) {
   }).toList();
   return listaIDs;
 });
+
+final valorTotalPagamentosSelecionadosProvider = Provider<double>(
+  (ref) {
+    final pagamentosSelecionados = ref.watch(pagamentosSelecionadosProvider);
+    double valorTotal = 0;
+
+    for (final pagamento in pagamentosSelecionados) {
+      valorTotal += pagamento.valor;
+    }
+    return valorTotal;
+  },
+);

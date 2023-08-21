@@ -142,7 +142,7 @@ class ApiService {
   /// Retorna uma [Future<bool>] que indica se o dispositivo está ativado:
   /// - `true`: O dispositivo está ativado.
   /// - `false`: O dispositivo não está ativado ou ocorreu um erro durante a verificação.
-  Future<bool> isDeviceActivated() async {
+  Future<int> isDeviceActivated() async {
     const endPoint = '/IsDeviceActivated';
 
     try {
@@ -152,16 +152,15 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        if (data['nResultado'] == 1) {
-          return true;
+        if (data['nResultado'] > 0) {
+          return data['nResultado'];
         }
-        return false;
       }
     } catch (e) {
-      return false;
+      return 0;
     }
 
-    return false;
+    return 0;
   }
 
   /// Regista um dispositivo associado a um NIF e um email.
@@ -234,50 +233,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> dataPerfil = json.decode(response.body);
-        final Map<String, dynamic> dataCliente = dataPerfil['obCliente'];
+        final Map<String, dynamic> dataUtilizador =
+            dataPerfil['obCliente'] ?? dataPerfil['obFuncionario'];
         final Map<String, dynamic> dataEntidade = dataPerfil['obEntidade'];
-
-        //converte dataCliente['lAgregados'] pata List<Agregado>
-        List<Agregado> lAgregados = [];
-        List<String> preenchimentoObrigatorio = [];
-        List<String> comprovativoObrigatorio = [];
-
-        dataCliente['lAgregados'].forEach((element) {
-          lAgregados.add(
-            Agregado(
-                agregado: element['strAgregado'],
-                relacao: element['strRelacao']),
-          );
-        });
-
-        dataCliente['lCamposObrigaPreenchimento'].forEach((element) {
-          preenchimentoObrigatorio.add(element);
-        });
-
-        dataCliente['lCamposObrigaComprovativo'].forEach((element) {
-          comprovativoObrigatorio.add(element);
-        });
-
-        final Cliente cliente = Cliente(
-          listaAgregados: lAgregados,
-          comprovativoObrigatorio: comprovativoObrigatorio,
-          preenchimentoObrigatorio: preenchimentoObrigatorio,
-          categoria: dataCliente['strCategoria'],
-          cartaoCidadao: dataCliente['strCartaoCidadao'],
-          nif: dataCliente['strNIF'],
-          dataNascimento: dataCliente['strDataNascimento'],
-          sexo: dataCliente['strSexo'],
-          estado: dataCliente['strEstado'],
-          pais: dataCliente['strPais'],
-          localidade: dataCliente['strLocalidade'],
-          codigoPostal: dataCliente['strCodigoPostal'],
-          morada: dataCliente['strMorada'],
-          morada2: dataCliente['strMorada2'],
-          telefone: dataCliente['strTelefone'],
-          telemovel: dataCliente['strTelemovel'],
-          contatoEmergencia: dataCliente['strContatoEmergencia'],
-          contatoEmergencia2: dataCliente['strContatoEmergencia2'],
-        );
 
         final Entidade entidade = Entidade(
           codigoPostal: dataEntidade['strCodigoPostal'],
@@ -303,19 +261,88 @@ class ApiService {
           );
         });
 
-        final perfil = Perfil(
-          id: dataPerfil['strID'],
-          name: dataPerfil['strNome'],
-          email: dataPerfil['strEmail'],
-          entity: dataPerfil['obEntidade']['strNome'],
-          photo: dataPerfil['strFotoBase64'],
-          userType: dataPerfil['eTipoPerfil'],
-          numeroCliente: dataPerfil['strNumero'],
-          janelas: lJanelas,
-          cliente: cliente,
-          entidade: entidade,
-        );
-        ref.read(perfilProvider.notifier).setPerfil(perfil);
+        if (dataPerfil['obCliente'] != null) {
+          //converte dataCliente['lAgregados'] pata List<Agregado>
+          List<Agregado> lAgregados = [];
+          List<String> preenchimentoObrigatorio = [];
+          List<String> comprovativoObrigatorio = [];
+
+          dataUtilizador['lAgregados'].forEach((element) {
+            lAgregados.add(
+              Agregado(
+                  agregado: element['strAgregado'],
+                  relacao: element['strRelacao']),
+            );
+          });
+
+          dataUtilizador['lCamposObrigaPreenchimento'].forEach((element) {
+            preenchimentoObrigatorio.add(element);
+          });
+
+          dataUtilizador['lCamposObrigaComprovativo'].forEach((element) {
+            comprovativoObrigatorio.add(element);
+          });
+
+          final Cliente cliente = Cliente(
+            listaAgregados: lAgregados,
+            comprovativoObrigatorio: comprovativoObrigatorio,
+            preenchimentoObrigatorio: preenchimentoObrigatorio,
+            categoria: dataUtilizador['strCategoria'],
+            cartaoCidadao: dataUtilizador['strCartaoCidadao'],
+            nif: dataUtilizador['strNIF'],
+            dataNascimento: dataUtilizador['strDataNascimento'],
+            sexo: dataUtilizador['strSexo'],
+            estado: dataUtilizador['strEstado'],
+            pais: dataUtilizador['strPais'],
+            localidade: dataUtilizador['strLocalidade'],
+            codigoPostal: dataUtilizador['strCodigoPostal'],
+            morada: dataUtilizador['strMorada'],
+            morada2: dataUtilizador['strMorada2'],
+            telefone: dataUtilizador['strTelefone'],
+            telemovel: dataUtilizador['strTelemovel'],
+            contatoEmergencia: dataUtilizador['strContatoEmergencia'],
+            contatoEmergencia2: dataUtilizador['strContatoEmergencia2'],
+          );
+
+          final perfil = Perfil(
+            id: dataPerfil['strID'],
+            name: dataPerfil['strNome'],
+            email: dataPerfil['strEmail'],
+            photo: dataPerfil['strFotoBase64'],
+            userType: dataPerfil['eTipoPerfil'],
+            numeroCliente: dataPerfil['strNumero'],
+            janelas: lJanelas,
+            cliente: cliente,
+            funcionario: null,
+            entidade: entidade,
+          );
+          ref.read(perfilProvider.notifier).setPerfil(perfil);
+        } else {
+          final funcionario = Funcionario(
+            categoria: dataUtilizador['strCategoria'],
+            morada: dataUtilizador['strMorada'],
+            morada2: dataUtilizador['strMorada2'],
+            telefone: dataUtilizador['strTelefone'],
+            telemovel: dataUtilizador['strTelemovel'],
+            localidade: dataUtilizador['strLocalidade'],
+            codigoPostal: dataUtilizador['strCodigoPostal'],
+          );
+
+          final perfil = Perfil(
+            id: dataPerfil['strID'],
+            name: dataPerfil['strNome'],
+            email: dataPerfil['strEmail'],
+            photo: dataPerfil['strFotoBase64'],
+            userType: dataPerfil['eTipoPerfil'],
+            numeroCliente: dataPerfil['strNumero'],
+            janelas: lJanelas,
+            cliente: null,
+            funcionario: funcionario,
+            entidade: entidade,
+          );
+          ref.read(perfilProvider.notifier).setPerfil(perfil);
+        }
+
         return true;
       }
     } catch (e) {
@@ -891,7 +918,7 @@ class ApiService {
               wednesday: e['bWednesday'],
               thursday: e['bThursday'],
               inscrito: e['bInscrito'],
-              cor: color ?? Colors.green,
+              cor: color ?? Colors.transparent,
             );
           }).toList();
 
@@ -1126,6 +1153,16 @@ class ApiService {
     return false;
   }
 
+  /// Obtém o conteúdo de um documento PDF para download com base no ID do documento.
+  ///
+  /// Esta função realiza uma solicitação HTTP GET para o endpoint de download de documentos
+  /// e retorna o conteúdo do documento como uma string base64.
+  ///
+  /// Parâmetros:
+  /// - [idDocumento]: O ID do documento a ser baixado.
+  ///
+  /// Retorna uma [Future] que resolve em uma [String] contendo o conteúdo do documento em base64,
+  /// ou uma mensagem de erro se ocorrer algum problema durante a solicitação.
   Future<String> getDownloadDocumento(String idDocumento) async {
     final endPoint = '/DownloadDocumento?strIDDocumento=$idDocumento';
 
@@ -1138,19 +1175,134 @@ class ApiService {
       if (response.statusCode == 200) {
         final String data = json.decode(response.body);
         if (data.isNotEmpty) {
-          Uint8List bytes = base64.decode(data);
-
-          final String fileName = 'fatura_${generateRandomString(5)}';
-          Directory documentsDir = await getApplicationDocumentsDirectory();
-          String filePath = '${documentsDir.path}/$fileName.pdf';
-          final File file = File(filePath);
-          await file.writeAsBytes(bytes);
-          return 'ok';
+          return data;
         }
       }
     } catch (e) {
       return 'Erro: ${e.toString()}';
     }
-    return 'Erro';
+    return 'error';
+  }
+
+  /// Envia uma solicitação para atualizar o perfil de um cliente.
+  ///
+  /// Esta função envia os dados fornecidos em um objeto [ClienteAlteracao] para
+  /// um endpoint específico no servidor. Ela retorna um [Future] contendo um mapa
+  /// com informações sobre o resultado da operação.
+  ///
+  /// - Parâmetros:
+  ///   - [alteracao]: Um objeto [ClienteAlteracao] contendo as informações a serem
+  ///     atualizadas no perfil do cliente.
+  ///
+  /// - Retorna:
+  ///   Um [Future] contendo um [Map] com as chaves:
+  ///   - 'resultado': Um valor numérico indicando o resultado da operação.
+  ///   - 'mensagem': Uma mensagem descritiva relacionada ao resultado.
+  ///
+  /// Em caso de sucesso, 'resultado' será um valor positivo indicando sucesso,
+  /// e 'mensagem' conterá uma descrição relacionada à operação realizada.
+  ///
+  /// Em caso de erro, 'resultado' será 0 e 'mensagem' conterá uma mensagem de erro.
+  ///
+  /// Exemplo:
+  /// ```dart
+  /// final alteracao = ClienteAlteracao(/* ... */);
+  /// final resultado = await postPerfilCliente(alteracao);
+  /// print('Resultado: ${resultado['resultado']}, Mensagem: ${resultado['mensagem']}');
+  /// ```
+  Future<Map<String, dynamic>> postPerfilCliente(
+      ClienteAlteracao alteracao) async {
+    const endPoint = '/SetPerfilCliente';
+
+    final body = {
+      'strEmail': alteracao.email,
+      'strNIF': alteracao.nif,
+      'strDataNascimento': alteracao.dataNascimento,
+      'strSexo': alteracao.sexo,
+      'strMorada': alteracao.morada,
+      'strMorada2': alteracao.morada2,
+      'strCodigoPostal': alteracao.dataNascimento,
+      'strLocalidade': alteracao.dataNascimento,
+      'strPais': alteracao.dataNascimento,
+      'strTelefone': alteracao.dataNascimento,
+      'strTelemovel': alteracao.dataNascimento,
+      'strContatoEmergencia': alteracao.dataNascimento,
+      'strContatoEmergencia2': alteracao.dataNascimento,
+      'strCartaoCidadao': alteracao.dataNascimento,
+      'obComprovativo': {
+        'strFilename': alteracao.comprovativo.fileName,
+        'strBase64': alteracao.comprovativo.base64
+      }
+    };
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return {
+          'resultado': data['nResultado'],
+          'mensagem': data['strDescricao'],
+        };
+      }
+    } catch (e) {
+      return {
+        'resultado': 0,
+        'mensagem': 'ERRO: ${e.toString()}',
+      };
+    }
+
+    return {
+      'resultado': 0,
+      'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
+    };
+  }
+
+
+  Future<Map<String, dynamic>> postPerfilAssociarAgregado(
+      NovoAgregado novoAgregado) async {
+    const endPoint = '/SetPerfilAssociarAgregado';
+
+    final body = {
+      'strNIF': novoAgregado.nif,
+      'obComprovativo': {
+        'strFilename': novoAgregado.comprovativo.fileName,
+        'strBase64': novoAgregado.comprovativo.base64
+      }
+    };
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return {
+          'resultado': data['nResultado'],
+          'mensagem': data['strDescricao'],
+        };
+      }
+    } catch (e) {
+      return {
+        'resultado': 0,
+        'mensagem': 'ERRO: ${e.toString()}',
+      };
+    }
+
+    return {
+      'resultado': 0,
+      'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
+    };
   }
 }
