@@ -129,7 +129,7 @@ class _AvaliacaoConclusionScreenState
               child: FadeInImage(
                 placeholder: MemoryImage(kTransparentImage),
                 image: MemoryImage(
-                  base64Decode(widget.aluno.photo!),
+                  base64Decode(widget.aluno.foto!),
                 ),
                 fit: BoxFit.cover,
               ),

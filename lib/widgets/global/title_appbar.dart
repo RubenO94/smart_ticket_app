@@ -11,14 +11,19 @@ class TitleAppBAr extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon),
-        const SizedBox(
-          width: 8,
-        ),
-        Text(title),
-      ],
-    );
+    return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          children: [
+            Icon(icon),
+            const SizedBox(
+              width: 8,
+            ),
+            Text(
+              title,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ));
   }
 }

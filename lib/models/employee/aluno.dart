@@ -7,14 +7,14 @@ class Aluno {
       required this.numeroAluno,
       required this.nome,
       required this.dataAvalicao,
-      this.photo,
+      this.foto,
       required this.respostas});
 
   final int idCliente;
   final int idDesempenhoNivel;
   final int numeroAluno;
   final String dataAvalicao;
-  final String? photo;
+  final String? foto;
   final String nome;
   final List<Resposta> respostas;
 

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
+import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 import 'conclusao_avaliacao.dart';
@@ -27,16 +28,11 @@ class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
 
 class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   int _currentPageIndex = 0;
-  List<Resposta> _respostas = [];
+  final List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
   final PageController _pageController = PageController(initialPage: 0);
   bool _avaliacaoCompleted = false;
-
-  void loadPerguntas() {
-    setState(() {
-      _respostas = [...widget.aluno.respostas];
-    });
-  }
+  Nivel? _selectedNivel;
 
   Future<bool> _onWillPop() async {
     if (_respostas.isNotEmpty) {
@@ -46,7 +42,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
           title: const Text('Tem a certeza?'),
           content: const Text(
               'Voltar para a pagina anterior fará com as alterações feitas sejam descartadas.'),
-          actions: <Widget>[
+          actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
               child: const Text('Cancelar'),
@@ -64,7 +60,16 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
     return true;
   }
 
+  void _selecionarNivel(Nivel nivel) {
+    setState(() {
+      _selectedNivel = nivel;
+    });
+  }
+
   bool todasPerguntasRespondidas() {
+    if (_selectedNivel == null) {
+      return false;
+    }
     for (final pergunta in _perguntasList) {
       if (pergunta.obrigatorio) {
         final index = _respostas.indexWhere(
@@ -144,7 +149,8 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _perguntasList = ref.watch(perguntasNotifierProvider);
+    _perguntasList = ref.watch(perguntasProvider);
+    final niveisList = ref.watch(niveisProvider);
     return WillPopScope(
       onWillPop: _onWillPop,
       child: _avaliacaoCompleted
@@ -157,7 +163,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
           : Scaffold(
               appBar: AppBar(
                 title: Text(
-                  'Avaliação de ${widget.aluno.nameToTitleCase}',
+                  'Nova Avaliação de ${widget.aluno.nameToTitleCase}',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 actions: [
@@ -174,7 +180,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                       child: FadeInImage(
                         placeholder: MemoryImage(kTransparentImage),
                         image: MemoryImage(
-                          base64Decode(widget.aluno.photo!),
+                          base64Decode(widget.aluno.foto!),
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -204,135 +210,194 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                               classificacao: -1),
                         );
 
-                        return SingleChildScrollView(
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height -
-                                kToolbarHeight -
-                                kBottomNavigationBarHeight,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  title: Text(
-                                    pergunta.descricao,
-                                    style:
-                                        Theme.of(context).textTheme.labelLarge,
-                                  ),
-                                  subtitle: Text(
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Card(
+                              margin: EdgeInsets.only(top: 12, right: 12, left: 12),
+                              elevation: 0.2,
+                              shape: ContinuousRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.only(
+                                    right: 16, left: 16, top: 4, bottom: 8),
+                                title: Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Text(
                                     'Categoria: ${pergunta.categoria}',
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(fontWeight: FontWeight.bold),
                                   ),
-                                  trailing: pergunta.obrigatorio
-                                      ? Text(
-                                          '*',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleLarge!
-                                              .copyWith(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .error),
-                                        )
-                                      : null,
                                 ),
-                                RadioListTile<int>(
-                                  title: const Text('Muito bom (3)'),
-                                  value: 3,
-                                  groupValue: resposta.classificacao,
-                                  onChanged: (value) {
-                                    responderPergunta(value!);
-                                  },
+                                subtitle: Text(
+                                  pergunta.descricao,
+                                  style: Theme.of(context).textTheme.labelLarge,
                                 ),
-                                RadioListTile<int>(
-                                  title: const Text('Bom (2)'),
-                                  value: 2,
-                                  groupValue: resposta.classificacao,
-                                  onChanged: (value) {
-                                    responderPergunta(value!);
-                                  },
-                                ),
-                                RadioListTile<int>(
-                                  title: const Text('A Melhorar (1)'),
-                                  value: 1,
-                                  groupValue: resposta.classificacao,
-                                  onChanged: (value) {
-                                    responderPergunta(value!);
-                                  },
-                                ),
-                                RadioListTile<int>(
-                                  title:
-                                      const Text('Matéria não lecionada (0)'),
-                                  value: 0,
-                                  groupValue: resposta.classificacao,
-                                  onChanged: (value) {
-                                    responderPergunta(value!);
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                const Divider(),
-                              ],
+                                trailing: pergunta.obrigatorio
+                                    ? Text(
+                                        '*',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .error),
+                                      )
+                                    : null,
+                              ),
                             ),
-                          ),
+                            RadioListTile<int>(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 64),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              title: const Text('Muito bom (3)'),
+                              value: 3,
+                              groupValue: resposta.classificacao,
+                              onChanged: (value) {
+                                responderPergunta(value!);
+                              },
+                            ),
+                            RadioListTile<int>(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 64),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              title: const Text('Bom (2)'),
+                              value: 2,
+                              groupValue: resposta.classificacao,
+                              onChanged: (value) {
+                                responderPergunta(value!);
+                              },
+                            ),
+                            RadioListTile<int>(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 64),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              title: const Text('A Melhorar (1)'),
+                              value: 1,
+                              groupValue: resposta.classificacao,
+                              onChanged: (value) {
+                                responderPergunta(value!);
+                              },
+                            ),
+                            RadioListTile<int>(
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 64),
+                              controlAffinity: ListTileControlAffinity.trailing,
+                              title: const Text('Matéria não lecionada (0)'),
+                              value: 0,
+                              groupValue: resposta.classificacao,
+                              onChanged: (value) {
+                                responderPergunta(value!);
+                              },
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            const Divider(),
+                          ],
                         );
                       },
                     ),
                   ),
-                  const SizedBox(
-                    height: 48,
-                  ),
-                  ElevatedButton(
-                    onPressed: todasPerguntasRespondidas()
-                        ? () {
-                            setState(() {
-                              _avaliacaoCompleted = true;
-                            });
-                          }
-                        : null,
-                    child: const Text('Concluir Avaliação'),
-                  ),
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, bottom: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextButton.icon(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: voltarPergunta,
-                          label: const Text('Voltar'),
-                        ),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: TextButton.icon(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton.icon(
                               icon: const Icon(Icons.arrow_back),
-                              onPressed: avancarPergunta,
-                              label: const Text('Avançar')),
+                              onPressed: _currentPageIndex == 0
+                                  ? null
+                                  : voltarPergunta,
+                              label: const Text('Voltar'),
+                            ),
+                            Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: TextButton.icon(
+                                  icon: const Icon(Icons.arrow_back),
+                                  onPressed: _currentPageIndex ==
+                                          _perguntasList.length - 1
+                                      ? null
+                                      : avancarPergunta,
+                                  label: const Text('Avançar')),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            for (int i = 0; i < _perguntasList.length; i++)
+                              Icon(
+                                Icons.circle,
+                                color: i == _currentPageIndex
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Colors.grey,
+                                size: 18,
+                              ),
+                          ],
                         ),
                       ],
                     ),
                   ),
+                  Text(
+                    'Selecione o nível de transição:',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: niveisList.map((nivel) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          _selecionarNivel(nivel);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(6)),
+                          foregroundColor: _selectedNivel == nivel
+                              ? Theme.of(context).colorScheme.onTertiary
+                              : null,
+                          backgroundColor: _selectedNivel == nivel
+                              ? Theme.of(context).colorScheme.tertiary
+                              : null,
+                        ),
+                        child: Text(nivel.strDescricao),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(
+                    height: 120,
+                  )
                 ],
               ),
-              bottomNavigationBar: BottomAppBar(
-                color: Theme.of(context).colorScheme.background,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (int i = 0; i < _perguntasList.length; i++)
-                      Icon(
-                        Icons.circle,
-                        color: i == _currentPageIndex
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey,
-                        size: 18,
+              floatingActionButton: todasPerguntasRespondidas()
+                  ? FloatingActionButton.extended(
+                      shape: const ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(6),
+                        ),
                       ),
-                  ],
-                ),
-              ),
+                      onPressed: todasPerguntasRespondidas()
+                          ? () {
+                              setState(() {
+                                _avaliacaoCompleted = true;
+                              });
+                            }
+                          : null,
+                      label: const Text('Concluir Avaliação'),
+                    )
+                  : null,
             ),
     );
   }

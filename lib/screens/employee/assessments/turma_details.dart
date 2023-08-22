@@ -1,15 +1,11 @@
-import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
-
-
 
 class TurmaDetails extends ConsumerStatefulWidget {
   const TurmaDetails({super.key, required this.idAula});
@@ -20,8 +16,6 @@ class TurmaDetails extends ConsumerStatefulWidget {
 }
 
 class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
-  late final List<Aluno> _alunosList;
-  List<Aluno> _items = [];
   bool _isLoading = true;
   bool _isOffline = false;
   final _searchController = TextEditingController();
@@ -30,9 +24,7 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
     final apiService = ref.read(apiServiceProvider);
     final hasAlunos = await apiService.getAlunos(widget.idAula.toString(), '');
     if (hasAlunos) {
-      _alunosList = ref.read(alunosProvider);
       setState(() {
-        _items = _alunosList;
         _isLoading = false;
       });
       return;
@@ -40,25 +32,6 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
     setState(() {
       _isLoading = false;
       _isOffline = true;
-    });
-  }
-
-  void _filterSearchResults(String value) {
-    if (value.isEmpty) {
-      setState(() {
-        _items = _alunosList;
-      });
-      return;
-    }
-
-    setState(() {
-      final resultList = _alunosList.where((aluno) {
-        final normalizedSearchTerm = removeDiacritics(value.toLowerCase());
-        final normalizedAlunoNome = removeDiacritics(aluno.nome.toLowerCase());
-
-        return normalizedAlunoNome.contains(normalizedSearchTerm);
-      }).toList();
-      _items = resultList;
     });
   }
 
@@ -77,6 +50,7 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   @override
   Widget build(BuildContext context) {
     final idAtividadeLetiva = ref.read(atividadeLetivaIDProvider);
+    final listaAlunos = ref.watch(alunosProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Alunos'),
@@ -94,9 +68,8 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
                   color: Theme.of(context).colorScheme.background,
                   child: TextField(
                     controller: _searchController,
-                    onChanged: (value) {
-                      _filterSearchResults(value);
-                    },
+                    onChanged: (value) =>
+                        ref.read(alunosProvider.notifier).filterAlunos(value),
                     decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       border: OutlineInputBorder(),
@@ -113,9 +86,9 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
                           child: CircularProgressIndicator(),
                         )
                       : ListView.builder(
-                          itemCount: _items.length,
+                          itemCount: listaAlunos.length,
                           itemBuilder: (context, index) => AlunoItem(
-                              aluno: _items[index],
+                              aluno: listaAlunos[index],
                               idAula: widget.idAula,
                               idAtividadeLetiva: idAtividadeLetiva),
                         ),

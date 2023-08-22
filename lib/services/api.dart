@@ -427,7 +427,7 @@ class ApiService {
             ),
           );
           ref
-              .read(perguntasNotifierProvider.notifier)
+              .read(perguntasProvider.notifier)
               .setPerguntas(listaPerguntas);
         });
         data['listAlunos'].forEach((element) {
@@ -447,7 +447,7 @@ class ApiService {
             nome: element['strNome'],
             dataAvalicao: element['strDataAvaliacao'],
             respostas: listaRespostas,
-            photo: element['strFotoBase64'],
+            foto: element['strFotoBase64'],
           ));
         });
         ref.read(alunosProvider.notifier).setAlunos(listaAlunos);

@@ -9,7 +9,7 @@ class PerguntasNotifier extends StateNotifier<List<Pergunta>> {
   }
 }
 
-final perguntasNotifierProvider =
+final perguntasProvider =
     StateNotifierProvider<PerguntasNotifier, List<Pergunta>>(
   (ref) {
     return PerguntasNotifier();
