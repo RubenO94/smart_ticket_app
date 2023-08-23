@@ -5,6 +5,7 @@ class Aluno {
       {required this.idCliente,
       required this.idDesempenhoNivel,
       required this.numeroAluno,
+      required this.pontuacaoTotal,
       required this.nome,
       required this.dataAvalicao,
       this.foto,
@@ -13,6 +14,7 @@ class Aluno {
   final int idCliente;
   final int idDesempenhoNivel;
   final int numeroAluno;
+  final int pontuacaoTotal;
   final String dataAvalicao;
   final String? foto;
   final String nome;
@@ -33,5 +35,27 @@ class Aluno {
     }).toList();
 
     return words.join(' ');
+  }
+
+  Aluno copyWith({
+    int? idCliente,
+    int? idDesempenhoNivel,
+    int? numeroAluno,
+    int? pontuacaoTotal,
+    String? nome,
+    String? dataAvalicao,
+    String? foto,
+    List<Resposta>? respostas,
+  }) {
+    return Aluno(
+      idCliente: idCliente ?? this.idCliente,
+      idDesempenhoNivel: idDesempenhoNivel ?? this.idDesempenhoNivel,
+      numeroAluno: numeroAluno ?? this.numeroAluno,
+      pontuacaoTotal: pontuacaoTotal ?? this.pontuacaoTotal,
+      nome: nome ?? this.nome,
+      dataAvalicao: dataAvalicao ?? this.dataAvalicao,
+      foto: foto ?? this.foto,
+      respostas: respostas ?? this.respostas,
+    );
   }
 }

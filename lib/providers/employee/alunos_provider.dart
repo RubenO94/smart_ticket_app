@@ -1,6 +1,7 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 
 class AlunosProvider extends StateNotifier<List<Aluno>> {
   AlunosProvider() : super([]);
@@ -10,6 +11,27 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
   void setAlunos(List<Aluno> alunos) {
     _initialList = alunos;
     _filteredList = alunos;
+    state = alunos;
+  }
+
+  void editarAluno(
+      List<Resposta> respostas, int idDesempenhoNivel, int numeroAluno) {
+    int totalPontos = 0;
+
+    for (final resposta in respostas) {
+      totalPontos += resposta.classificacao!;
+    }
+
+    final List<Aluno> alunos = state.map((aluno) {
+      if (aluno.numeroAluno == numeroAluno) {
+        return aluno.copyWith(
+            respostas: respostas,
+            idDesempenhoNivel: idDesempenhoNivel,
+            pontuacaoTotal: totalPontos);
+      }
+      return aluno;
+    }).toList();
+
     state = alunos;
   }
 

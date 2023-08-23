@@ -405,9 +405,7 @@ class ApiService {
           client.get(Uri.parse(baseUrl + endPoint), headers: headers));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        List<Aluno> listaAlunos = [];
-        List<Resposta> listaRespostas = [];
-        List<Pergunta> listaPerguntas = [];
+
         final int actividadeLetiva = data['nIDAtividadeLetiva'];
         ref
             .read(atividadeLetivaIDProvider.notifier)
@@ -416,40 +414,40 @@ class ApiService {
         final int idAula = data['nIDAula'];
         ref.read(aulaIDProvider.notifier).setAulaId(idAula);
 
-        data['listPerguntas'].forEach((pergunta) {
-          listaPerguntas.add(
-            Pergunta(
-              obrigatorio: pergunta['bObrigatorio'],
-              idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
-              tipo: pergunta['nTipo'],
-              categoria: pergunta['strCategoria'],
-              descricao: pergunta['strPergunta'],
-            ),
+        final List<Pergunta> listaPerguntas =
+            (data['listPerguntas'] as List<dynamic>).map((pergunta) {
+          return Pergunta(
+            obrigatorio: pergunta['bObrigatorio'],
+            idDesempenhoLinha: pergunta['nIDDesempenhoLinha'],
+            tipo: pergunta['nTipo'],
+            categoria: pergunta['strCategoria'],
+            descricao: pergunta['strPergunta'],
           );
-          ref
-              .read(perguntasProvider.notifier)
-              .setPerguntas(listaPerguntas);
-        });
-        data['listAlunos'].forEach((element) {
-          element['listRespostas'].forEach((resposta) {
-            listaRespostas.add(
-              Resposta(
-                idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
-                classificacao: resposta['nRespostaClassificacao'],
-              ),
-            );
-          });
+        }).toList();
 
-          listaAlunos.add(Aluno(
+        ref.read(perguntasProvider.notifier).setPerguntas(listaPerguntas);
+
+        final List<Aluno> listaAlunos =
+            (data['listAlunos'] as List<dynamic>).map((element) {
+          final List<Resposta> listaRespostas =
+              (element['listRespostas'] as List<dynamic>).map((resposta) {
+            return Resposta(
+              idDesempenhoLinha: resposta['nIDDesempenhoLinha'],
+              classificacao: resposta['nRespostaClassificacao'],
+            );
+          }).toList();
+
+          return Aluno(
             idCliente: element['nIDCliente'],
             idDesempenhoNivel: element['nIDDesempenhoNivel'],
             numeroAluno: element['nNumero'],
+            pontuacaoTotal: element['nPontuacaoAvaliacao'],
             nome: element['strNome'],
             dataAvalicao: element['strDataAvaliacao'],
             respostas: listaRespostas,
             foto: element['strFotoBase64'],
-          ));
-        });
+          );
+        }).toList();
         ref.read(alunosProvider.notifier).setAlunos(listaAlunos);
         return true;
       }
@@ -1263,7 +1261,6 @@ class ApiService {
       'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
     };
   }
-
 
   Future<Map<String, dynamic>> postPerfilAssociarAgregado(
       NovoAgregado novoAgregado) async {

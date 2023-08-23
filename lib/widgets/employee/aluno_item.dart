@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
+import 'package:smart_ticket/screens/employee/assessments/editar_avaliacao.dart';
 import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 import 'package:smart_ticket/screens/employee/assessments/ver_avaliacao.dart';
 
@@ -111,7 +112,7 @@ class AlunoItem extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => NovaAvaliacaoScreen(
+                        builder: (context) => EditarAvaliacaoScreen(
                             aluno: aluno,
                             idAula: idAula,
                             idAtividadeLetiva: idAtividadeLetiva),
