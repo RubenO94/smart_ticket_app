@@ -70,12 +70,15 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
       _formKey.currentState!.save();
       if (_comprovativoNecessario) {
         final dialogResult = await showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (context) {
               String fileName = _fileName;
               return StatefulBuilder(
                 builder: (context, setState) {
                   return AlertDialog(
+                    shape: ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
                     title: const TitleAppBAr(
                         icon: Icons.insert_drive_file_sharp,
                         title: 'Anexar Comprovativo'),
@@ -137,7 +140,14 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
+                        onPressed: () {
+                          setState(() {
+                            _base64File = '';
+                            _fileName = '';
+                          });
+
+                          Navigator.of(context).pop(false);
+                        },
                         child: const Text('Cancelar'),
                       ),
                       TextButton(

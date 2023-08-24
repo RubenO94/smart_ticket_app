@@ -5,6 +5,7 @@ import 'package:smart_ticket/providers/employee/turmas_provider.dart';
 
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/widgets/employee/turma_item.dart';
+import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
 
 import '../../../models/employee/turma.dart';
 
@@ -19,7 +20,7 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
   late List<Turma> listaTurmas = [];
   List<Turma> _items = [];
   bool _isLoading = true;
-  bool _isOffline = false;
+  bool _isEmpty = false;
   final _searchController = TextEditingController();
 
   void _getTurmas() async {
@@ -31,7 +32,7 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
     if (listaTurmas.isEmpty) {
       setState(() {
         _isLoading = false;
-        _isOffline = true;
+        _isEmpty = true;
       });
       return;
     }
@@ -41,24 +42,24 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
   }
 
   void _filterSearchResults(String value) {
-  if (value.isEmpty) {
+    if (value.isEmpty) {
+      setState(() {
+        _items = listaTurmas;
+      });
+      return;
+    }
+
     setState(() {
-      _items = listaTurmas;
+      final resultList = listaTurmas.where((turma) {
+        final normalizedSearchTerm = removeDiacritics(value.toLowerCase());
+        final normalizedTurmaDescricao =
+            removeDiacritics(turma.descricao.toLowerCase());
+
+        return normalizedTurmaDescricao.contains(normalizedSearchTerm);
+      }).toList();
+      _items = resultList;
     });
-    return;
   }
-
-  setState(() {
-    final resultList = listaTurmas.where((turma) {
-      final normalizedSearchTerm = removeDiacritics(value.toLowerCase());
-      final normalizedTurmaDescricao =
-          removeDiacritics(turma.descricao.toLowerCase());
-
-      return normalizedTurmaDescricao.contains(normalizedSearchTerm);
-    }).toList();
-    _items = resultList;
-  });
-}
 
   @override
   void initState() {
@@ -78,10 +79,10 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
       appBar: AppBar(
         title: const Text('Turmas'),
       ),
-      body: _isOffline
-          ? OfflineScreen(
-              refresh: _getTurmas,
-            )
+      body: _isEmpty
+          ? const MenssagemCentro(
+              widget: Icon(Icons.group_off),
+              mensagem: 'Ainda não tem turmas associadas')
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

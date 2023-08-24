@@ -14,6 +14,7 @@ class TitleAppBAr extends StatelessWidget {
     return FittedBox(
         fit: BoxFit.scaleDown,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Icon(icon),
             const SizedBox(

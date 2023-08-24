@@ -374,8 +374,8 @@ class ApiService {
               )
               .toList();
           ref.read(turmasProvider.notifier).setTurmas(turmas);
-          return true;
         }
+        return true;
       }
     } catch (e) {
       return false;
@@ -607,7 +607,7 @@ class ApiService {
                 });
 
                 return FichaAvaliacao(
-                  idAtividadeLetiva: e['nIDAtividadeLetiva'],
+                  idAtividadeLetiva: e['IDAtividadeLetiva'],
                   idAula: e['IDAula'],
                   descricao: e['Aula'],
                   dataAvalicao: listAlunos[0]['strDataAvaliacao'],
@@ -1220,14 +1220,14 @@ class ApiService {
       'strSexo': alteracao.sexo,
       'strMorada': alteracao.morada,
       'strMorada2': alteracao.morada2,
-      'strCodigoPostal': alteracao.dataNascimento,
-      'strLocalidade': alteracao.dataNascimento,
-      'strPais': alteracao.dataNascimento,
-      'strTelefone': alteracao.dataNascimento,
-      'strTelemovel': alteracao.dataNascimento,
-      'strContatoEmergencia': alteracao.dataNascimento,
-      'strContatoEmergencia2': alteracao.dataNascimento,
-      'strCartaoCidadao': alteracao.dataNascimento,
+      'strCodigoPostal': alteracao.codigoPostal,
+      'strLocalidade': alteracao.localidade,
+      'strPais': alteracao.pais,
+      'strTelefone': alteracao.telefone,
+      'strTelemovel': alteracao.telemovel,
+      'strContatoEmergencia': alteracao.contatoEmergencia,
+      'strContatoEmergencia2': alteracao.contatoEmergencia2,
+      'strCartaoCidadao': alteracao.cartaoCidadao,
       'obComprovativo': {
         'strFilename': alteracao.comprovativo.fileName,
         'strBase64': alteracao.comprovativo.base64
