@@ -5,8 +5,8 @@ import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/resources/data.dart';
 import 'package:smart_ticket/widgets/global/perfil_dados_item.dart';
 
-class PerfilDadosList extends ConsumerWidget {
-  const PerfilDadosList({
+class ClienteDadosList extends ConsumerWidget {
+  const ClienteDadosList({
     super.key,
   });
 

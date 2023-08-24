@@ -5,7 +5,6 @@ import 'package:smart_ticket/main.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/screens/global/register.dart';

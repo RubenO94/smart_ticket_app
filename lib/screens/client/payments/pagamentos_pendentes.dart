@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
@@ -20,10 +19,10 @@ class PagamentosPendentesScreen extends ConsumerStatefulWidget {
 
 class _PagamentosPendentesScreenState
     extends ConsumerState<PagamentosPendentesScreen> {
-  List<int> _pagamentosSelecionados = [];
+  final List<int> _pagamentosSelecionados = [];
   double _total = 0;
   bool _isLoading = false;
-  bool _isPagos = false;
+  final bool _isPagos = false;
 
   void _efetuarPagamento() async {
     setState(() {

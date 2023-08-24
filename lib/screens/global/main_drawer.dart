@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,8 +5,6 @@ import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/global/admin_settings.dart';
-import 'package:smart_ticket/screens/global/register.dart';
-import 'package:smart_ticket/screens/global/splash.dart';
 
 class MainDrawer extends ConsumerStatefulWidget {
   const MainDrawer({super.key});

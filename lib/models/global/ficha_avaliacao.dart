@@ -37,6 +37,7 @@ class Resposta {
 }
 
 class FichaAvaliacao {
+  final int idAtividadeLetiva;
   final int idAula;
   final String descricao;
   final String dataAvalicao;
@@ -46,6 +47,7 @@ class FichaAvaliacao {
   final List<Resposta> respostasList;
 
   FichaAvaliacao({
+    required this.idAtividadeLetiva,
     required this.idAula,
     required this.descricao,
     required this.dataAvalicao,

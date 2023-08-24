@@ -70,7 +70,7 @@ class UpdateScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton.icon(
                 onPressed: () {
                   // Coloque aqui a lógica para abrir a página de atualização da App Store.

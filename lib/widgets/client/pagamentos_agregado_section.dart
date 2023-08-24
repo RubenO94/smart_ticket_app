@@ -33,7 +33,7 @@ class PagamentoAgregadoSection extends StatelessWidget {
         ),
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: pagamentosDoAgregado.length,
           itemBuilder: (context, index) {
             final pagamento = pagamentosDoAgregado[index];

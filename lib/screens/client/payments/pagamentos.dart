@@ -18,7 +18,7 @@ class PagamentosScreen extends ConsumerStatefulWidget {
 }
 
 class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _isPagos = false;
 
   void _irParaCarrinho() {

@@ -26,7 +26,7 @@ class TurmaItem extends StatelessWidget {
             ),
           );
         },
-        contentPadding: const EdgeInsets.only(right: 16, top: 16, bottom: 16),
+        contentPadding: const EdgeInsets.only(right: 16),
         leading: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

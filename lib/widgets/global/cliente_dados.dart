@@ -11,18 +11,18 @@ import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/global/editar_perfil_form.dart';
-import 'package:smart_ticket/widgets/global/perfil_dados_list.dart';
+import 'package:smart_ticket/widgets/global/cliente_dados_list.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
-class PerfilDados extends ConsumerStatefulWidget {
-  const PerfilDados({super.key, required this.perfil});
+class ClienteDados extends ConsumerStatefulWidget {
+  const ClienteDados({super.key, required this.perfil});
   final Perfil perfil;
 
   @override
-  ConsumerState<PerfilDados> createState() => _PerfilDadosState();
+  ConsumerState<ClienteDados> createState() => _ClienteDadosState();
 }
 
-class _PerfilDadosState extends ConsumerState<PerfilDados> {
+class _ClienteDadosState extends ConsumerState<ClienteDados> {
   bool _isEditarPerfilFormOpen = false;
   bool _isAgregadosOpen = false;
   bool _isSending = false;
@@ -208,7 +208,7 @@ class _PerfilDadosState extends ConsumerState<PerfilDados> {
 
   @override
   Widget build(BuildContext context) {
-    Widget contentDados = const PerfilDadosList();
+    Widget contentDados = const ClienteDadosList();
     Widget contentAgregados = PerfilAgregados(widget: widget);
 
     if (_isEditarPerfilFormOpen) {
@@ -283,7 +283,7 @@ class PerfilAgregados extends StatelessWidget {
     required this.widget,
   });
 
-  final PerfilDados widget;
+  final ClienteDados widget;
 
   @override
   Widget build(BuildContext context) {

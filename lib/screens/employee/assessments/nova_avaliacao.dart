@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
@@ -9,8 +10,6 @@ import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
-
-import 'conclusao_avaliacao.dart';
 
 class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
   const NovaAvaliacaoScreen(
@@ -64,6 +63,39 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
       ));
     }
     return true;
+  }
+
+  void _confirmarAvaliacao() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+          title: const Text('Enviar Avaliação'),
+          content: const Text('Deseja realmente enviar a avaliação?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Agendar a chamada do método após o fechamento do AlertDialog
+                Future.delayed(Duration.zero, () {
+                  _enviarAvaliacao();
+                });
+              },
+              child: const Text('Enviar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _enviarAvaliacao() async {
@@ -465,7 +497,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                   ),
                 ),
                 onPressed: _todasPerguntasRespondidas() || !_isSending
-                    ? _enviarAvaliacao
+                    ? _confirmarAvaliacao
                     : null,
                 label: _isSending
                     ? const CircularProgressIndicator()
