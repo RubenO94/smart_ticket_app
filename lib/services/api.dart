@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 
 import 'package:smart_ticket/models/global/alerta.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
@@ -233,6 +230,10 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> dataPerfil = json.decode(response.body);
+        if (dataPerfil.isEmpty || dataPerfil['strID'] == null) {
+          return false;
+        }
+
         final Map<String, dynamic> dataUtilizador =
             dataPerfil['obCliente'] ?? dataPerfil['obFuncionario'];
         final Map<String, dynamic> dataEntidade = dataPerfil['obEntidade'];
@@ -249,17 +250,15 @@ class ApiService {
         );
 
         //converte data['lJanelas'] para List<Janela>
-        List<Janela> lJanelas = [];
-        dataPerfil['lJanelas'].forEach((element) {
-          lJanelas.add(
-            Janela(
-              id: element['nIDMenuPrincipal'],
-              name: element['strMenuPrincipal'],
-              icon: getIconJanela(
-                  element['nIDMenuPrincipal'], dataPerfil['eTipoPerfil']),
-            ),
+        List<Janela> lJanelas =
+            (dataPerfil['lJanelas'] as List<dynamic>).map((element) {
+          return Janela(
+            id: element['nIDMenuPrincipal'],
+            name: element['strMenuPrincipal'],
+            icon: getIconJanela(
+                element['nIDMenuPrincipal'], dataPerfil['eTipoPerfil']),
           );
-        });
+        }).toList();
 
         if (dataPerfil['obCliente'] != null) {
           //converte dataCliente['lAgregados'] pata List<Agregado>
@@ -608,6 +607,7 @@ class ApiService {
                 });
 
                 return FichaAvaliacao(
+                  idAtividadeLetiva: e['nIDAtividadeLetiva'],
                   idAula: e['IDAula'],
                   descricao: e['Aula'],
                   dataAvalicao: listAlunos[0]['strDataAvaliacao'],
@@ -620,6 +620,7 @@ class ApiService {
             }
 
             return FichaAvaliacao(
+              idAtividadeLetiva: 0,
               idAula: 0,
               descricao: 'null',
               dataAvalicao: 'null',
