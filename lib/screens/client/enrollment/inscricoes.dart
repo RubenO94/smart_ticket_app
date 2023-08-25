@@ -34,19 +34,20 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('Não'),
-            ),
-            TextButton(
+             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
                 _onSubmitDelete(aula);
               },
               child: const Text('Sim'),
             ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Não'),
+            ),
+           
           ],
         );
       },

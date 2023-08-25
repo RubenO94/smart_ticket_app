@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -37,8 +38,8 @@ class _ClienteDadosState extends ConsumerState<ClienteDados> {
     setState(() {
       _isAgregadosOpen = true;
     });
-    final dialogResult = await showDialog(
-        barrierDismissible: false,
+    await showDialog(
+        barrierDismissible: true,
         context: context,
         builder: (context) {
           String fileName = _fileName;
@@ -49,126 +50,152 @@ class _ClienteDadosState extends ConsumerState<ClienteDados> {
                 title: const TitleAppBAr(
                     icon: Icons.person_add_alt_1_rounded,
                     title: 'Novo Agregado'),
-                content: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                          'Por favor, insira o NIF correspondente ao agregado que deseja adicionar à sua lista.'),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          labelText: 'NUMERO DE IDENTIFICAÇÃO FISCAL',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Este campo não pode ser vazio.';
-                          }
-                          if (!isValidNIF(value)) {
-                            return 'Este nif é inválido';
-                          }
-                          return null;
-                        },
-                        onSaved: (newValue) {
-                          _enteredNif = newValue!;
-                        },
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Text(
-                        'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final result = await _pickFile();
-                          setState(() {
-                            fileName = result;
-                          });
-                        },
-                        icon: const Icon(Icons.file_upload_outlined),
-                        label: const Text('Anexar arquivo'),
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: fileName.isEmpty
-                            ? Text(
-                                'Nenhum arquivo selecionado',
-                                style: Theme.of(context).textTheme.labelSmall,
-                                textAlign: TextAlign.center,
-                              )
-                            : RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
-                                  children: <TextSpan>[
-                                    TextSpan(
-                                      text: 'Arquivo selecionado: \n',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge!
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                    TextSpan(
-                                      text: fileName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelMedium,
-                                    ),
-                                  ],
+                content: _isSending
+                    ? const LinearProgressIndicator()
+                    : Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                                'Por favor, insira o NIF correspondente ao agregado que deseja adicionar à sua lista.'),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
+                                labelText: 'NUMERO DE IDENTIFICAÇÃO FISCAL',
                               ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Este campo não pode ser vazio.';
+                                }
+                                if (!isValidNIF(value)) {
+                                  return 'Este nif é inválido';
+                                }
+                                return null;
+                              },
+                              onSaved: (newValue) {
+                                _enteredNif = newValue!;
+                              },
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Text(
+                              'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final result = await _pickFile();
+                                setState(() {
+                                  fileName = result;
+                                });
+                              },
+                              icon: const Icon(Icons.file_upload_outlined),
+                              label: const Text('Anexar arquivo'),
+                            ),
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: fileName.isEmpty
+                                  ? Text(
+                                      'Nenhum arquivo selecionado',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall,
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        style:
+                                            DefaultTextStyle.of(context).style,
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text: 'Arquivo selecionado: \n',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                          ),
+                                          TextSpan(
+                                            text: fileName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .labelMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: _isSending || _base64File.isEmpty
-                        ? null
-                        : _submitAgregado,
-                    child: const Text('Confirmar'),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancelar'),
-                  ),
-                ],
+                actions: _isSending
+                    ? null
+                    : [
+                        TextButton(
+                          onPressed: _isSending || _base64File.isEmpty
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _isSending = true;
+                                  });
+                                  _submitAgregado();
+                                },
+                          child: const Text('Confirmar'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _base64File = '';
+                              _fileName = '';
+                            });
+
+                            Navigator.of(context).pop({'status': false});
+                          },
+                          child: const Text('Cancelar'),
+                        ),
+                      ],
               );
             },
           );
         });
-    if (!dialogResult) {
-      showToast(context, 'Teste erro', 'error');
-    } else {
-      showToast(context, 'Teste sucesso', 'success');
-    }
+
+    // if (!dialogResult['status'] &&
+    //     dialogResult['mensagem'] != null &&
+    //     mounted) {
+    //   showMensagemDialog(context, 'Ocorreu um erro!', dialogResult['mensagem']);
+    // } else if (dialogResult['mensagem'] != null) {
+    //   showMensagemDialog(context, 'Sucesso!', dialogResult['mensagem']);
+    // }
   }
 
   Future<String> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    PermissionStatus status = await Permission.manageExternalStorage.request();
+    if (status.isGranted) {
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      final selectedFile = File(result.files.single.path!);
-      List<int> fileBytes = selectedFile.readAsBytesSync();
-      _base64File = base64Encode(fileBytes);
-      final fileName = path.basename(result.files.single.name);
-      _fileName = fileName;
-      return fileName;
+      if (result != null) {
+        final selectedFile = File(result.files.single.path!);
+        List<int> fileBytes = selectedFile.readAsBytesSync();
+        _base64File = base64Encode(fileBytes);
+        final fileName = path.basename(result.files.single.name);
+        _fileName = fileName;
+        return fileName;
+      }
     }
     return '';
   }
@@ -192,12 +219,30 @@ class _ClienteDadosState extends ConsumerState<ClienteDados> {
             .read(apiServiceProvider)
             .postPerfilAssociarAgregado(agregado);
         if (resultado['resultado'] > 0 && mounted) {
-          Navigator.of(context).pop(true);
+          Navigator.of(context).pop();
+          showDialog(
+            context: context,
+            builder: (ctx) => showMensagemDialog(
+                ctx, 'Sucesso!', resultado['mensagem'] ?? ''),
+          );
         } else if (mounted) {
-          Navigator.of(context).pop(false);
+          Navigator.of(context).pop();
+          showDialog(
+            context: context,
+            builder: (ctx) => showMensagemDialog(
+                ctx,
+                'Erro!',
+                resultado['mensagem'] ??
+                    'Ocorreu um erro ao tentar adicionar este elemento à sua lista de agregados.'),
+          );
         }
       }
     }
+    setState(() {
+      _base64File = '';
+      _fileName = '';
+      _isSending = false;
+    });
   }
 
   void _cancelarForm() {

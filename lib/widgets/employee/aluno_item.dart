@@ -33,6 +33,7 @@ class AlunoItem extends StatelessWidget {
             width: 40,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
               boxShadow: [
                 BoxShadow(
                     blurStyle: BlurStyle.solid,
@@ -42,9 +43,15 @@ class AlunoItem extends StatelessWidget {
               ],
               borderRadius: BorderRadius.circular(100),
             ),
-            child: Image.memory(
-              base64Decode(aluno.foto!),
-            ),
+            child: aluno.foto!.isEmpty
+                ? Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )
+                : Image.memory(
+                    base64Decode(aluno.foto!),
+                  ),
           ),
           title: Text(
             aluno.nameToTitleCase,
@@ -123,11 +130,13 @@ class AlunoItem extends StatelessWidget {
                 ),
               if (aluno.dataAvalicao != '1900-01-01')
                 PopupMenuItem(
+                  
+                  padding: EdgeInsets.all(0),
                   child: TextButton.icon(
                     style: ButtonStyle(
                         foregroundColor: MaterialStatePropertyAll(
                             Theme.of(context).colorScheme.onPrimaryContainer)),
-                    label: const Text('Ver Fichar de Avaliação'),
+                    label: const Text('Ver Ficha de Avaliação'),
                     onPressed: () {
                       Navigator.of(context).pop();
                       Navigator.of(context).push(

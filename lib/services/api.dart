@@ -307,7 +307,7 @@ class ApiService {
             id: dataPerfil['strID'],
             name: dataPerfil['strNome'],
             email: dataPerfil['strEmail'],
-            photo: dataPerfil['strFotoBase64'],
+            photo: dataPerfil['strFotoBase64'] ?? '',
             userType: dataPerfil['eTipoPerfil'],
             numeroCliente: dataPerfil['strNumero'],
             janelas: lJanelas,
@@ -331,7 +331,7 @@ class ApiService {
             id: dataPerfil['strID'],
             name: dataPerfil['strNome'],
             email: dataPerfil['strEmail'],
-            photo: dataPerfil['strFotoBase64'],
+            photo: dataPerfil['strFotoBase64'] ?? '',
             userType: dataPerfil['eTipoPerfil'],
             numeroCliente: dataPerfil['strNumero'],
             janelas: lJanelas,
@@ -444,7 +444,7 @@ class ApiService {
             nome: element['strNome'],
             dataAvalicao: element['strDataAvaliacao'],
             respostas: listaRespostas,
-            foto: element['strFotoBase64'],
+            foto: element['strFotoBase64'] ?? '',
           );
         }).toList();
         ref.read(alunosProvider.notifier).setAlunos(listaAlunos);
@@ -1263,6 +1263,20 @@ class ApiService {
     };
   }
 
+/// Envia uma solicitação para associar um novo agregado ao perfil do utilizador.
+///
+/// A função faz uma solicitação POST para o endpoint '/SetPerfilAssociarAgregado'
+/// com os dados do novo agregado e o seu comprovativo.
+///
+/// Retorna um [Future] que contém um mapa com os seguintes campos:
+/// - 'resultado': O resultado da operação. 0 indica erro e 1 indica sucesso.
+/// - 'mensagem': Uma mensagem descritiva do resultado da operação.
+///   Se 'resultado' for 0, 'mensagem' conterá a mensagem de erro.
+///   Se 'resultado' for 1, 'mensagem' conterá uma mensagem de sucesso ou uma mensagem padrão se 'strDescricao' for nula.
+///
+/// [novoAgregado] contém os detalhes do novo agregado, incluindo NIF e comprovativo.
+///
+/// Lança exceções se ocorrerem erros durante a execução.
   Future<Map<String, dynamic>> postPerfilAssociarAgregado(
       NovoAgregado novoAgregado) async {
     const endPoint = '/SetPerfilAssociarAgregado';
@@ -1288,7 +1302,9 @@ class ApiService {
         final Map<String, dynamic> data = json.decode(response.body);
         return {
           'resultado': data['nResultado'],
-          'mensagem': data['strDescricao'],
+          'mensagem': data['nResultado'] == 0 && data['strDescricao'] == null
+              ? 'Ocorreu um erro. Tente novamente mais tarde.'
+              : data['strDescricao'],
         };
       }
     } catch (e) {

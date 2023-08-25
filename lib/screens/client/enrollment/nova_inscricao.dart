@@ -86,6 +86,11 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
     }
   }
 
+  Future<bool> onWillPop() async {
+     Navigator.of(context).pop(false);
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,209 +100,213 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
   Widget build(BuildContext context) {
     final atividadesList = ref.watch(atividadesProvider);
     final periodoLetivoList = ref.watch(atividadesLetivasProvider);
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Nova Inscrição'),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DropdownButtonFormField(
-                  isDense: true,
-                  menuMaxHeight: 200,
-                  decoration: const InputDecoration(
-                      labelText: 'Período Letivo',
-                      prefixIcon: Icon(Icons.calendar_month_rounded)),
-                  value: null,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        idPeriodoLetivo = value.id;
-                      });
-                      _onLoad();
-                    }
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione um Período Letivo';
-                    }
-                    return null;
-                  },
-                  items: [
-                    for (final atividadeLetiva in periodoLetivoList)
-                      DropdownMenuItem(
-                        value: atividadeLetiva,
-                        child: Text(
-                          '${atividadeLetiva.dataInicio} - ${atividadeLetiva.dataFim}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                DropdownButtonFormField(
-                  isDense: true,
-                  menuMaxHeight: 200,
-                  decoration: const InputDecoration(
-                      labelText: 'Atividade',
-                      prefixIcon: Icon(Icons.school_rounded)),
-                  value: null,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        idAtividade = value.id;
-                      });
-                      _onLoad();
-                    }
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione uma Ativadade';
-                    }
-                    return null;
-                  },
-                  items: [
-                    for (final atividade in atividadesList)
-                      DropdownMenuItem(
-                        value: atividade,
-                        child: Text(
-                          atividade.descricao,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Aulas Disponíveis:',
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground),
-                  ),
-                ),
-                Expanded(
-                  child: FutureBuilder(
-                    future: futureAulasDisponiveis,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Padding(
-                          padding: EdgeInsets.all(48.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Nova Inscrição'),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DropdownButtonFormField(
+                    isDense: true,
+                    menuMaxHeight: 200,
+                    decoration: const InputDecoration(
+                        labelText: 'Período Letivo',
+                        prefixIcon: Icon(Icons.calendar_month_rounded)),
+                    value: null,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          idPeriodoLetivo = value.id;
+                        });
+                        _onLoad();
                       }
-                      if (_canLoad &&
-                          snapshot.connectionState == ConnectionState.done) {
-                        if (snapshot.data!.isEmpty) {
-                          return Padding(
-                            padding: const EdgeInsets.all(48),
-                            child: Center(
-                              child: Column(
-                                children: [
-                                  const Icon(
-                                    Icons.warning_rounded,
-                                    size: 100,
-                                    color: Colors.orangeAccent,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                      'Não foi possível carregar a lista de aulas. Tente novamente mais tarde.',
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        final aulasComVagas = snapshot.data!.where((element) {
-                          return element.vagas! > 0;
-                        }).toList();
-
-                        if (aulasComVagas.isEmpty) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 24.0, vertical: 48.0),
-                            child: Center(
-                              child: Text(
-                                'Não há aulas disponíveis para inscrição nesta atividade.',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                          );
-                        }
-
-                        return ListView.builder(
-                          itemCount: aulasComVagas.length,
-                          itemBuilder: (context, index) => RadioListTile(
-                            title: Text(aulasComVagas[index].aula),
-                            value: aulasComVagas[index],
-                            groupValue: aulaSelecionada,
-                            onChanged: (value) {
-                              setState(() {
-                                aulaSelecionada = value as Aula;
-                              });
-                            },
-                          ),
-                        );
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0, vertical: 48.0),
-                        child: Center(
-                          child: Text(
-                            'Por favor, selecione um período letivo e uma atividade',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      );
                     },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione um Período Letivo';
+                      }
+                      return null;
+                    },
+                    items: [
+                      for (final atividadeLetiva in periodoLetivoList)
+                        DropdownMenuItem(
+                          value: atividadeLetiva,
+                          child: Text(
+                            '${atividadeLetiva.dataInicio} - ${atividadeLetiva.dataFim}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground),
+                          ),
+                        ),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  DropdownButtonFormField(
+                    isDense: true,
+                    menuMaxHeight: 200,
+                    decoration: const InputDecoration(
+                        labelText: 'Atividade',
+                        prefixIcon: Icon(Icons.school_rounded)),
+                    value: null,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          idAtividade = value.id;
+                        });
+                        _onLoad();
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione uma Ativadade';
+                      }
+                      return null;
+                    },
+                    items: [
+                      for (final atividade in atividadesList)
+                        DropdownMenuItem(
+                          value: atividade,
+                          child: Text(
+                            atividade.descricao,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onBackground),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Aulas Disponíveis:',
+                      textAlign: TextAlign.start,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                  ),
+                  Expanded(
+                    child: FutureBuilder(
+                      future: futureAulasDisponiveis,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Padding(
+                            padding: EdgeInsets.all(48.0),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
+                        if (_canLoad &&
+                            snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.data!.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(48),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    const Icon(
+                                      Icons.warning_rounded,
+                                      size: 100,
+                                      color: Colors.orangeAccent,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                        'Não foi possível carregar a lista de aulas. Tente novamente mais tarde.',
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          final aulasComVagas = snapshot.data!.where((element) {
+                            return element.vagas! > 0;
+                          }).toList();
+
+                          if (aulasComVagas.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24.0, vertical: 48.0),
+                              child: Center(
+                                child: Text(
+                                  'Não há aulas disponíveis para inscrição nesta atividade.',
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return ListView.builder(
+                            itemCount: aulasComVagas.length,
+                            itemBuilder: (context, index) => RadioListTile(
+                              title: Text(aulasComVagas[index].aula),
+                              value: aulasComVagas[index],
+                              groupValue: aulaSelecionada,
+                              onChanged: (value) {
+                                setState(() {
+                                  aulaSelecionada = value as Aula;
+                                });
+                              },
+                            ),
+                          );
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24.0, vertical: 48.0),
+                          child: Center(
+                            child: Text(
+                              'Por favor, selecione um período letivo e uma atividade',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        persistentFooterButtons: [
-          FloatingActionButton.extended(
-            shape: ContinuousRectangleBorder(
-                borderRadius: BorderRadius.circular(6)),
-            foregroundColor: aulaSelecionada == null
-                ? Theme.of(context).disabledColor
-                : null,
-            backgroundColor: aulaSelecionada == null
-                ? Theme.of(context).colorScheme.surfaceVariant
-                : null,
-            disabledElevation: 0,
-            onPressed: aulaSelecionada == null
-                ? null
-                : () => _onSubmit(aulaSelecionada!),
-            icon: const Icon(Icons.check_box_rounded),
-            label: const Text('Confirmar'),
-          ),
-        ]);
+          persistentFooterButtons: [
+            FloatingActionButton.extended(
+              shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(6)),
+              foregroundColor: aulaSelecionada == null
+                  ? Theme.of(context).disabledColor
+                  : null,
+              backgroundColor: aulaSelecionada == null
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : null,
+              disabledElevation: 0,
+              onPressed: aulaSelecionada == null
+                  ? null
+                  : () => _onSubmit(aulaSelecionada!),
+              icon: const Icon(Icons.check_box_rounded),
+              label: const Text('Confirmar'),
+            ),
+          ]),
+    );
   }
 }

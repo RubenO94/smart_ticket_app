@@ -72,8 +72,15 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
     });
   }
 
-  void refreshPagamentosPendentes() {
-    ref.read(apiServiceProvider).getPagamentos();
+  void refreshPagamentosPendentes() async {
+    final resultado = await ref.read(apiServiceProvider).getPagamentos();
+    final resultado2 =
+        await ref.read(apiServiceProvider).getPagamentosAgregados();
+
+    if (resultado && resultado2) {
+      print('SUCESSO!');
+    }
+
     setState(() {
       ref.read(pagamentosSelecionadosProvider.notifier).clearPagamentos();
       Navigator.of(context).popUntil(

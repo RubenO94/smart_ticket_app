@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
@@ -15,6 +16,51 @@ class HorariosScreen extends ConsumerStatefulWidget {
 class _HorariosScreenState extends ConsumerState<HorariosScreen> {
   final searchController = TextEditingController();
   bool isPessoal = false;
+
+  Tab makeTab(String dayOfWeek, List<Horario> eventsForDay) {
+    bool hasClasses = isPessoal && eventsForDay.isNotEmpty;
+
+    return Tab(
+      child: Column(
+        children: [
+          Text(dayOfWeek),
+          if (hasClasses)
+            Icon(
+              Icons.event_available,
+              color: Theme.of(context).colorScheme.primary,
+            )
+        ],
+      ),
+    );
+  }
+
+  List<Horario> getEventsForDay(String dayOfWeek) {
+    final eventos = isPessoal
+        ? ref.watch(calendarioPessoalProvider)
+        : ref.watch(calendarioGeralProvider);
+
+    return eventos.where((event) {
+      switch (dayOfWeek) {
+        case 'Monday':
+          return event.monday;
+        case 'Tuesday':
+          return event.tuesday;
+        case 'Wednesday':
+          return event.wednesday;
+        case 'Thursday':
+          return event.thursday;
+        case 'Friday':
+          return event.friday;
+        case 'Saturday':
+          return event.saturday;
+        case 'Sunday':
+          return event.sunday;
+        default:
+          return false;
+      }
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -22,16 +68,16 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const TitleAppBAr(icon: Icons.access_time, title: 'Horários'),
-          bottom: const TabBar(
+          bottom: TabBar(
             isScrollable: true,
             tabs: [
-              Tab(text: 'Segunda'),
-              Tab(text: 'Terça'),
-              Tab(text: 'Quarta'),
-              Tab(text: 'Quinta'),
-              Tab(text: 'Sexta'),
-              Tab(text: 'Sábado'),
-              Tab(text: 'Domingo'),
+              makeTab('Segunda', getEventsForDay('Monday')),
+              makeTab('Terça', getEventsForDay('Tuesday')),
+              makeTab('Quarta', getEventsForDay('Wednesday')),
+              makeTab('Quinta', getEventsForDay('Thursday')),
+              makeTab('Sexta', getEventsForDay('Friday')),
+              makeTab('Sábado', getEventsForDay('Saturday')),
+              makeTab('Domingo', getEventsForDay('Sunday')),
             ],
           ),
         ),

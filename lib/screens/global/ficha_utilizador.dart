@@ -27,6 +27,7 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
                   boxShadow: [
                     BoxShadow(
                         blurStyle: BlurStyle.solid,
@@ -36,9 +37,15 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                   ],
                   shape: BoxShape.circle,
                 ),
-                child: Image.memory(
-                  base64Decode(perfil.photo),
-                ),
+                child: perfil.photo.isEmpty
+                    ? Icon(
+                        Icons.person,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.secondary,
+                      )
+                    : Image.memory(
+                        base64Decode(perfil.photo),
+                      ),
               ),
               const SizedBox(
                 width: 2,
@@ -49,9 +56,8 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                   Text(
                     perfil.name,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 14
-                        ),
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 14),
                   ),
                   const SizedBox(
                     height: 4,
@@ -66,8 +72,7 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                   const SizedBox(
                     height: 8,
                   ),
-                  if(perfil.userType == 1)
-                  const UtilizadorEstadoBadge(),
+                  if (perfil.userType == 1) const UtilizadorEstadoBadge(),
                 ],
               ),
             ],

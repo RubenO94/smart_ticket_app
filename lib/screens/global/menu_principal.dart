@@ -33,6 +33,7 @@ class MenuPrincipalScreen extends ConsumerWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
                   boxShadow: [
                     BoxShadow(
                         blurStyle: BlurStyle.solid,
@@ -42,13 +43,19 @@ class MenuPrincipalScreen extends ConsumerWidget {
                   ],
                   shape: BoxShape.circle,
                 ),
-                child: FadeInImage(
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: MemoryImage(
-                    base64Decode(perfil.photo),
-                  ),
-                  fit: BoxFit.cover,
-                ),
+                child: perfil.photo.isEmpty
+                    ? Icon(
+                        Icons.person,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.secondary,
+                      )
+                    : FadeInImage(
+                        placeholder: MemoryImage(kTransparentImage),
+                        image: MemoryImage(
+                          base64Decode(perfil.photo),
+                        ),
+                        fit: BoxFit.cover,
+                      ),
               ),
               const SizedBox(
                 width: 2,

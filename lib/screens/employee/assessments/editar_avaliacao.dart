@@ -244,6 +244,7 @@ class _EditarAvaliacaoScreenState extends ConsumerState<EditarAvaliacaoScreen> {
                           height: 32,
                           width: 32,
                           decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.background,
                             boxShadow: [
                               BoxShadow(
                                   blurStyle: BlurStyle.solid,
@@ -253,9 +254,16 @@ class _EditarAvaliacaoScreenState extends ConsumerState<EditarAvaliacaoScreen> {
                             ],
                             shape: BoxShape.circle,
                           ),
-                          child: Image.memory(
-                            base64Decode(widget.aluno.foto!),
-                          ),
+                          child: widget.aluno.foto!.isEmpty
+                              ? Icon(
+                                  Icons.person,
+                                  size: 24,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                )
+                              : Image.memory(
+                                  base64Decode(widget.aluno.foto!),
+                                ),
                         ),
                         const SizedBox(
                           width: 2,

@@ -29,6 +29,8 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
   final _formKey = GlobalKey<FormState>();
   final List<String> _sexOptions = ['Masculino', 'Feminino'];
 
+  bool _isSending = false;
+
   String _enteredNIF = '';
   String _enteredCC = '';
   String _enteredEMAIL = '';
@@ -82,81 +84,90 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                     title: const TitleAppBAr(
                         icon: Icons.insert_drive_file_sharp,
                         title: 'Anexar Comprovativo'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            final result = await _pickFile();
-                            setState(() {
-                              fileName = result;
-                            });
-                          },
-                          icon: const Icon(Icons.file_upload_outlined),
-                          label: const Text('Anexar arquivo'),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: fileName.isEmpty
-                              ? Text(
-                                  'Nenhum arquivo selecionado',
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                  textAlign: TextAlign.center,
-                                )
-                              : RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    style: DefaultTextStyle.of(context).style,
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: 'Arquivo selecionado: \n',
+                    content: _isSending
+                        ? const LinearProgressIndicator()
+                        : Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Para garantir a veracidade das informações editadas, por favor, anexe um comprovativo relevante.',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  final result = await _pickFile();
+                                  setState(() {
+                                    fileName = result;
+                                  });
+                                },
+                                icon: const Icon(Icons.file_upload_outlined),
+                                label: const Text('Anexar arquivo'),
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: fileName.isEmpty
+                                    ? Text(
+                                        'Nenhum arquivo selecionado',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .labelLarge!
-                                            .copyWith(
-                                                fontWeight: FontWeight.bold),
+                                            .labelSmall,
+                                        textAlign: TextAlign.center,
+                                      )
+                                    : RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                          style: DefaultTextStyle.of(context)
+                                              .style,
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                              text: 'Arquivo selecionado: \n',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelLarge!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            TextSpan(
+                                              text: fileName,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .labelMedium,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      TextSpan(
-                                        text: fileName,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _base64File = '';
-                            _fileName = '';
-                          });
+                              ),
+                            ],
+                          ),
+                    actions: _isSending
+                        ? null
+                        : [
+                            TextButton(
+                              onPressed: fileName.isEmpty
+                                  ? null
+                                  : () => Navigator.of(context).pop(true),
+                              child: const Text('Enviar'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isSending = true;
+                                  _base64File = '';
+                                  _fileName = '';
+                                });
 
-                          Navigator.of(context).pop(false);
-                        },
-                        child: const Text('Cancelar'),
-                      ),
-                      TextButton(
-                        onPressed: fileName.isEmpty
-                            ? null
-                            : () => Navigator.of(context).pop(true),
-                        child: const Text('Enviar'),
-                      ),
-                    ],
+                                Navigator.of(context).pop(false);
+                              },
+                              child: const Text('Cancelar'),
+                            ),
+                          ],
                   );
                 },
               );

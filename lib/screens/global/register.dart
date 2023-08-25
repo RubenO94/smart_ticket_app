@@ -179,19 +179,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                FocusScope.of(context).unfocus();
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
                 setState(() {
                   _isSending = true;
                 });
                 _saveActivationCode();
               },
               child: const Text('Confirmar'),
+            ),
+            TextButton(
+              onPressed: () {
+                FocusScope.of(context).unfocus();
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('Cancelar'),
             ),
           ],
         );

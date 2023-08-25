@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
@@ -25,33 +26,37 @@ class _PagamentoPagoItemState extends ConsumerState<PagamentoPagoItem> {
   bool _isDownLoading = false;
 
   void _createPdf() async {
-    setState(() {
-      _isDownLoading = true;
-    });
-    final base64WithPrefix = await ref
-        .read(apiServiceProvider)
-        .getDownloadDocumento(widget.pagamento.idDocumento);
-    if (base64WithPrefix.startsWith('base64:')) {
-      try {
-        final base64 = removeBase64Prefix(base64WithPrefix);
-        var bytes = base64Decode(base64.replaceAll('\n', ''));
-        final output = await getTemporaryDirectory();
-        final randomFileName = 'fatura_${generateRandomString(5)}';
-        final file = File("${output.path}/$randomFileName.pdf");
-        await file.writeAsBytes(bytes.buffer.asUint8List());
-        await OpenFile.open("${output.path}/$randomFileName.pdf");
-      } catch (e) {
-        print(e.toString());
-        setState(() {
-          _isDownLoading = false;
-        });
+    final PermissionStatus status =
+        await Permission.manageExternalStorage.request();
+    if (status.isGranted) {
+      setState(() {
+        _isDownLoading = true;
+      });
+      final base64WithPrefix = await ref
+          .read(apiServiceProvider)
+          .getDownloadDocumento(widget.pagamento.idDocumento);
+      if (base64WithPrefix.startsWith('base64:')) {
+        try {
+          final base64 = removeBase64Prefix(base64WithPrefix);
+          var bytes = base64Decode(base64.replaceAll('\n', ''));
+          final output = await getTemporaryDirectory();
+          final randomFileName = 'fatura_${generateRandomString(5)}';
+          final file = File("${output.path}/$randomFileName.pdf");
+          await file.writeAsBytes(bytes.buffer.asUint8List());
+          await OpenFile.open("${output.path}/$randomFileName.pdf");
+        } catch (e) {
+          print(e.toString());
+          setState(() {
+            _isDownLoading = false;
+          });
+        }
+      } else if (mounted) {
+        showToast(context, 'Ocorreu um erro. Tente mais tarde', 'error');
       }
-    } else if (mounted) {
-      showToast(context, 'Ocorreu um erro. Tente mais tarde', 'error');
+      setState(() {
+        _isDownLoading = false;
+      });
     }
-    setState(() {
-      _isDownLoading = false;
-    });
   }
 
   @override
