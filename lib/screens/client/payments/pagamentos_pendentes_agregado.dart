@@ -61,7 +61,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SelecionarAgregadoDropdown(agregados: agregados),
+          const SelecionarAgregadoDropdown(),
           content,
         ],
       ),

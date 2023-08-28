@@ -138,7 +138,22 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).colorScheme.background,
         child: const MenssagemCentro(
-            widget: LinearProgressIndicator(),
+            widget: Column(
+              children: [
+                Icon(
+                  Icons.access_time,
+                  size: 48,
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: LinearProgressIndicator(
+                  ),
+                ),
+              ],
+            ),
             mensagem:
                 'A Processar os detalhes do pagamento. Aguarde um momento, por favor.'),
       );

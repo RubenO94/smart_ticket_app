@@ -67,12 +67,43 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     }
   }
 
-  void toggleTheme(bool isDark) {
+  void _toggleTheme(bool isDark) {
     if (isDark) {
       ref.read(themeProvider.notifier).setTheme(ThemeMode.dark);
       return;
     }
     ref.read(themeProvider.notifier).setTheme(ThemeMode.light);
+  }
+
+  void _logOutDialog() async {
+    final dialogResult = await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        title: const Text('Tem a certeza?'),
+        content: Text('Ao confirmar esta ação a aplição será encerrada.'),
+        actions: [
+          TextButton.icon(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            icon: const Icon(Icons.logout),
+            label: const Text('Sair'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+    if (dialogResult) {
+      await ref.read(secureStorageProvider).deleteAllSecureData();
+      if (context.mounted) {
+        // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
+        SystemNavigator.pop();
+      }
+    }
   }
 
   @override
@@ -104,13 +135,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                     ],
                   ),
                   IconButton(
-                    onPressed: () async {
-                      await ref.read(secureStorageProvider).deleteAllSecureData();
-                      if (context.mounted) {
-                        // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
-                        SystemNavigator.pop();
-                      }
-                    },
+                    onPressed: _logOutDialog,
                     icon: const Icon(
                       Icons.logout_rounded,
                       size: 32,
@@ -120,7 +145,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
               ),
             ),
             const SizedBox(
-              height: 24,
+              height: 32,
             ),
             Row(
               children: [
@@ -147,7 +172,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                         ),
                   value: isDarkModeEnabled,
                   onChanged: (value) {
-                    toggleTheme(value);
+                    _toggleTheme(value);
                   },
                   activeColor: Theme.of(context).colorScheme.onInverseSurface,
                 ),

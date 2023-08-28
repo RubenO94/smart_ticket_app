@@ -59,7 +59,7 @@ class PagamentosPagosAgregadoScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [SelecionarAgregadoDropdown(agregados: agregados), content],
+        children: [const SelecionarAgregadoDropdown(), content],
       ),
     );
   }

@@ -18,7 +18,7 @@ class MenssagemCentro extends StatelessWidget {
         children: [
           widget,
           const SizedBox(
-            height: 16,
+            height: 24,
           ),
           Text(
             mensagem,

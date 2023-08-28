@@ -6,30 +6,38 @@ import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart
 class SelecionarAgregadoDropdown extends ConsumerWidget {
   const SelecionarAgregadoDropdown({
     super.key,
-    required this.agregados,
   });
-
-  final List<AgregadoPagamento> agregados;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final agregados = ref.watch(pagamentosAgregadosProvider);
+    final agregadosNome = agregados.map((e) => e.nome).toList();
     final agregadoSelecionado = ref.watch(agregadoSelecionadoProvider);
-    return DropdownButtonFormField<AgregadoPagamento>(
+    final agregadoSelecionadoNome = agregadosNome.firstWhere(
+        (element) => element == agregadoSelecionado.nome,
+        orElse: () => '');
+    return DropdownButtonFormField<String>(
       hint: const Text('Selecione um agregado'),
-      value: agregadoSelecionado.nome == '' ? null : agregadoSelecionado,
+      value: agregadosNome.isEmpty || agregadoSelecionadoNome.isEmpty
+          ? null
+          : agregadoSelecionadoNome,
       decoration: const InputDecoration(
           labelText: 'LISTA DE AGREGADOS', border: OutlineInputBorder()),
       style: Theme.of(context).textTheme.labelLarge,
-      items: agregados.map<DropdownMenuItem<AgregadoPagamento>>((agregado) {
+      items: agregadosNome.map<DropdownMenuItem<String>>((agregado) {
         return DropdownMenuItem(
           value: agregado,
-          child: Text(agregado.nome),
+          child: Text(agregado),
         );
       }).toList(),
       onChanged: (value) {
+        final selecionado = agregados.firstWhere(
+          (element) => element.nome == value,
+          orElse: () => AgregadoPagamento(nome: '', pagamentos: []),
+        );
         ref
             .read(agregadoSelecionadoProvider.notifier)
-            .setAgregadoSelecionado(value!);
+            .setAgregadoSelecionado(selecionado);
       },
     );
   }

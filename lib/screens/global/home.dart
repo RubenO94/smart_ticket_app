@@ -71,7 +71,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         key: _scaffoldKey,
         drawerEnableOpenDragGesture: false,
         drawer: Drawer(
-          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: const ContinuousRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(6),
@@ -87,6 +87,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           }
         },
         appBar: AppBar(
+          leading: _currentPageIndex != 2 ? BackButton(
+            onPressed: () {
+              setState(() {
+                _currentPageIndex = 2;
+              });
+            },
+          ) : null,
           automaticallyImplyLeading: false,
           centerTitle: true,
           backgroundColor:

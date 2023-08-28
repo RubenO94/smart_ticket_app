@@ -2,26 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/global/perfil.dart';
 
-enum Estado {
-  inativo,
-  ativo,
-  devedor,
-  contencioso,
-  credito,
-  banido,
-  suspenso,
-}
-
-const Map<Estado, IconData> iconsEstado = {
-  Estado.inativo: Icons.disabled_by_default,
-  Estado.ativo: Icons.check_box,
-  Estado.devedor: Icons.credit_card_off_rounded,
-  Estado.contencioso: Icons.crisis_alert_rounded,
-  Estado.credito: Icons.credit_card_rounded,
-  Estado.banido: Icons.remove_circle,
-  Estado.suspenso: Icons.lock_clock_rounded,
-};
-
 /// Notificador de estado responsável por gerir as informações do perfil.
 class PerfilNotifier extends StateNotifier<Perfil> {
   PerfilNotifier()
@@ -89,6 +69,20 @@ final utilizadorEstadoIconProvider = Provider<IconData>((ref) {
       return Icons.phone_android_rounded;
   }
 });
+
+class IsDeviceActivatedNotifer extends StateNotifier<bool> {
+  IsDeviceActivatedNotifer() : super(false);
+
+  void setEstado(bool estado) {
+    state = estado;
+  }
+}
+
+final isDeviceActivatedProvider =
+    StateNotifierProvider<IsDeviceActivatedNotifer, bool>(
+        (ref) => IsDeviceActivatedNotifer());
+  
+
 
 // class ComprovativoFileNameNotifier extends StateNotifier<String> {
 //   ComprovativoFileNameNotifier() : super('');
