@@ -1070,9 +1070,18 @@ class ApiService {
             );
           }).toList();
 
+          //Atualizar os pagamentos dos agregados e o agregado selecionado na lista.
           ref
               .read(pagamentosAgregadosProvider.notifier)
               .setPagamentosAgregados(agregados);
+          final agregadoSelecionado = ref.read(agregadoSelecionadoProvider);
+          final agregadoSelecionadoRefresh = agregados.firstWhere(
+            (element) => element.nome == agregadoSelecionado.nome,
+            orElse: () => AgregadoPagamento(nome: '', pagamentos: []),
+          );
+          ref
+              .read(agregadoSelecionadoProvider.notifier)
+              .setAgregadoSelecionado(agregadoSelecionadoRefresh);
 
           int totalLength = 0;
 
@@ -1263,20 +1272,20 @@ class ApiService {
     };
   }
 
-/// Envia uma solicitação para associar um novo agregado ao perfil do utilizador.
-///
-/// A função faz uma solicitação POST para o endpoint '/SetPerfilAssociarAgregado'
-/// com os dados do novo agregado e o seu comprovativo.
-///
-/// Retorna um [Future] que contém um mapa com os seguintes campos:
-/// - 'resultado': O resultado da operação. 0 indica erro e 1 indica sucesso.
-/// - 'mensagem': Uma mensagem descritiva do resultado da operação.
-///   Se 'resultado' for 0, 'mensagem' conterá a mensagem de erro.
-///   Se 'resultado' for 1, 'mensagem' conterá uma mensagem de sucesso ou uma mensagem padrão se 'strDescricao' for nula.
-///
-/// [novoAgregado] contém os detalhes do novo agregado, incluindo NIF e comprovativo.
-///
-/// Lança exceções se ocorrerem erros durante a execução.
+  /// Envia uma solicitação para associar um novo agregado ao perfil do utilizador.
+  ///
+  /// A função faz uma solicitação POST para o endpoint '/SetPerfilAssociarAgregado'
+  /// com os dados do novo agregado e o seu comprovativo.
+  ///
+  /// Retorna um [Future] que contém um mapa com os seguintes campos:
+  /// - 'resultado': O resultado da operação. 0 indica erro e 1 indica sucesso.
+  /// - 'mensagem': Uma mensagem descritiva do resultado da operação.
+  ///   Se 'resultado' for 0, 'mensagem' conterá a mensagem de erro.
+  ///   Se 'resultado' for 1, 'mensagem' conterá uma mensagem de sucesso ou uma mensagem padrão se 'strDescricao' for nula.
+  ///
+  /// [novoAgregado] contém os detalhes do novo agregado, incluindo NIF e comprovativo.
+  ///
+  /// Lança exceções se ocorrerem erros durante a execução.
   Future<Map<String, dynamic>> postPerfilAssociarAgregado(
       NovoAgregado novoAgregado) async {
     const endPoint = '/SetPerfilAssociarAgregado';

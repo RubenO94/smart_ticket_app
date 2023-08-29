@@ -11,7 +11,11 @@ class SelecionarAgregadoDropdown extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final agregados = ref.watch(pagamentosAgregadosProvider);
-    final agregadosNome = agregados.map((e) => e.nome).toList();
+    final agregadosNome = ref.watch(pagamentosAgregadosProvider.select((value) {
+      return value.map((e) {
+        return e.nome;
+      }).toList();
+    }));
     final agregadoSelecionado = ref.watch(agregadoSelecionadoProvider);
     final agregadoSelecionadoNome = agregadosNome.firstWhere(
         (element) => element == agregadoSelecionado.nome,

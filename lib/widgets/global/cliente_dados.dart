@@ -15,15 +15,15 @@ import 'package:smart_ticket/widgets/global/editar_perfil_form.dart';
 import 'package:smart_ticket/widgets/global/cliente_dados_list.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
-class ClienteDados extends ConsumerStatefulWidget {
-  const ClienteDados({super.key, required this.perfil});
+class ClienteDadosScreen extends ConsumerStatefulWidget {
+  const ClienteDadosScreen({super.key, required this.perfil});
   final Perfil perfil;
 
   @override
-  ConsumerState<ClienteDados> createState() => _ClienteDadosState();
+  ConsumerState<ClienteDadosScreen> createState() => _ClienteDadosScreenState();
 }
 
-class _ClienteDadosState extends ConsumerState<ClienteDados> {
+class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
   bool _isEditarPerfilFormOpen = false;
   bool _isAgregadosOpen = false;
   bool _isSending = false;
@@ -282,7 +282,6 @@ class _ClienteDadosState extends ConsumerState<ClienteDados> {
             ),
             trailing: IconButton(
               onPressed: _showAgregadoDialog,
-              //TODO: adicionar um novo agregado.
               icon: Icon(
                 Icons.person_add_alt_rounded,
                 color: Theme.of(context).colorScheme.secondary,
@@ -306,7 +305,6 @@ class _ClienteDadosState extends ConsumerState<ClienteDados> {
             ),
             trailing: IconButton(
               onPressed: () {
-                //TODO: Form para editar campos do perfil
                 setState(() {
                   _isEditarPerfilFormOpen = true;
                 });
@@ -328,7 +326,7 @@ class PerfilAgregados extends StatelessWidget {
     required this.widget,
   });
 
-  final ClienteDados widget;
+  final ClienteDadosScreen widget;
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,9 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
     final List<AgregadoPagamento> agregados =
         ref.watch(pagamentosAgregadosProvider);
     final agregadoSelecionado = ref.watch(agregadoSelecionadoProvider);
-    final pagamentos = ref.watch(agregadoSelecionadoPendentesProvider);
+    final pagamentos = ref.watch(agregadoSelecionadoProvider.select((value) {
+      return value.pagamentos.where((pagamento) => pagamento.pendente).toList();
+    }));
 
     if (agregados.isEmpty) {
       return const MenssagemCentro(

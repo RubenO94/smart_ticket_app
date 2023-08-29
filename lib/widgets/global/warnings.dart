@@ -27,10 +27,9 @@ class WarningsWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               return ListTile(
                 leading: Icon(alertas[index]
-                    .getIconDataForType()), // Icon corresponding to the type
+                    .getIconDataForType()), 
                 title: Text(alertas[index].message),
                 subtitle: Text(alertas[index].type),
-                // You can customize the appearance of the ListTile as needed
               );
             },
           ),

@@ -66,6 +66,14 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
   }
 
   void _confirmarAvaliacao() {
+    if (!_todasPerguntasRespondidas()) {
+      showDialog(
+        context: context,
+        builder: (ctx) => showMensagemDialog(ctx, 'Atenção!',
+            'Existe perguntas obrigatorias por responder e/ou o nível de transição não foi selecionado.'),
+      );
+      return;
+    }
     showDialog(
       context: context,
       builder: (context) {
@@ -497,21 +505,19 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
             ],
           ),
         ),
-        floatingActionButton: _todasPerguntasRespondidas()
-            ? FloatingActionButton.extended(
-                shape: const ContinuousRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(6),
-                  ),
-                ),
-                onPressed: _todasPerguntasRespondidas() || !_isSending
-                    ? _confirmarAvaliacao
-                    : null,
-                label: _isSending
-                    ? const CircularProgressIndicator()
-                    : const Text('Concluir Avaliação'),
-              )
-            : null,
+        floatingActionButton: FloatingActionButton.extended(
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(6),
+            ),
+          ),
+          onPressed: _todasPerguntasRespondidas() || !_isSending
+              ? _confirmarAvaliacao
+              : null,
+          label: _isSending
+              ? const CircularProgressIndicator()
+              : const Text('Concluir Avaliação'),
+        ),
       ),
     );
   }

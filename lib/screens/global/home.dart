@@ -6,6 +6,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/screens/global/entidade_info.dart';
 import 'package:smart_ticket/screens/global/ficha_utilizador.dart';
 import 'package:smart_ticket/screens/global/main_drawer.dart';
@@ -87,13 +88,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           }
         },
         appBar: AppBar(
-          leading: _currentPageIndex != 2 ? BackButton(
-            onPressed: () {
-              setState(() {
-                _currentPageIndex = 2;
-              });
-            },
-          ) : null,
+          leading: _currentPageIndex != 2
+              ? BackButton(
+                  onPressed: () {
+                    setState(() {
+                      _currentPageIndex = 2;
+                    });
+                  },
+                )
+              : null,
           automaticallyImplyLeading: false,
           centerTitle: true,
           backgroundColor:
@@ -110,7 +113,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         body: RefreshIndicator(
           child: activeScreen,
           onRefresh: () async {
-            return await ref.read(apiDataProvider.future);
+            final result = await ref.read(apiDataProvider.future);
+            if (!result && mounted) {
+              showToast(
+                  context,
+                  'Não foi possível atualizar os dados. Tente mais tarde.',
+                  'error');
+            } else {
+              showToast(context, 'Dados atualizados com sucesso!', 'success');
+            }
           },
         ),
         bottomNavigationBar: CurvedNavigationBar(
@@ -120,7 +131,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           index: _currentPageIndex,
           letIndexChange: (value) => true,
           onTap: (index) {
-            //TODO: Nagevação Bottom
             _changeScreen(index);
             if (_currentPageIndex == 4) {
               _scaffoldKey.currentState!.openDrawer();

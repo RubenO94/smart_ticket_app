@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 class EntidadeInfoScreen extends ConsumerWidget {
@@ -61,7 +60,9 @@ class EntidadeInfoScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               subtitle: Text(
-                entidade.telefone,
+                entidade.telefone.isEmpty
+                    ? 'Sem informação'
+                    : entidade.telefone,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -72,7 +73,7 @@ class EntidadeInfoScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               subtitle: Text(
-                entidade.email,
+                entidade.email.isEmpty ? 'Sem informação' : entidade.email,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -83,7 +84,7 @@ class EntidadeInfoScreen extends ConsumerWidget {
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               subtitle: Text(
-                entidade.website,
+                entidade.website.isEmpty ? 'Sem informação' : entidade.website,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/widgets/global/cliente_dados.dart';
+import 'package:smart_ticket/widgets/global/funcionario_dados.dart';
 import 'package:smart_ticket/widgets/global/utilizador_estado_badge.dart';
 
 class FichaUtilizadorScreen extends ConsumerWidget {
@@ -82,8 +83,8 @@ class FichaUtilizadorScreen extends ConsumerWidget {
           ),
           Expanded(
               child: perfil.userType == 0
-                  ? Container()
-                  : ClienteDados(
+                  ? const FuncionarioDadosScreen()
+                  : ClienteDadosScreen(
                       perfil: perfil,
                     )),
         ],
