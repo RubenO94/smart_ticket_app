@@ -26,8 +26,8 @@ class _PagamentoPagoItemState extends ConsumerState<PagamentoPagoItem> {
   bool _isDownLoading = false;
 
   void _createPdf() async {
-    final PermissionStatus status =
-        await Permission.manageExternalStorage.request();
+    final PermissionStatus status = Platform.isAndroid ? 
+        await Permission.manageExternalStorage.request() : await Permission.mediaLibrary.request();
     if (status.isGranted) {
       setState(() {
         _isDownLoading = true;
