@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
+
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/global/admin_settings.dart';
-import 'package:smart_ticket/screens/global/register.dart';
+
 
 class MainDrawer extends ConsumerStatefulWidget {
   const MainDrawer({super.key});
@@ -95,12 +99,11 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     if (dialogResult) {
       await ref.read(secureStorageProvider).deleteAllSecureData();
       if (context.mounted) {
-        // SystemNavigator.pop(animated: true);
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const RegisterScreen(),
-          ),
-        );
+        if (Platform.isAndroid) {
+          SystemNavigator.pop(animated: true);
+        }else{
+          FlutterExitApp.exitApp(iosForceExit: true);
+        }
       }
     }
   }
