@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
+
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
