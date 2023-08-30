@@ -77,7 +77,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Tem a certeza?'),
-        content: Text('Ao confirmar esta ação a aplição será encerrada.'),
+        content: const Text('Ao confirmar esta ação a aplição será encerrada.'),
         actions: [
           TextButton.icon(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -95,7 +95,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       await ref.read(secureStorageProvider).deleteAllSecureData();
       if (context.mounted) {
         // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
-        SystemNavigator.pop();
+        SystemNavigator.pop(animated: true);
       }
     }
   }

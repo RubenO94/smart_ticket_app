@@ -75,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           backgroundColor: Theme.of(context).colorScheme.surface,
           shape: const ContinuousRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(6),
+              Radius.circular(20),
             ),
           ),
           child: const MainDrawer(),
