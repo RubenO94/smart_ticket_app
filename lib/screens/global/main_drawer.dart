@@ -5,6 +5,7 @@ import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/global/admin_settings.dart';
+import 'package:smart_ticket/screens/global/register.dart';
 
 class MainDrawer extends ConsumerStatefulWidget {
   const MainDrawer({super.key});
@@ -95,7 +96,12 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       await ref.read(secureStorageProvider).deleteAllSecureData();
       if (context.mounted) {
         // TODO: ALGO NÃO ESTÁ A FUNCIONAR CORRETAMENTE, TEM A VER COM MATERIALIZATION
-        SystemNavigator.pop(animated: true);
+        // SystemNavigator.pop(animated: true);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const RegisterScreen(),
+          ),
+        );
       }
     }
   }
