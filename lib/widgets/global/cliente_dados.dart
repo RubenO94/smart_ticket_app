@@ -184,18 +184,18 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
   }
 
   Future<String> _pickFile() async {
-    PermissionStatus status = await Permission.manageExternalStorage.request();
-    if (status.isGranted) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+    // PermissionStatus status = await Permission.manageExternalStorage.request();
+    // if (status.isGranted) {
+    // }
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-      if (result != null) {
-        final selectedFile = File(result.files.single.path!);
-        List<int> fileBytes = selectedFile.readAsBytesSync();
-        _base64File = base64Encode(fileBytes);
-        final fileName = path.basename(result.files.single.name);
-        _fileName = fileName;
-        return fileName;
-      }
+    if (result != null) {
+      final selectedFile = File(result.files.single.path!);
+      List<int> fileBytes = selectedFile.readAsBytesSync();
+      _base64File = base64Encode(fileBytes);
+      final fileName = path.basename(result.files.single.name);
+      _fileName = fileName;
+      return fileName;
     }
     return '';
   }

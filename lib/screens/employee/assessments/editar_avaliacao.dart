@@ -41,9 +41,6 @@ class _EditarAvaliacaoScreenState extends ConsumerState<EditarAvaliacaoScreen> {
       return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
           title: const Text('Tem a certeza?'),
           content: const Text(
               'Voltar para a página anterior fará com que as alterações feitas sejam descartadas.'),

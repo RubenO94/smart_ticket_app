@@ -20,9 +20,6 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
         title: const Text('SmartTicket App'),
         content: Form(
           key: _formKey,
@@ -79,9 +76,6 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     final dialogResult = await showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
         title: const Text('Tem a certeza?'),
         content: Text('Ao confirmar esta ação a aplição será encerrada.'),
         actions: [

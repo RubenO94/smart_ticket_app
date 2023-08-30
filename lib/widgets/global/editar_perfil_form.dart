@@ -50,18 +50,18 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
   bool _comprovativoNecessario = false;
 
   Future<String> _pickFile() async {
-    PermissionStatus status = await Permission.manageExternalStorage.request();
-    if (status.isGranted) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+    // PermissionStatus status = await Permission.manageExternalStorage.request();
+    // if (status.isGranted) {
 
-      if (result != null) {
-        final selectedFile = File(result.files.single.path!);
-        List<int> fileBytes = selectedFile.readAsBytesSync();
-        _base64File = base64Encode(fileBytes);
-        final fileName = path.basename(result.files.single.name);
-        _fileName = fileName;
-        return fileName;
-      }
+    // }
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      final selectedFile = File(result.files.single.path!);
+      List<int> fileBytes = selectedFile.readAsBytesSync();
+      _base64File = base64Encode(fileBytes);
+      final fileName = path.basename(result.files.single.name);
+      _fileName = fileName;
+      return fileName;
     }
     return '';
   }
@@ -79,8 +79,6 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               return StatefulBuilder(
                 builder: (context, setState) {
                   return AlertDialog(
-                    shape: ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(6)),
                     title: const TitleAppBAr(
                         icon: Icons.insert_drive_file_sharp,
                         title: 'Anexar Comprovativo'),

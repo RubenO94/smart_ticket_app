@@ -41,9 +41,6 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
       return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
           title: const Text('Tem a certeza?'),
           content: const Text(
               'Voltar para a pagina anterior fará com esta avaliação seja descartada.'),
@@ -78,9 +75,6 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
           title: const Text('Enviar Avaliação'),
           content: const Text('Deseja realmente enviar a avaliação?'),
           actions: [

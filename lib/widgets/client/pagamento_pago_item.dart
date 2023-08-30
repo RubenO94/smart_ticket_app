@@ -26,10 +26,12 @@ class _PagamentoPagoItemState extends ConsumerState<PagamentoPagoItem> {
   bool _isDownLoading = false;
 
   void _createPdf() async {
-    final PermissionStatus status = Platform.isAndroid ? 
-        await Permission.manageExternalStorage.request() : await Permission.mediaLibrary.request();
-    if (status.isGranted) {
-      setState(() {
+    // final PermissionStatus status = Platform.isAndroid ? 
+    //     await Permission.manageExternalStorage.request() : await Permission.mediaLibrary.request();
+    // if (status.isGranted) {
+     
+    // }
+     setState(() {
         _isDownLoading = true;
       });
       final base64WithPrefix = await ref
@@ -56,7 +58,6 @@ class _PagamentoPagoItemState extends ConsumerState<PagamentoPagoItem> {
       setState(() {
         _isDownLoading = false;
       });
-    }
   }
 
   @override
