@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -28,7 +30,7 @@ class ContactItem extends StatelessWidget {
       }),
     );
 
-    final Uri phoneLunchUri = Uri(scheme: 'tel', path: contact);
+    final Uri phoneLunchUri = Uri(scheme: 'tel', path: Platform.isAndroid ? contact : '//$contact');
 
     return GestureDetector(
       onTap: () async {
