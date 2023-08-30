@@ -26,7 +26,7 @@ class FuncionarioDadosScreen extends ConsumerWidget {
           children: [
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'CODÍGO POSTAL',
+                  titulo: 'CÓDIGO POSTAL',
                   conteudo: perfil.funcionario!.codigoPostal),
             ),
             Expanded(

@@ -130,8 +130,6 @@ class AlunoItem extends StatelessWidget {
                 ),
               if (aluno.dataAvalicao != '1900-01-01')
                 PopupMenuItem(
-                  
-                  padding: EdgeInsets.all(0),
                   child: TextButton.icon(
                     style: ButtonStyle(
                         foregroundColor: MaterialStatePropertyAll(

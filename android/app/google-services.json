@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "12154420354",
+    "project_id": "smartticketapp-63be1",
+    "storage_bucket": "smartticketapp-63be1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12154420354:android:104ca9e947b59625bf089b",
+        "android_client_info": {
+          "package_name": "com.smartstep.smartticketapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "12154420354-9f8ue0co5if1cbdncrjhluk1nhghoh40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP6JehFApH0xiFLROoGzfZ-5cZROjB120"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "12154420354-9f8ue0co5if1cbdncrjhluk1nhghoh40.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

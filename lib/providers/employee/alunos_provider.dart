@@ -15,7 +15,7 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
   }
 
   void editarAluno(
-      List<Resposta> respostas, int idDesempenhoNivel, int numeroAluno) {
+      List<Resposta> respostas, int idDesempenhoNivel, int numeroAluno, String dataAvalicao) {
     int totalPontos = 0;
 
     for (final resposta in respostas) {
@@ -25,6 +25,7 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
     final List<Aluno> alunos = state.map((aluno) {
       if (aluno.numeroAluno == numeroAluno) {
         return aluno.copyWith(
+          dataAvalicao: dataAvalicao,
             respostas: respostas,
             idDesempenhoNivel: idDesempenhoNivel,
             pontuacaoTotal: totalPontos);

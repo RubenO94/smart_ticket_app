@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,9 +28,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   late AnimationController _animationController;
   int _currentPageIndex = 2;
 
+  void _setupPushNotifications() async {
+//Permissions to Firebase Messaging
+    final fcm = FirebaseMessaging.instance;
+    await fcm.requestPermission();
+    final token = await fcm.getToken();
+    print(token);
+
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _setupPushNotifications();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),

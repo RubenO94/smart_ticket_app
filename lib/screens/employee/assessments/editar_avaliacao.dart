@@ -9,6 +9,7 @@ import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/utils.dart';
 
 class EditarAvaliacaoScreen extends ConsumerStatefulWidget {
   const EditarAvaliacaoScreen(
@@ -78,8 +79,12 @@ class _EditarAvaliacaoScreenState extends ConsumerState<EditarAvaliacaoScreen> {
           widget.idAtividadeLetiva);
 
       if (hasPosted && mounted) {
-        ref.read(alunosProvider.notifier).editarAluno(_respostas,
-            _selectedNivel!.nIDDesempenhoNivel, widget.aluno.numeroAluno);
+        ref.read(alunosProvider.notifier).editarAluno(
+              _respostas,
+              _selectedNivel!.nIDDesempenhoNivel,
+              widget.aluno.numeroAluno,
+              convertDateToString(DateTime.now()),
+            );
         Navigator.of(context).pop();
         showToast(context, 'A avaliação foi editada com sucesso!', 'success');
       } else {

@@ -70,7 +70,7 @@ class ClienteDadosList extends ConsumerWidget {
           children: [
             Expanded(
               child: PerfilDadosItem(
-                  titulo: 'CODÍGO POSTAL',
+                  titulo: 'CÓDIGO POSTAL',
                   conteudo: perfil.cliente!.codigoPostal),
             ),
             Expanded(
