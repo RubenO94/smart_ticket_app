@@ -30,7 +30,8 @@ class ContactItem extends StatelessWidget {
       }),
     );
 
-    final Uri phoneLunchUri = Uri(scheme: 'tel', path: Platform.isAndroid ? contact : '//$contact');
+    final Uri phoneLunchUri =
+        Uri(scheme: 'tel', path: Platform.isAndroid ? contact : '//$contact');
 
     return GestureDetector(
       onTap: () async {
@@ -43,20 +44,24 @@ class ContactItem extends StatelessWidget {
           return;
         }
       },
-      child: Row(
-        children: [
-          Icon(icon, size: 12, color: Theme.of(context).colorScheme.onPrimary),
-          const SizedBox(
-            width: 6,
-          ),
-          Text(
-            contact,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 24),
+        child: Row(
+          children: [
+            Icon(icon,
+                size: 16, color: Theme.of(context).colorScheme.onPrimary),
+            const SizedBox(
+              width: 6,
+            ),
+            Text(
+              contact,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          ],
+        ),
       ),
     );
   }

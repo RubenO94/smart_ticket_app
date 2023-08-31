@@ -35,21 +35,21 @@ class AboutApp extends StatelessWidget {
             'Esta aplicação só disponibiliza as suas funções quando está licenciada.',
             style: Theme.of(context)
                 .textTheme
-                .bodySmall!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-          ),
-          const SizedBox(
-            height: 12,
-          ),
-          Text(
-            'Para mais informações contacte-nos:',
-            style: Theme.of(context)
-                .textTheme
                 .bodyMedium!
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
           const SizedBox(
             height: 16,
+          ),
+          Text(
+            'Para mais informações contacte-nos:',
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+          const SizedBox(
+            height: 8,
           ),
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,

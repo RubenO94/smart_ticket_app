@@ -202,6 +202,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
+    FocusScope.of(context).unfocus();
     super.dispose();
   }
 
@@ -209,24 +210,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
+        indicatorColor: const Color(0xF5F5F5F5),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Color(0xF5F5F5F5),
           selectionHandleColor: Color(0xF5F5F5F5),
-          selectionColor: Color(0xF5F5F5F5),
+          selectionColor: Color.fromARGB(172, 122, 182, 54),
         ),
       ),
       child: Scaffold(
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(
             colors: [
-              const Color.fromARGB(255, 21, 44, 31),
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.primaryContainer,
+              Color.fromARGB(255, 4, 13, 18),
+              Color.fromARGB(255, 24, 61, 61),
+              Color.fromARGB(255, 24, 61, 61),
+              Color.fromARGB(255, 92, 131, 116),
+              Color.fromARGB(255, 92, 131, 116),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomRight,
@@ -290,14 +292,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                             .onPrimary),
                                 labelStyle: Theme.of(context)
                                     .textTheme
-                                    .labelMedium!
+                                    .labelLarge!
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
                                             .onPrimary),
                                 errorStyle: Theme.of(context)
                                     .textTheme
-                                    .labelMedium!
+                                    .labelLarge!
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
@@ -353,7 +355,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 label: const Text('Endereço de Email'),
                                 labelStyle: Theme.of(context)
                                     .textTheme
-                                    .labelMedium!
+                                    .labelLarge!
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme

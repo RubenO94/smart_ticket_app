@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:334575012316:ios:3068c84310bfd6e8b36719",
-  "FIREBASE_PROJECT_ID": "smartticketapp-4d31d",
-  "GCM_SENDER_ID": "334575012316"
+  "GOOGLE_APP_ID": "1:12154420354:android:104ca9e947b59625bf089b",
+  "FIREBASE_PROJECT_ID": "smartticketapp-63be1",
+  "GCM_SENDER_ID": "12154420354"
 }
