@@ -50,7 +50,7 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
 
 /// Função para gerar a senha necessária na obtenção do token.
 String generatePassword() {
-  DateTime now = DateTime.now();
+  DateTime now = DateTime.now().toUtc();
   String formattedDate = now.year.toString() +
       now.month.toString().padLeft(2, '0') +
       now.day.toString().padLeft(2, '0');

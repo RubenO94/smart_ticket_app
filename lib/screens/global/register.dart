@@ -202,7 +202,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   void dispose() {
-    FocusScope.of(context).unfocus();
     super.dispose();
   }
 

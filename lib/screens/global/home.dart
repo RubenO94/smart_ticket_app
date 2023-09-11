@@ -32,9 +32,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 //Permissions to Firebase Messaging
     final fcm = FirebaseMessaging.instance;
     await fcm.requestPermission();
-    final token = await fcm.getToken();
-    print(token);
-
+    // final token = await fcm.getToken();
   }
 
   @override
