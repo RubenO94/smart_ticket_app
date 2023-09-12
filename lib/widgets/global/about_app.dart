@@ -8,25 +8,31 @@ class AboutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: MediaQuery.of(context).size.width > 650
+          ? EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width / 3.8)
+          : const EdgeInsets.all(0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Icon(Icons.info_outline,
-                  color: Theme.of(context).colorScheme.onPrimary),
-              const SizedBox(
-                width: 6,
-              ),
-              Text(
-                'Informações sobre a aplicação',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-              ),
-            ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              children: [
+                Icon(Icons.info_outline,
+                    color: Theme.of(context).colorScheme.onPrimary),
+                const SizedBox(
+                  width: 6,
+                ),
+                Text(
+                  'Informações sobre a aplicação',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ],
+            ),
           ),
           const SizedBox(
             height: 12,
@@ -59,7 +65,7 @@ class AboutApp extends StatelessWidget {
                   icon: Icons.phone,
                   contactType: 'phone'),
               SizedBox(
-                width: 12,
+                width: 4,
               ),
               ContactItem(
                 contact: 'info@smartstep.pt',
