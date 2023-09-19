@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
@@ -26,13 +27,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
+  final ZoomDrawerController _zoomController = ZoomDrawerController();
   int _currentPageIndex = 2;
 
   void _setupPushNotifications() async {
 //Permissions to Firebase Messaging
     final fcm = FirebaseMessaging.instance;
     await fcm.requestPermission();
-    // final token = await fcm.getToken();
+    final token = await fcm.getToken();
+    print(token);
+    fcm.subscribeToTopic('notifcations');
+  }
+
+  void _closeDrawer() {
+    setState(() {
+      _currentPageIndex = 2;
+    });
   }
 
   @override
@@ -79,25 +89,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       activeScreen = const EntidadeInfoScreen();
     }
 
-    return Scaffold(
+    return ZoomDrawer(
+      borderRadius: 30,
+      showShadow: true,
+      angle: -1.0,
+      shadowLayer1Color: Theme.of(context).colorScheme.primary,
+      shadowLayer2Color: Theme.of(context).colorScheme.secondaryContainer,
+      menuScreenOverlayColor: Theme.of(context).colorScheme.background,
+      menuBackgroundColor: Theme.of(context).colorScheme.surface,
+      menuScreenWidth: double.infinity,
+      moveMenuScreen: true,
+      
+      controller: _zoomController,
+      menuScreen: MainDrawer(closeDrawer: _closeDrawer),
+      mainScreen: Scaffold(
         key: _scaffoldKey,
         drawerEnableOpenDragGesture: false,
-        drawer: Drawer(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
-            ),
-          ),
-          child: const MainDrawer(),
-        ),
-        onDrawerChanged: (isOpened) {
-          if (!isOpened) {
-            setState(() {
-              _currentPageIndex = 2;
-            });
-          }
-        },
         appBar: AppBar(
           leading: _currentPageIndex != 2
               ? BackButton(
@@ -144,7 +151,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           onTap: (index) {
             _changeScreen(index);
             if (_currentPageIndex == 4) {
-              _scaffoldKey.currentState!.openDrawer();
+              _zoomController.open?.call();
+            } else {
+              _zoomController.close?.call();
             }
           },
           items: [
@@ -179,6 +188,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: Colors.white,
             ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
