@@ -218,9 +218,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ),
       child: Padding(
         padding: MediaQuery.of(context).size.width > 650
-          ? EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width / 3.8)
-          : const EdgeInsets.all(0),
+            ? EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 3.8)
+            : const EdgeInsets.all(0),
         child: Scaffold(
           body: Container(
             width: double.infinity,
@@ -228,11 +228,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             decoration: const BoxDecoration(
                 gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 4, 13, 18),
-                Color.fromARGB(255, 24, 61, 61),
-                Color.fromARGB(255, 24, 61, 61),
-                Color.fromARGB(255, 92, 131, 116),
-                Color.fromARGB(255, 92, 131, 116),
+                Color.fromARGB(255, 1, 1, 1),
+                Color.fromARGB(255, 1, 1, 1),
+                Color.fromARGB(255, 1, 1, 1),
+                Color.fromARGB(255, 23, 29, 6),
+                Color.fromARGB(255, 67, 85, 18),
+                Color(0xFF95BD20),
               ],
               begin: Alignment.topCenter,
               end: Alignment.bottomRight,
@@ -408,15 +409,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ),
                               _isSending
                                   ? CircularProgressIndicator(
-                                      color:
-                                          Theme.of(context).colorScheme.onPrimary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
                                     )
                                   : TextButton.icon(
                                       style: ButtonStyle(
-                                        foregroundColor: MaterialStatePropertyAll(
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary),
+                                        foregroundColor:
+                                            MaterialStatePropertyAll(
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary),
                                         backgroundColor:
                                             const MaterialStatePropertyAll(
                                                 Colors.transparent),
@@ -436,8 +439,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                       ),
                                       onPressed:
                                           _isSending ? null : _saveCredentials,
-                                      icon:
-                                          const Icon(Icons.phone_android_rounded),
+                                      icon: const Icon(
+                                          Icons.phone_android_rounded),
                                       label: const Text('Registar'),
                                     ),
                             ],

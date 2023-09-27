@@ -1,15 +1,17 @@
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 
 class Aluno {
-  const Aluno(
-      {required this.idCliente,
-      required this.idDesempenhoNivel,
-      required this.numeroAluno,
-      required this.pontuacaoTotal,
-      required this.nome,
-      required this.dataAvalicao,
-      this.foto,
-      required this.respostas});
+  const Aluno({
+    required this.idCliente,
+    required this.idDesempenhoNivel,
+    required this.numeroAluno,
+    required this.pontuacaoTotal,
+    required this.nome,
+    required this.dataAvalicao,
+    this.foto,
+    required this.respostas,
+    required this.observacao,
+  });
 
   final int idCliente;
   final int idDesempenhoNivel;
@@ -19,6 +21,7 @@ class Aluno {
   final String? foto;
   final String nome;
   final List<Resposta> respostas;
+  final String observacao;
 
   String get nameToTitleCase {
     if (nome.isEmpty) {
@@ -46,6 +49,7 @@ class Aluno {
     String? dataAvalicao,
     String? foto,
     List<Resposta>? respostas,
+    String? observacao
   }) {
     return Aluno(
       idCliente: idCliente ?? this.idCliente,
@@ -56,6 +60,7 @@ class Aluno {
       dataAvalicao: dataAvalicao ?? this.dataAvalicao,
       foto: foto ?? this.foto,
       respostas: respostas ?? this.respostas,
+      observacao: observacao ?? this.observacao
     );
   }
 }

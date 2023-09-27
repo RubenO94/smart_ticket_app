@@ -25,6 +25,18 @@ class Nivel {
   });
 }
 
+class Classificacao {
+  final int valor;
+  final String descricao;
+  final String sigla;
+
+  Classificacao({
+    required this.valor,
+    required this.descricao,
+    required this.sigla
+  });
+}
+
 class Resposta {
   Resposta({required this.idDesempenhoLinha, required this.classificacao})
       : texto = '',
