@@ -623,6 +623,7 @@ class ApiService {
                   pontuacaoTotal: listAlunos[0]['nPontuacaoAvaliacao'],
                   perguntasList: listaPerguntas,
                   respostasList: listaRespostas,
+                  observacao: listAlunos[0]['strObservacao']
                 );
               }
             }
@@ -636,6 +637,7 @@ class ApiService {
               pontuacaoTotal: 0,
               perguntasList: [],
               respostasList: [],
+              observacao: 'null'
             );
           }).toList();
 
@@ -1337,6 +1339,14 @@ class ApiService {
     };
   }
 
+  /// Obtém os tipos de classificação a partir da API.
+  ///
+  /// Esta função realiza uma solicitação assíncrona para obter os tipos de classificação
+  /// Os tipos de classificação são recuperados em formato JSON
+  /// e convertidos numa lista de objetos [Classificacao]. Esses objetos são então armazenados
+  /// no provider [tiposClassificacaoProvider] para uso posterior na aplicação.
+  ///
+  /// Retorna `true` se a operação for bem-sucedida e `false` em caso de falha.
   Future<bool> getTiposClassificacao() async {
     const endPoint = '/GetTiposClassificacao';
     try {
@@ -1360,6 +1370,37 @@ class ApiService {
             ref
                 .read(tiposClassificacaoProvider.notifier)
                 .setTiposClassificacao(classificacoes);
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  Future<bool> postFcmToken(String token) async {
+    const endPoint = '/SetFcmToken';
+
+    if(token.isEmpty) {
+      return false;
+    }
+
+    final body = {"strFcmToken": token};
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          if(data["nResultado"] == 1){
             return true;
           }
         }

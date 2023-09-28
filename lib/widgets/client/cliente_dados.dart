@@ -10,9 +10,11 @@ import 'package:path/path.dart' as path;
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 import 'package:smart_ticket/widgets/global/editar_perfil_form.dart';
-import 'package:smart_ticket/widgets/global/cliente_dados_list.dart';
+import 'package:smart_ticket/widgets/client/cliente_dados_list.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class ClienteDadosScreen extends ConsumerStatefulWidget {
@@ -146,7 +148,7 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
                 actions: _isSending
                     ? null
                     : [
-                        TextButton(
+                        BotaoDialog(
                           onPressed: _isSending || _base64File.isEmpty
                               ? null
                               : () {
@@ -155,9 +157,9 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
                                   });
                                   _submitAgregado();
                                 },
-                          child: const Text('Confirmar'),
+                          type: ButtonDialogOptions.confirmar,
                         ),
-                        TextButton(
+                        BotaoDialog(
                           onPressed: () {
                             setState(() {
                               _base64File = '';
@@ -166,7 +168,7 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
 
                             Navigator.of(context).pop({'status': false});
                           },
-                          child: const Text('Cancelar'),
+                          type: ButtonDialogOptions.cancelar,
                         ),
                       ],
               );

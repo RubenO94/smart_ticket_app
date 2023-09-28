@@ -11,8 +11,10 @@ class MenuPrincipalScreen extends ConsumerWidget {
   const MenuPrincipalScreen({
     super.key,
     required AnimationController animationController,
+    required this.onTapPerfil
   }) : _animationController = animationController;
 
+  final void Function(int index) onTapPerfil;
   final AnimationController _animationController;
 
   @override
@@ -27,35 +29,40 @@ class MenuPrincipalScreen extends ConsumerWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                margin: const EdgeInsets.only(right: 16),
-                clipBehavior: Clip.hardEdge,
-                height: 56,
-                width: 56,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  boxShadow: [
-                    BoxShadow(
-                        blurStyle: BlurStyle.solid,
-                        blurRadius: 1.0,
-                        color: Theme.of(context).colorScheme.primary,
-                        spreadRadius: 2.5),
-                  ],
-                  shape: BoxShape.circle,
-                ),
-                child: perfil.photo.isEmpty
-                    ? Icon(
-                        Icons.person,
-                        size: 48,
-                        color: Theme.of(context).colorScheme.secondary,
-                      )
-                    : FadeInImage(
-                        placeholder: MemoryImage(kTransparentImage),
-                        image: MemoryImage(
-                          base64Decode(perfil.photo),
+              GestureDetector(
+                onTap: () {
+                  onTapPerfil(0);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 16),
+                  clipBehavior: Clip.hardEdge,
+                  height: 56,
+                  width: 56,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    boxShadow: [
+                      BoxShadow(
+                          blurStyle: BlurStyle.solid,
+                          blurRadius: 1.0,
+                          color: Theme.of(context).colorScheme.primary,
+                          spreadRadius: 2.5),
+                    ],
+                    shape: BoxShape.circle,
+                  ),
+                  child: perfil.photo.isEmpty
+                      ? Icon(
+                          Icons.person,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.secondary,
+                        )
+                      : FadeInImage(
+                          placeholder: MemoryImage(kTransparentImage),
+                          image: MemoryImage(
+                            base64Decode(perfil.photo),
+                          ),
+                          fit: BoxFit.cover,
                         ),
-                        fit: BoxFit.cover,
-                      ),
+                ),
               ),
               const SizedBox(
                 width: 2,

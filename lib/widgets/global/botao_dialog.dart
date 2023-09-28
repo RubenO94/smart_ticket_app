@@ -3,7 +3,7 @@ import 'package:smart_ticket/resources/enums.dart';
 
 class BotaoDialog extends StatelessWidget {
   const BotaoDialog({super.key, required this.onPressed, required this.type});
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final ButtonDialogOptions type;
   @override
   Widget build(BuildContext context) {
@@ -24,6 +24,13 @@ class BotaoDialog extends StatelessWidget {
         label = "Cancelar";
         backgroundColor = Theme.of(context).colorScheme.secondary;
         foregroundColor = Theme.of(context).colorScheme.onSecondary;
+        break;
+        case ButtonDialogOptions.sair:
+        icon = const Icon(Icons.cancel);
+        label = "Sair";
+        backgroundColor = Theme.of(context).colorScheme.secondary;
+        foregroundColor = Theme.of(context).colorScheme.onSecondary;
+        break;
       case ButtonDialogOptions.ok:
         icon = const Icon(Icons.done);
         label = "Ok";

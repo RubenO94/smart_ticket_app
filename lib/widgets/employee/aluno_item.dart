@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/screens/employee/assessments/ficha_avaliacao.dart';
-import 'package:smart_ticket/screens/employee/assessments/avaliacao.dart';
+import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/assessments/ver_avaliacao.dart';
 
 class AlunoItem extends StatelessWidget {
   const AlunoItem(

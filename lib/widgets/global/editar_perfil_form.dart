@@ -12,7 +12,9 @@ import 'package:smart_ticket/providers/global/services_provider.dart';
 
 import 'package:smart_ticket/resources/data.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
 class EditarPerfilForm extends ConsumerStatefulWidget {
@@ -147,13 +149,13 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                     actions: _isSending
                         ? null
                         : [
-                            TextButton(
+                            BotaoDialog(
                               onPressed: fileName.isEmpty
                                   ? null
                                   : () => Navigator.of(context).pop(true),
-                              child: const Text('Enviar'),
+                              type: ButtonDialogOptions.enivar,
                             ),
-                            TextButton(
+                            BotaoDialog(
                               onPressed: () {
                                 setState(() {
                                   _isSending = true;
@@ -163,7 +165,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
 
                                 Navigator.of(context).pop(false);
                               },
-                              child: const Text('Cancelar'),
+                              type: ButtonDialogOptions.cancelar,
                             ),
                           ],
                   );

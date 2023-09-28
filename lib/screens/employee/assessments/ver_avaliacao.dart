@@ -7,7 +7,7 @@ import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
-import 'package:smart_ticket/screens/employee/assessments/ficha_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 import 'package:smart_ticket/widgets/employee/aluno_badge.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';

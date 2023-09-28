@@ -7,8 +7,10 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/global/admin_settings.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 
 class MainDrawer extends ConsumerStatefulWidget {
   const MainDrawer({super.key, required this.closeDrawer});
@@ -48,11 +50,12 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
           ),
         ),
         actions: [
-          TextButton(
+          TextButton.icon(
               onPressed: () {
                 _submit();
               },
-              child: const Text('Entrar')),
+              icon: const Icon(Icons.login),
+              label: const Text('Entrar')),
         ],
       ),
     );
@@ -83,15 +86,12 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
         title: const Text('Sair da Aplicação'),
         content: const Text('Tem certeza de que deseja sair?'),
         actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            icon: const Icon(Icons.logout),
-            label: const Text('Sair'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancelar'),
-          ),
+          BotaoDialog(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              type: ButtonDialogOptions.confirmar),
+          BotaoDialog(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              type: ButtonDialogOptions.cancelar),
         ],
       ),
     );
@@ -107,7 +107,6 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     }
   }
 
-
   @override
   void dispose() {
     widget.closeDrawer();
@@ -119,9 +118,15 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     final isDarkModeEnabled =
         ref.watch(themeProvider) == ThemeMode.dark ?? false;
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        leading: BackButton(
+          onPressed: widget.closeDrawer,
+        ),
+      ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.only(top: 24, left: 12, right: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -148,37 +153,31 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                         ),
                       ],
                     ),
-                    IconButton(
-                      onPressed: _logOutDialog,
-                      icon: const Icon(
-                        Icons.logout_rounded,
-                        size: 32,
-                      ),
-                    )
                   ],
                 ),
               ),
               const SizedBox(
-                height: 32,
+                height: 120,
               ),
               Row(
                 children: [
                   Text(
                     'ESQUEMA DE CORES',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         color: Theme.of(context).colorScheme.onBackground),
                   ),
                   const SizedBox(
                     width: 8,
                   ),
                   Switch(
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    splashRadius: 1,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
                     key: ValueKey(isDarkModeEnabled),
                     thumbIcon: isDarkModeEnabled
-                        ? const MaterialStatePropertyAll(
+                        ? MaterialStatePropertyAll(
                             Icon(
                               Icons.dark_mode_rounded,
-                              color: Colors.white,
+                              color: Colors.grey.shade800,
                             ),
                           )
                         : const MaterialStatePropertyAll(
@@ -188,10 +187,33 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                     onChanged: (value) {
                       _toggleTheme(value);
                     },
-                    activeColor: Theme.of(context).colorScheme.onInverseSurface,
+                    // activeColor: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ],
               ),
+              const Divider(
+                endIndent: 180,
+              ),
+              const SizedBox(
+                height: 48,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 48),
+                child: ElevatedButton.icon(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.onSecondary),
+                    backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.secondary),
+                  ),
+                  onPressed: _logOutDialog,
+                  label: const Text("Sair"),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    size: 32,
+                  ),
+                ),
+              )
             ],
           ),
         ),

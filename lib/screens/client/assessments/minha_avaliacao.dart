@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
-class MinhaAvaliacaoScreen extends StatelessWidget {
+class MinhaAvaliacaoScreen extends ConsumerWidget {
   const MinhaAvaliacaoScreen(
       {super.key, required this.avaliacao, required this.nivel});
   final FichaAvaliacao avaliacao;
   final Nivel nivel;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    //Tipos de classificação:
+
+    final tiposClassificacao = ref.watch(tiposClassificacaoProvider);
+
     // Agrupar perguntas por categoria
     final Map<String, List<Pergunta>> perguntasPorCategoria = {};
 
@@ -79,7 +85,7 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Objetivo',
+                          'Parâmetros da Avaliação',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
@@ -116,13 +122,51 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.note,
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    "Observações",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall!
+                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
+              height: 120,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(6),
+                color: Theme.of(context).colorScheme.surface,
+              ),
+              child: avaliacao.observacao.isEmpty
+                  ? const Center(
+                      child: Text("Sem Observações"),
+                    )
+                  : Text(avaliacao.observacao),
+            ),
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  border: Border(
-                      top: BorderSide(color: Theme.of(context).dividerColor))),
-              padding: const EdgeInsets.only(bottom: 48, left: 16, top: 16),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                border: Border(
+                  top: BorderSide(color: Theme.of(context).dividerColor),
+                ),
+              ),
+              padding: const EdgeInsets.only(bottom: 16, left: 16, top: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,11 +181,11 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
                   const SizedBox(
                     height: 12,
                   ),
-                  const AvaliacaoLegendaItem(texto: '3 - Muito Bom'),
-                  const AvaliacaoLegendaItem(texto: '2 - Bom'),
-                  const AvaliacaoLegendaItem(texto: '1 - A Melhorar'),
-                  const AvaliacaoLegendaItem(
-                      texto: '0 - Matéria não lecionada'),
+                  for (Classificacao classificacao in tiposClassificacao)
+                    AvaliacaoLegendaItem(
+                      texto:
+                          '${classificacao.valor} - ${classificacao.descricao}',
+                    ),
                 ],
               ),
             ),
@@ -150,5 +194,4 @@ class MinhaAvaliacaoScreen extends StatelessWidget {
       ),
     );
   }
-
 }

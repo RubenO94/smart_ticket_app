@@ -166,17 +166,8 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
     } else {
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-          title: const Text('Atenção!'),
-          content: const Text(
-              'Existe campos obrigatórios que ainda não foram avaliados. Reveja a ficha de avaliação antes de submeter'),
-        ),
+        builder: (ctx) => showMensagemDialog(ctx, 'Atenção!',
+            'Existe campos obrigatórios que ainda não foram avaliados. Reveja a ficha de avaliação antes de submeter'),
       );
     }
     setState(() {

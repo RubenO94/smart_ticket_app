@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/global/about_app.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -177,21 +179,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             ),
           ),
           actions: [
-            TextButton(
+            BotaoDialog(
               onPressed: () {
                 setState(() {
                   _isSending = true;
                 });
                 _saveActivationCode();
               },
-              child: const Text('Confirmar'),
+              type: ButtonDialogOptions.confirmar,
             ),
-            TextButton(
+            BotaoDialog(
               onPressed: () {
                 FocusScope.of(context).unfocus();
                 Navigator.of(context).pop(false);
               },
-              child: const Text('Cancelar'),
+              type: ButtonDialogOptions.cancelar,
             ),
           ],
         );

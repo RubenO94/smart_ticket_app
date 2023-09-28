@@ -5,8 +5,10 @@ import 'package:smart_ticket/models/client/aula.dart';
 import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/widgets/client/aula_item.dart';
 import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
 import 'package:smart_ticket/widgets/global/title_appbar.dart';
 
@@ -34,20 +36,19 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           actions: [
-             TextButton(
+            BotaoDialog(
               onPressed: () {
                 Navigator.of(context).pop(true);
                 _onSubmitDelete(aula);
               },
-              child: const Text('Sim'),
+              type: ButtonDialogOptions.confirmar,
             ),
-            TextButton(
+            BotaoDialog(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('Não'),
+              type: ButtonDialogOptions.cancelar,
             ),
-           
           ],
         );
       },
@@ -69,15 +70,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
     } else if (mounted) {
       await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro!'),
-          content: Text(response['mensagem']),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'))
-          ],
-        ),
+        builder: (ctx) => showMensagemDialog(ctx, 'Erro', response['mensagem']),
       );
     }
   }
