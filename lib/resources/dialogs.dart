@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/resources/enums.dart';
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 
 /// Exibe um snackbar de notificação com base no [tipo].
 ///
@@ -66,14 +68,14 @@ void showToast(BuildContext context, String message, String type) {
   );
 }
 
+///Exibe um Dialog com Titulo e Contexto dinâmico
 AlertDialog showMensagemDialog(
     BuildContext context, String titulo, String mensagem) {
   return AlertDialog(
     title: Text(titulo),
     content: Text(mensagem),
     actions: [
-      TextButton(
-          onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))
+      BotaoDialog(onPressed: () => Navigator.of(context).pop(), type: ButtonDialogOptions.sair)
     ],
   );
 }

@@ -25,6 +25,18 @@ class Nivel {
   });
 }
 
+class Classificacao {
+  final int valor;
+  final String descricao;
+  final String sigla;
+
+  Classificacao({
+    required this.valor,
+    required this.descricao,
+    required this.sigla
+  });
+}
+
 class Resposta {
   Resposta({required this.idDesempenhoLinha, required this.classificacao})
       : texto = '',
@@ -43,6 +55,7 @@ class FichaAvaliacao {
   final String dataAvalicao;
   final int idDesempenhoNivel;
   final int pontuacaoTotal;
+  final String observacao;
   final List<Pergunta> perguntasList;
   final List<Resposta> respostasList;
 
@@ -53,6 +66,7 @@ class FichaAvaliacao {
     required this.dataAvalicao,
     required this.idDesempenhoNivel,
     required this.pontuacaoTotal,
+    required this.observacao,
     required this.perguntasList,
     required this.respostasList,
   });

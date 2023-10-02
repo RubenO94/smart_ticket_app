@@ -7,13 +7,14 @@ import 'package:flutter_exit_app/flutter_exit_app.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/theme_provider.dart';
+import 'package:smart_ticket/resources/enums.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/screens/global/admin_settings.dart';
-
+import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 
 class MainDrawer extends ConsumerStatefulWidget {
-  const MainDrawer({super.key});
-
+  const MainDrawer({super.key, required this.closeDrawer});
+  final void Function() closeDrawer;
   @override
   ConsumerState<MainDrawer> createState() => _MainDrawerState();
 }
@@ -49,11 +50,12 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
           ),
         ),
         actions: [
-          TextButton(
+          TextButton.icon(
               onPressed: () {
                 _submit();
               },
-              child: const Text('Entrar')),
+              icon: const Icon(Icons.login),
+              label: const Text('Entrar')),
         ],
       ),
     );
@@ -84,15 +86,12 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
         title: const Text('Sair da Aplicação'),
         content: const Text('Tem certeza de que deseja sair?'),
         actions: [
-          TextButton.icon(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            icon: const Icon(Icons.logout),
-            label: const Text('Sair'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancelar'),
-          ),
+          BotaoDialog(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              type: ButtonDialogOptions.confirmar),
+          BotaoDialog(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              type: ButtonDialogOptions.cancelar),
         ],
       ),
     );
@@ -101,7 +100,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       if (context.mounted) {
         if (Platform.isAndroid) {
           SystemNavigator.pop(animated: true);
-        }else{
+        } else {
           FlutterExitApp.exitApp(iosForceExit: true);
         }
       }
@@ -109,78 +108,114 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
   }
 
   @override
+  void dispose() {
+    widget.closeDrawer();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDarkModeEnabled =
         ref.watch(themeProvider) == ThemeMode.dark ?? false;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onLongPress: () => _developerDialog(),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.settings_applications_rounded),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        'Configurações',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.onBackground),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: _logOutDialog,
-                    icon: const Icon(
-                      Icons.logout_rounded,
-                      size: 32,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        leading: BackButton(
+          onPressed: widget.closeDrawer,
+        ),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 24, left: 12, right: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onLongPress: () => _developerDialog(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.settings_applications_rounded),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          'Configurações',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onBackground),
+                        ),
+                      ],
                     ),
-                  )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 120,
+              ),
+              Row(
+                children: [
+                  Text(
+                    'ESQUEMA DE CORES',
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Switch(
+                    splashRadius: 1,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    key: ValueKey(isDarkModeEnabled),
+                    thumbIcon: isDarkModeEnabled
+                        ? MaterialStatePropertyAll(
+                            Icon(
+                              Icons.dark_mode_rounded,
+                              color: Colors.grey.shade800,
+                            ),
+                          )
+                        : const MaterialStatePropertyAll(
+                            Icon(Icons.wb_sunny),
+                          ),
+                    value: isDarkModeEnabled,
+                    onChanged: (value) {
+                      _toggleTheme(value);
+                    },
+                    // activeColor: Theme.of(context).colorScheme.onInverseSurface,
+                  ),
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 32,
-            ),
-            Row(
-              children: [
-                Text(
-                  'ESQUEMA DE CORES',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onBackground),
+              const Divider(
+                endIndent: 180,
+              ),
+              const SizedBox(
+                height: 48,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 48),
+                child: ElevatedButton.icon(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.onSecondary),
+                    backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.secondary),
+                  ),
+                  onPressed: _logOutDialog,
+                  label: const Text("Sair"),
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    size: 32,
+                  ),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Switch(
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  key: ValueKey(isDarkModeEnabled),
-                  thumbIcon: isDarkModeEnabled
-                      ? const MaterialStatePropertyAll(
-                          Icon(
-                            Icons.dark_mode_rounded,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const MaterialStatePropertyAll(
-                          Icon(Icons.wb_sunny),
-                        ),
-                  value: isDarkModeEnabled,
-                  onChanged: (value) {
-                    _toggleTheme(value);
-                  },
-                  activeColor: Theme.of(context).colorScheme.onInverseSurface,
-                ),
-              ],
-            ),
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

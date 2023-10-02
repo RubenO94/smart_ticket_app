@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
-import 'package:smart_ticket/widgets/global/cliente_dados.dart';
-import 'package:smart_ticket/widgets/global/funcionario_dados.dart';
+import 'package:smart_ticket/widgets/client/cliente_dados.dart';
+import 'package:smart_ticket/widgets/employee/funcionario_dados.dart';
 import 'package:smart_ticket/widgets/global/utilizador_estado_badge.dart';
 
 class FichaUtilizadorScreen extends ConsumerWidget {

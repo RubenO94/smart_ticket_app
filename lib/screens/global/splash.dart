@@ -93,33 +93,40 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             refresh: _checkConnectivity,
           )
         : Container(
-            color: Theme.of(context).colorScheme.background,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 1, 1, 1),
+                  Color.fromARGB(255, 1, 1, 1),
+                  Color.fromARGB(255, 1, 1, 1),
+                  Color.fromARGB(255, 23, 29, 6),
+                  Color.fromARGB(255, 67, 85, 18),
+                  Color(0xFF95BD20),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomRight,
+              ),
+            ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    isDarkMode
-                        ? 'assets/images/logo-dark.png'
-                        : 'assets/images/logo.png',
+                    'assets/images/splash-screen.png',
                     height: 100,
                   ),
                   const SizedBox(
-                    height: 48,
+                    height: 80,
                   ),
-                  CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.onBackground,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).colorScheme.primary,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 80),
+                    child: LinearProgressIndicator(
+                      backgroundColor: const Color.fromARGB(255, 23, 29, 6),
+                      color: Colors.transparent,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).colorScheme.background,
+                      ),
                     ),
-                    strokeWidth: 2,
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Text(
-                    'A Carregar...',
-                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ],
               ),

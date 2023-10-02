@@ -52,18 +52,17 @@ class DefaultFirebaseOptions {
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBP6JehFApH0xiFLROoGzfZ-5cZROjB120',
     appId: '1:12154420354:android:104ca9e947b59625bf089b',
-    messagingSenderId: '334575012316',
+    messagingSenderId: '12154420354',
     projectId: 'smartticketapp-63be1',
     storageBucket: 'smartticketapp-63be1.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAjtdQOTFGH3KPUEm603dNntUyO81SruCo',
-    appId: '1:334575012316:ios:3068c84310bfd6e8b36719',
-    messagingSenderId: '334575012316',
+    apiKey: 'AIzaSyBE5fqALCO4AdjYlJHXaI0AG4R2AdRUn8s',
+    appId: '1:12154420354:ios:d0eaf5da2f8452abbf089b',
+    messagingSenderId: '12154420354',
     projectId: 'smartticketapp-63be1',
     storageBucket: 'smartticketapp-63be1.appspot.com',
-    iosClientId: '12154420354-9f8ue0co5if1cbdncrjhluk1nhghoh40.apps.googleusercontent.com',
     iosBundleId: 'com.smartstep.smartTicketApp',
   );
 }

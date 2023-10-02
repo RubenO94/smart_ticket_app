@@ -15,7 +15,7 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
   }
 
   void editarAluno(
-      List<Resposta> respostas, int idDesempenhoNivel, int numeroAluno, String dataAvalicao) {
+      List<Resposta> respostas, int idDesempenhoNivel, int numeroAluno, String dataAvalicao, String observacao) {
     int totalPontos = 0;
 
     for (final resposta in respostas) {
@@ -28,6 +28,7 @@ class AlunosProvider extends StateNotifier<List<Aluno>> {
           dataAvalicao: dataAvalicao,
             respostas: respostas,
             idDesempenhoNivel: idDesempenhoNivel,
+            observacao: observacao,
             pontuacaoTotal: totalPontos);
       }
       return aluno;

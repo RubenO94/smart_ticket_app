@@ -51,19 +51,8 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
       });
       await showDialog(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Erro!'),
-          content: const Text(
-              'Ocorreu um erro ao tentar processar os detalhes de pagamento. Por favor tente mais tarde.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            )
-          ],
-        ),
+        builder: (ctx) => showMensagemDialog(ctx, 'Erro!',
+            'Ocorreu um erro ao tentar processar os detalhes de pagamento. Por favor tente mais tarde.'),
       );
       return;
     }
@@ -149,8 +138,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: LinearProgressIndicator(
-                  ),
+                  child: LinearProgressIndicator(),
                 ),
               ],
             ),

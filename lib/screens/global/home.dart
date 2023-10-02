@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 import 'package:smart_ticket/models/global/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
@@ -26,13 +27,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController _animationController;
+  final ZoomDrawerController _zoomController = ZoomDrawerController();
   int _currentPageIndex = 2;
+  bool _isMainScreen = true;
 
   void _setupPushNotifications() async {
 //Permissions to Firebase Messaging
     final fcm = FirebaseMessaging.instance;
-    await fcm.requestPermission();
-    // final token = await fcm.getToken();
+    final settings = await fcm.requestPermission();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      await fcm.subscribeToTopic('notifcations');
+      final token = await fcm.getToken();
+      print(token);
+      if (token != null || token!.isNotEmpty) {
+        final tokenHasSet =
+            await ref.read(apiServiceProvider).postFcmToken(token);
+        print('Estado Token: $tokenHasSet');
+      }
+    } else if (settings.authorizationStatus == AuthorizationStatus.denied &&
+        mounted) {
+      await showDialog(
+        context: context,
+        builder: (ctx) => showMensagemDialog(
+          ctx,
+          "Notificações",
+          "Para receber notificações importantes, ative as permissões de notificação em Configurações. Garantimos que as suas informações são mantidas seguras e privadas.",
+        ),
+      );
+    }
+  }
+
+  void _closeDrawer() {
+    setState(() {
+      _zoomController.close?.call();
+      _currentPageIndex = 2;
+    });
   }
 
   @override
@@ -57,15 +86,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   void _changeScreen(int index) {
-    setState(() {
-      _currentPageIndex = index;
-    });
+    if (index == 4) {
+      _zoomController.open?.call();
+      _currentPageIndex = 2;
+    } else {
+      setState(() {
+        _zoomController.close?.call();
+        _currentPageIndex = index;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final alertasQuantity = ref.watch(alertasQuantityProvider);
     Widget activeScreen = MenuPrincipalScreen(
+      onTapPerfil: _changeScreen,
       animationController: _animationController,
     );
 
@@ -79,25 +115,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       activeScreen = const EntidadeInfoScreen();
     }
 
-    return Scaffold(
+    return ZoomDrawer(
+      androidCloseOnBackTap: true,
+      borderRadius: 30,
+      showShadow: true,
+      angle: -2,
+      shadowLayer1Color: Theme.of(context).colorScheme.primary,
+      shadowLayer2Color: Theme.of(context).colorScheme.secondaryContainer,
+      menuScreenOverlayColor: Theme.of(context).colorScheme.background,
+      menuBackgroundColor: Theme.of(context).colorScheme.surface,
+      menuScreenWidth: double.infinity,
+      moveMenuScreen: true,
+      controller: _zoomController,
+      menuScreen: MainDrawer(closeDrawer: _closeDrawer),
+      mainScreen: Scaffold(
         key: _scaffoldKey,
         drawerEnableOpenDragGesture: false,
-        drawer: Drawer(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shape: const ContinuousRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(20),
-            ),
-          ),
-          child: const MainDrawer(),
-        ),
-        onDrawerChanged: (isOpened) {
-          if (!isOpened) {
-            setState(() {
-              _currentPageIndex = 2;
-            });
-          }
-        },
         appBar: AppBar(
           leading: _currentPageIndex != 2
               ? BackButton(
@@ -143,9 +176,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           letIndexChange: (value) => true,
           onTap: (index) {
             _changeScreen(index);
-            if (_currentPageIndex == 4) {
-              _scaffoldKey.currentState!.openDrawer();
-            }
           },
           items: [
             const Icon(
@@ -179,6 +209,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               color: Colors.white,
             ),
           ],
-        ));
+        ),
+      ),
+    );
   }
 }

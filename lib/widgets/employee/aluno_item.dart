@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/screens/employee/assessments/editar_avaliacao.dart';
 import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 import 'package:smart_ticket/screens/employee/assessments/ver_avaliacao.dart';
 
@@ -19,137 +18,86 @@ class AlunoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        elevation: 0.2,
-        color: Theme.of(context).cardColor,
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: ListTile(
-          leading: Container(
-            height: 40,
-            width: 40,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
-              boxShadow: [
-                BoxShadow(
-                    blurStyle: BlurStyle.solid,
-                    blurRadius: 1.0,
-                    color: Theme.of(context).colorScheme.primary,
-                    spreadRadius: 2.5),
-              ],
-              borderRadius: BorderRadius.circular(100),
-            ),
-            child: aluno.foto!.isEmpty
-                ? Icon(
-                    Icons.person,
-                    size: 32,
-                    color: Theme.of(context).colorScheme.secondary,
-                  )
-                : Image.memory(
-                    base64Decode(aluno.foto!),
-                  ),
+    bool temAvaliacao = aluno.dataAvalicao != "1900-01-01";
+    return Card(
+      elevation: 0.2,
+      color: Theme.of(context).cardColor,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: ListTile(
+        leading: Container(
+          height: 40,
+          width: 40,
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            boxShadow: [
+              BoxShadow(
+                  blurStyle: BlurStyle.solid,
+                  blurRadius: 1.0,
+                  color: Theme.of(context).colorScheme.primary,
+                  spreadRadius: 2.5),
+            ],
+            borderRadius: BorderRadius.circular(100),
           ),
-          title: Text(
-            aluno.nameToTitleCase,
-            style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                  color: Theme.of(context).colorScheme.onBackground,
+          child: aluno.foto!.isEmpty
+              ? Icon(
+                  Icons.person,
+                  size: 32,
+                  color: Theme.of(context).colorScheme.secondary,
+                )
+              : Image.memory(
+                  base64Decode(aluno.foto!),
                 ),
-          ),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 4),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        ),
+        title: Text(
+          aluno.nameToTitleCase,
+          style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Nº ${aluno.numeroAluno.toString()}',
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onBackground
+                          .withOpacity(0.7),
+                    ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              if (temAvaliacao)
                 Text(
-                  'Nº ${aluno.numeroAluno.toString()}',
-                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                  'Data da Avaliação: ${aluno.dataAvalicao}',
+                  style: Theme.of(context).textTheme.labelSmall!.copyWith(
                         color: Theme.of(context)
                             .colorScheme
                             .onBackground
-                            .withOpacity(0.7),
+                            .withOpacity(0.8),
                       ),
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                if (aluno.dataAvalicao != '1900-01-01')
-                  Text(
-                    'Data da Avaliação: ${aluno.dataAvalicao}',
-                    style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onBackground
-                              .withOpacity(0.8),
-                        ),
-                  ),
-              ],
-            ),
-          ),
-          trailing: PopupMenuButton(
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: TextButton.icon(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStatePropertyAll(
-                          Theme.of(context).colorScheme.onPrimaryContainer)),
-                  label: const Text('Nova Avaliação'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => NovaAvaliacaoScreen(
-                          aluno: aluno,
-                          idAula: idAula,
-                          idAtividadeLetiva: idAtividadeLetiva),
-                    ));
-                  },
-                  icon: const Icon(Icons.assignment_add),
-                ),
-              ),
-              if (aluno.dataAvalicao != '1900-01-01')
-                PopupMenuItem(
-                  child: TextButton.icon(
-                    style: ButtonStyle(
-                        foregroundColor: MaterialStatePropertyAll(
-                            Theme.of(context).colorScheme.onPrimaryContainer)),
-                    label: const Text('Editar Ficha de Avaliação'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => EditarAvaliacaoScreen(
-                            aluno: aluno,
-                            idAula: idAula,
-                            idAtividadeLetiva: idAtividadeLetiva),
-                      ));
-                    },
-                    icon: const Icon(Icons.edit_document),
-                  ),
-                ),
-              if (aluno.dataAvalicao != '1900-01-01')
-                PopupMenuItem(
-                  child: TextButton.icon(
-                    style: ButtonStyle(
-                        foregroundColor: MaterialStatePropertyAll(
-                            Theme.of(context).colorScheme.onPrimaryContainer)),
-                    label: const Text('Ver Ficha de Avaliação'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              VerAvaliacaoScreen(aluno: aluno),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.remove_red_eye),
-                  ),
                 ),
             ],
           ),
-          onTap: null,
+        ),
+        trailing: temAvaliacao
+            ? Icon(
+                Icons.task,
+                color: Theme.of(context).colorScheme.primary,
+              )
+            : const Icon(Icons.edit_document, color: Colors.amber),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => VerAvaliacaoScreen(aluno: aluno, idAula: idAula),
+          ),
         ),
       ),
     );

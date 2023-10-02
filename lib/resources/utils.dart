@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 
 /// Password para aceder ás opções de programador diretamente da aplicação.
 const String adminPassword = 'smartadminapp';
@@ -197,7 +198,6 @@ IconData getIconJanela(int id, int tipoPerfil) {
   return Icons.check_box_outline_blank;
 }
 
-
 /// Gera uma string aleatória com base em caracteres alfanuméricos.
 ///
 /// Esta função gera uma string aleatória com o comprimento especificado,
@@ -215,7 +215,6 @@ String generateRandomString(int length) {
   return String.fromCharCodes(Iterable.generate(
       length, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
 }
-
 
 /// Remove o prefixo "base64:" de uma string em formato base64.
 ///
@@ -245,3 +244,5 @@ String removeBase64Prefix(String base64String) {
   }
   return base64String;
 }
+
+

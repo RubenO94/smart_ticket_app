@@ -23,11 +23,13 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
   if (perfil.userType == 0) {
     final hasNiveis = await apiService.getNiveis();
     final hasTurmas = await apiService.getTurmas();
-    if (hasNiveis && hasTurmas) {
+    final hasTiposClassificacao = await apiService.getTiposClassificacao();
+    if (hasNiveis && hasTurmas && hasTiposClassificacao) {
       return true;
     }
   } else if (perfil.userType == 1) {
     final hasNiveis = await apiService.getNiveis();
+    final hasTiposClassificacao = await apiService.getTiposClassificacao();
     final hasAulasInscricoes = await apiService.getAulasInscricoes();
     final hasAtividades = await apiService.getAtividades();
     final hasAtividadesLetivas = await apiService.getAtividadesLetivas();
@@ -36,6 +38,7 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
         await apiService.getPagamentosAgregados();
     final hasCalendario = await apiService.getHorarios();
     if (hasNiveis &&
+        hasTiposClassificacao &&
         hasAulasInscricoes &&
         hasAtividades &&
         hasAtividadesLetivas &&

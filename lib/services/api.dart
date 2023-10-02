@@ -19,6 +19,7 @@ import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/providers/client/atividades_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/client/atividades_letivas_disponiveis_provider.dart';
@@ -445,6 +446,7 @@ class ApiService {
             dataAvalicao: element['strDataAvaliacao'],
             respostas: listaRespostas,
             foto: element['strFotoBase64'] ?? '',
+            observacao: element['strObservacao'] ?? '',
           );
         }).toList();
         ref.read(alunosProvider.notifier).setAlunos(listaAlunos);
@@ -505,8 +507,13 @@ class ApiService {
   /// Retorna uma [Future<bool>] indicando se a avaliação foi enviada com sucesso:
   /// - `true`: A avaliação foi enviada com sucesso para o servidor.
   /// - `false`: A avaliação não pôde ser enviada ou ocorreu um erro durante o processo.
-  Future<bool> postAvaliacao(int clienteId, List<Resposta> respostas,
-      int idDesempenhoLinha, int idAula, int atividadeLetiva) async {
+  Future<bool> postAvaliacao(
+      int clienteId,
+      List<Resposta> respostas,
+      int idDesempenhoLinha,
+      int idAula,
+      int atividadeLetiva,
+      String observacao) async {
     const endPoint = '/SetAvaliacao';
     final body = {
       'nIDAula': idAula,
@@ -521,6 +528,7 @@ class ApiService {
               })
           .toList(),
       'nIDDesempenhoNivel': idDesempenhoLinha,
+      'strObservacao': observacao,
     };
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
@@ -615,6 +623,7 @@ class ApiService {
                   pontuacaoTotal: listAlunos[0]['nPontuacaoAvaliacao'],
                   perguntasList: listaPerguntas,
                   respostasList: listaRespostas,
+                  observacao: listAlunos[0]['strObservacao']
                 );
               }
             }
@@ -628,6 +637,7 @@ class ApiService {
               pontuacaoTotal: 0,
               perguntasList: [],
               respostasList: [],
+              observacao: 'null'
             );
           }).toList();
 
@@ -1327,5 +1337,77 @@ class ApiService {
       'resultado': 0,
       'mensagem': 'Ocorreu um erro. Tente novamente mais tarde.',
     };
+  }
+
+  /// Obtém os tipos de classificação a partir da API.
+  ///
+  /// Esta função realiza uma solicitação assíncrona para obter os tipos de classificação
+  /// Os tipos de classificação são recuperados em formato JSON
+  /// e convertidos numa lista de objetos [Classificacao]. Esses objetos são então armazenados
+  /// no provider [tiposClassificacaoProvider] para uso posterior na aplicação.
+  ///
+  /// Retorna `true` se a operação for bem-sucedida e `false` em caso de falha.
+  Future<bool> getTiposClassificacao() async {
+    const endPoint = '/GetTiposClassificacao';
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.get(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+        ),
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          List<Classificacao> classificacoes = data.map((e) {
+            return Classificacao(
+                valor: e["nValor"],
+                descricao: e["strDescricao"],
+                sigla: e["strSigla"]);
+          }).toList();
+
+          if (classificacoes.isNotEmpty) {
+            ref
+                .read(tiposClassificacaoProvider.notifier)
+                .setTiposClassificacao(classificacoes);
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  Future<bool> postFcmToken(String token) async {
+    const endPoint = '/SetFcmToken';
+
+    if(token.isEmpty) {
+      return false;
+    }
+
+    final body = {"strFcmToken": token};
+
+    try {
+      final response = await executeRequest(
+        (client, baseUrl, headers) => client.post(
+          Uri.parse(baseUrl + endPoint),
+          headers: headers,
+          body: json.encode(body),
+        ),
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        if (data.isNotEmpty) {
+          if(data["nResultado"] == 1){
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
   }
 }
