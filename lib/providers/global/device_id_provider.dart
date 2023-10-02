@@ -22,6 +22,6 @@ final deviceIdProvider = FutureProvider<String>((ref) async {
     }
   }
   return '';
-
+  
   // return '0f29fab11c8b50f5';
 });

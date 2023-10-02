@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:smart_ticket/screens/global/update.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,7 +53,7 @@ class MyApp extends ConsumerWidget {
           .copyWith(useMaterial3: true, colorScheme: darkColorScheme),
       theme: theme,
       themeMode: themeMode,
-      home: const SplashScreen(),
+      home: const UpdateScreen(),
       locale: const Locale('pt'),
     );
   }
