@@ -157,7 +157,7 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
                                   });
                                   _submitAgregado();
                                 },
-                          type: ButtonDialogOptions.confirmar,
+                          type: ButtonDialogOption.confirmar,
                         ),
                         BotaoDialog(
                           onPressed: () {
@@ -168,7 +168,7 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
 
                             Navigator.of(context).pop({'status': false});
                           },
-                          type: ButtonDialogOptions.cancelar,
+                          type: ButtonDialogOption.cancelar,
                         ),
                       ],
               );

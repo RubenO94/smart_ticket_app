@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/resources/enums.dart';
 
 /// Password para aceder ás opções de programador diretamente da aplicação.
 const String adminPassword = 'smartadminapp';
@@ -170,8 +171,8 @@ Color getTextColorOnBackground(Color backgroundColor) {
 /// verifica o [id] e retorna o ícone correspondente. Se o [tipoPerfil] não for 1 nem 0, retorna um ícone
 /// de caixa vazia como valor default.
 ///
-/// - [id]: O ID da janela para a qual o ícone está associado.
-/// - [tipoPerfil]: O tipo de perfil associado.
+/// - [id] : O ID da janela para a qual o ícone está associado.
+/// - [tipoPerfil] : O tipo de perfil associado.
 /// Retorna o ícone correspondente ao ID e ao tipo de perfil fornecidos.
 IconData getIconJanela(int id, int tipoPerfil) {
   if (tipoPerfil == 1) {
@@ -205,7 +206,7 @@ IconData getIconJanela(int id, int tipoPerfil) {
 /// Isso é útil para criar nomes de arquivos únicos.
 ///
 /// Parâmetros:
-///   - [length]: O comprimento da string aleatória a ser gerada.
+///   - [length] : O comprimento da string aleatória a ser gerada.
 ///
 /// Retorna:
 ///   Uma string aleatória de comprimento [length].
@@ -231,7 +232,7 @@ String generateRandomString(int length) {
 /// ```
 ///
 /// Parâmetros:
-/// - [base64String]: A string em formato base64 para processamento.
+/// - [base64String] : A string em formato base64 para processamento.
 ///
 /// Retorna:
 /// Uma nova string contendo os dados base64 sem o prefixo "base64:",
@@ -245,4 +246,33 @@ String removeBase64Prefix(String base64String) {
   return base64String;
 }
 
-
+/// Faz a validação dos forms utilizados na aplicação.
+/// 
+/// Parâmetros:
+/// - [value] : Valor inserido no input para validação
+/// - [type] : O tipo de validação a ser feita
+/// 
+/// Retorna:
+/// Uma String com valor erro caso se confirme a condição, senão retorna null indicando que passou na validação
+String? formValidator(String? value, ValidatorType? type) {
+  switch (type) {
+    case ValidatorType.email:
+      if (value == null || value.isEmpty) {
+        return 'Insira o Endereço de Email';
+      }
+      if (!isValidEmail(value)) {
+        return 'Insira um Endereço de Email válido';
+      }
+      return null;
+    case ValidatorType.nif:
+      if (value == null || value.isEmpty) {
+        return 'Insira o Numero de Identificação Fiscal';
+      }
+      return null;
+    default:
+      if (value == null || value.isEmpty) {
+        return 'Este campo é obrigatório';
+      }
+      return null;
+  }
+}

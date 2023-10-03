@@ -5,6 +5,7 @@ import 'package:smart_ticket/main.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/theme.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/screens/global/register.dart';
@@ -87,25 +88,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     return _isOffline
         ? OfflineScreen(
             refresh: _checkConnectivity,
           )
         : Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 23, 29, 6),
-                  Color.fromARGB(255, 67, 85, 18),
-                  Color(0xFF95BD20),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomRight,
-              ),
+              gradient: smartGradient,
             ),
             child: Center(
               child: Column(

@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/resources/enums.dart';
+import 'package:smart_ticket/resources/theme.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/global/about_app.dart';
 import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 import 'package:smart_ticket/widgets/global/smart_logo.dart';
+import 'package:smart_ticket/widgets/global/smart_register_button.dart';
+import 'package:smart_ticket/widgets/global/smart_text_form_field.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -75,7 +77,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 _isSending = false;
               });
               return;
-            } else {
+            } else if(mounted) {
               showToast(
                   context, 'Ocorreu um erro ao carregar o seu perfil', 'error');
             }
@@ -228,19 +230,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           body: Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 1, 1, 1),
-                Color.fromARGB(255, 1, 1, 1),
-                Color.fromARGB(255, 1, 1, 1),
-                Color.fromARGB(255, 23, 29, 6),
-                Color.fromARGB(255, 67, 85, 18),
-                Color(0xFF95BD20),
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomRight,
-            )),
+            decoration: const BoxDecoration(gradient: smartGradient),
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -268,77 +258,18 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           key: _formKey,
                           child: Column(
                             children: [
-                              TextFormField(
-                                cursorColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                decoration: InputDecoration(
-                                  label: const Text('NIF / Utilizador'),
-                                  hintStyle: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
-                                  labelStyle: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
-                                  errorStyle: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .error),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  focusColor:
-                                      Theme.of(context).colorScheme.secondary,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  prefixIconColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  prefixIcon: const Icon(Icons.person),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo é obrigatório';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (newValue) async {
-                                  _enteredNIF = newValue!;
-                                },
-                              ),
+                              SmartTextFormField(
+                                  label: 'NIF / Utilizador',
+                                  icon: const Icon(Icons.person),
+                                  onSave: (value) => _enteredNIF = value!),
                               const SizedBox(
                                 height: 16,
                               ),
-                              //FORM FIELD
+                              SmartTextFormField(
+                                  label: 'Endereço de Email',
+                                  icon: const Icon(Icons.email),
+                                  validatorType: ValidatorType.email,
+                                  onSave: (value) => _enteredEmail = value!),
                               const SizedBox(
                                 height: 24,
                               ),
@@ -348,36 +279,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                           .colorScheme
                                           .onPrimary,
                                     )
-                                  : TextButton.icon(
-                                      style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStatePropertyAll(
-                                                Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary),
-                                        backgroundColor:
-                                            const MaterialStatePropertyAll(
-                                                Colors.transparent),
-                                        padding: const MaterialStatePropertyAll(
-                                            EdgeInsets.symmetric(
-                                                horizontal: 24, vertical: 16)),
-                                        shape: MaterialStatePropertyAll(
-                                          ContinuousRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              side: BorderSide(
-                                                  strokeAlign: 0.5,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary)),
-                                        ),
-                                      ),
-                                      onPressed:
-                                          _isSending ? null : _saveCredentials,
-                                      icon: const Icon(
-                                          Icons.phone_android_rounded),
-                                      label: const Text('Registar'),
-                                    ),
+                                  : SmartRegisterButton(onTap: _saveCredentials)
                             ],
                           ),
                         ),
