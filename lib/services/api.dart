@@ -10,6 +10,7 @@ import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/models/client/atividade.dart';
 import 'package:smart_ticket/models/client/atividade_letiva.dart';
 import 'package:smart_ticket/models/client/aula.dart';
+import 'package:smart_ticket/models/global/api_response_message.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
@@ -90,16 +91,32 @@ class ApiService {
   /// Obtém a URL base do Web Service associada ao NIF fornecido.
   ///
   /// Esta função obtém a URL base do WSApp associada a um determinado NIF e
-  /// software. A URL base é armazenada no SecureStorage [FlutterSecureStorage] e utilizada nas
+  /// software. A URL base é armazenada no [FlutterSecureStorage] e utilizada nas
   /// requisições subsequentes.
   ///
   /// - [nif]: O número de identificação fiscal.
   ///
   /// Retorna uma [Future] que indica o resultado da operação:
-  /// - 'success': A URL base foi obtida e armazenada com sucesso.
-  /// - 'errorUnknown': Ocorreu um erro desconhecido durante a obtenção da URL.
-  /// - 'null': A URL base obtida é nula.
-  Future<String> getWSApp(String nif) async {
+  /// - [ApiResponseMessage]: Um objeto que contém informações sobre o resultado da operação.
+  ///   - [ApiResponseMessage.success]: Indica se a operação foi bem-sucedida.
+  ///   - [ApiResponseMessage.message]: Mensagem opcional que descreve o resultado da operação.
+  ///
+  /// Exceções possíveis:
+  /// - [ApiResponseMessage] com `success: false` e uma mensagem explicativa.
+  ///
+  /// Exemplo de uso:
+  ///
+  /// ```dart
+  /// final result = await getWSApp('123456789');
+  /// if (result.success) {
+  ///   // URL base obtida com sucesso, pode continuar com as requisições.
+  /// } else {
+  ///   // Ocorreu um erro ao obter a URL base.
+  ///   print(result.message);
+  /// }
+  /// ```
+  ///
+  Future<ApiResponseMessage> getWSApp(String nif) async {
     if (nif.isNotEmpty) {
       final endPoint = '/GetWSApp?strNIF=$nif&strSoftware=08';
 
@@ -113,33 +130,56 @@ class ApiService {
                 ));
 
         if (response.statusCode != 200) {
-          return 'errorUnknown';
+          return const ApiResponseMessage(
+              success: false,
+              message: 'Houve um erro ao conectar com o servidor');
         }
 
         final Map<String, dynamic> data = json.decode(response.body);
         final String? baseUrl = data['strDescricao'];
 
-        if (baseUrl != null) {
+        if (baseUrl != null || baseUrl!.startsWith('http')) {
           final storage = ref.read(secureStorageProvider);
           await storage.writeSecureData('WSApp', baseUrl);
-          return 'success';
+          return const ApiResponseMessage(success: true);
         } else {
-          return 'null';
+          return const ApiResponseMessage(
+              success: false, message: 'NIF / Utilizador desconhecido');
         }
       } catch (error) {
-        return error.toString();
+        return const ApiResponseMessage(
+            success: false, message: 'Ocorreu um erro');
       }
     }
-    return 'errorUnknown';
+    return const ApiResponseMessage(success: false, message: 'Ocorreu um erro');
   }
 
-  /// Verifica se o dispositivo está ativado.
+  /// Verifica se o dispositivo está ativado e retorna a versão do Web Service.
   ///
-  /// Esta função verifica se o dispositivo está associado ao Serviço
+  /// Esta função verifica se o dispositivo está associado ao Serviço e obtém a
+  /// versão do Web Service associada ao dispositivo. A versão do Web Service é
+  /// essencial para validar a compatibilidade entre o cliente e o Web Service.
   ///
-  /// Retorna uma [Future<bool>] que indica se o dispositivo está ativado:
-  /// - `true`: O dispositivo está ativado.
-  /// - `false`: O dispositivo não está ativado ou ocorreu um erro durante a verificação.
+  /// Retorna uma [Future<int>] que indica a versão do Web Service ou um código de erro:
+  /// - Um número inteiro positivo: Indica a versão do Web Service associada ao dispositivo.
+  /// - `0`: O dispositivo não está ativado ou ocorreu um erro durante a verificação.
+  ///
+  /// Exemplo de uso:
+  ///
+  /// ```dart
+  /// final webServiceVersion = await isDeviceActivated();
+  /// if (webServiceVersion > 0) {
+  ///   // Dispositivo ativado com sucesso e versão do Web Service obtida.
+  ///   // Prossiga com a validação de compatibilidade.
+  /// } else {
+  ///   // O dispositivo não está ativado ou ocorreu um erro durante a verificação.
+  ///   if (webServiceVersion == 0) {
+  ///     // Tratar erro de ativação.
+  ///   } else {
+  ///     // Tratar erro específico com código webServiceVersion.
+  ///   }
+  /// }
+  /// ```
   Future<int> isDeviceActivated() async {
     const endPoint = '/IsDeviceActivated';
 
@@ -166,10 +206,29 @@ class ApiService {
   /// Esta função regista um dispositivo associado a um NIF (Número de Identificação
   /// Fiscal) e a um email. O registo é efetuado através da comunicação com o servidor.
   ///
-  /// Retorna uma [Future<String>] com o resultado do registo:
-  /// - `'true'`: O registo foi bem-sucedido.
-  /// - Uma descrição do erro se o registo não for bem-sucedido ou ocorrer um erro.
-  Future<String> registerDevice(String nif, String email) async {
+  /// - [nif]: O número de identificação fiscal associado ao dispositivo.
+  /// - [email]: O email associado ao dispositivo.
+  ///
+  /// Retorna uma [Future<ApiResponseMessage>] com o resultado do registo:
+  /// - [ApiResponseMessage.success]: Indica se o registo foi bem-sucedido.
+  /// - [ApiResponseMessage.message]: Mensagem opcional que descreve o resultado do registo
+  ///   ou detalhes do erro, se aplicável.
+  ///
+  /// Exemplo de uso:
+  ///
+  /// ```dart
+  /// final result = await registerDevice('123456789', 'example@email.com');
+  /// if (result.success) {
+  ///   // Dispositivo registado com sucesso.
+  /// } else {
+  ///   // Ocorreu um erro durante o registo ou o registo não foi bem-sucedido.
+  ///   print(result.message);
+  /// }
+  /// ```
+  ///
+  /// Exceções possíveis:
+  /// - [ApiResponseMessage] com `success: false` e uma mensagem explicativa em caso de erro.
+  Future<ApiResponseMessage> registerDevice(String nif, String email) async {
     final endPoint = '/RegisterDevice?strNif=$nif&strEmail=$email';
 
     try {
@@ -179,25 +238,45 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data['nResultado'] == 1) {
-          return 'true';
+          return const ApiResponseMessage(success: true);
         }
-        return data['strDescricao'];
+        return ApiResponseMessage(
+            success: false, message: data['strDescricao']);
       }
     } catch (e) {
-      return 'Erro: ${e.toString()}';
+      return const ApiResponseMessage(
+          success: false, message: 'Ocorreu um erro');
     }
 
-    return 'Ocorreu um erro ao tentar concetar com o servidor';
+    return const ApiResponseMessage(success: false, message: 'Ocorreu um erro');
   }
 
   /// Ativa um dispositivo com o código de ativação fornecido.
   ///
   /// Esta função ativa um dispositivo usando um código de ativação específico.
   ///
-  /// Retorna uma [Future<bool>] indicando se o dispositivo foi ativado com sucesso:
-  /// - `true`: O dispositivo foi ativado com sucesso.
-  /// - `false`: O dispositivo não foi ativado ou ocorreu um erro durante o processo.
-  Future<bool> activateDevice(String activationCode) async {
+  /// - [activationCode]: O código de ativação a ser utilizado para ativar o dispositivo.
+  ///
+  /// Retorna uma [Future<ApiResponseMessage>] indicando se o dispositivo foi ativado com sucesso:
+  /// - [ApiResponseMessage.success]: Indica se o dispositivo foi ativado com sucesso.
+  /// - [ApiResponseMessage.message]: Mensagem opcional que descreve o resultado da ativação
+  ///   ou detalhes do erro, se aplicável.
+  ///
+  /// Exemplo de uso:
+  ///
+  /// ```dart
+  /// final result = await activateDevice('123456');
+  /// if (result.success) {
+  ///   // Dispositivo ativado com sucesso.
+  /// } else {
+  ///   // Ocorreu um erro durante a ativação do dispositivo.
+  ///   print(result.message);
+  /// }
+  /// ```
+  ///
+  /// Exceções possíveis:
+  /// - [ApiResponseMessage] com `success: false` e uma mensagem explicativa em caso de erro.
+  Future<ApiResponseMessage> activateDevice(String activationCode) async {
     final endPoint = '/ActivateDevice?strCodigoAtivacao=$activationCode';
     try {
       final response = await executeRequest((client, baseUrl, headers) =>
@@ -206,14 +285,15 @@ class ApiService {
         final Map<String, dynamic> data = json.decode(response.body);
 
         if (data['nResultado'] == 1) {
-          return true;
+          return const ApiResponseMessage(success: true);
         }
       }
     } catch (e) {
-      return false;
+      return const ApiResponseMessage(
+          success: false, message: 'Ocorreu um erro');
     }
 
-    return false;
+    return const ApiResponseMessage(success: false, message: 'Ocorreu um erro');
   }
 
   /// Obtém o perfil do utilizador a partir do servidor.
@@ -615,30 +695,28 @@ class ApiService {
                 });
 
                 return FichaAvaliacao(
-                  idAtividadeLetiva: e['IDAtividadeLetiva'],
-                  idAula: e['IDAula'],
-                  descricao: e['Aula'],
-                  dataAvalicao: listAlunos[0]['strDataAvaliacao'],
-                  idDesempenhoNivel: listAlunos[0]['nIDDesempenhoNivel'],
-                  pontuacaoTotal: listAlunos[0]['nPontuacaoAvaliacao'],
-                  perguntasList: listaPerguntas,
-                  respostasList: listaRespostas,
-                  observacao: listAlunos[0]['strObservacao']
-                );
+                    idAtividadeLetiva: e['IDAtividadeLetiva'],
+                    idAula: e['IDAula'],
+                    descricao: e['Aula'],
+                    dataAvalicao: listAlunos[0]['strDataAvaliacao'],
+                    idDesempenhoNivel: listAlunos[0]['nIDDesempenhoNivel'],
+                    pontuacaoTotal: listAlunos[0]['nPontuacaoAvaliacao'],
+                    perguntasList: listaPerguntas,
+                    respostasList: listaRespostas,
+                    observacao: listAlunos[0]['strObservacao']);
               }
             }
 
             return FichaAvaliacao(
-              idAtividadeLetiva: 0,
-              idAula: 0,
-              descricao: 'null',
-              dataAvalicao: 'null',
-              idDesempenhoNivel: 0,
-              pontuacaoTotal: 0,
-              perguntasList: [],
-              respostasList: [],
-              observacao: 'null'
-            );
+                idAtividadeLetiva: 0,
+                idAula: 0,
+                descricao: 'null',
+                dataAvalicao: 'null',
+                idDesempenhoNivel: 0,
+                pontuacaoTotal: 0,
+                perguntasList: [],
+                respostasList: [],
+                observacao: 'null');
           }).toList();
 
           ref
@@ -1383,7 +1461,7 @@ class ApiService {
   Future<bool> postFcmToken(String token) async {
     const endPoint = '/SetFcmToken';
 
-    if(token.isEmpty) {
+    if (token.isEmpty) {
       return false;
     }
 
@@ -1400,7 +1478,7 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          if(data["nResultado"] == 1){
+          if (data["nResultado"] == 1) {
             return true;
           }
         }

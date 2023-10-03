@@ -37,3 +37,16 @@ final theme = ThemeData().copyWith(
     ),
   ),
 );
+
+const LinearGradient smartGradient = LinearGradient(
+  colors: [
+    Color.fromARGB(255, 1, 1, 1),
+    Color.fromARGB(255, 1, 1, 1),
+    Color.fromARGB(255, 1, 1, 1),
+    Color.fromARGB(255, 23, 29, 6),
+    Color.fromARGB(255, 67, 85, 18),
+    Color(0xFF95BD20),
+  ],
+  begin: Alignment.topCenter,
+  end: Alignment.bottomRight,
+);
