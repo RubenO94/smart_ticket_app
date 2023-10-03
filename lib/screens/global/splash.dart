@@ -63,7 +63,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
   }
 
-  void _checkConnectivity() async {
+  Future<bool> _checkConnectivity() async {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
@@ -71,11 +71,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       setState(() {
         _isOffline = false;
       });
-      return;
+      return true;
     }
     setState(() {
       _isOffline = true;
     });
+    return false;
   }
 
   @override
@@ -86,8 +87,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    
     return _isOffline
         ? OfflineScreen(
             refresh: _checkConnectivity,

@@ -53,7 +53,7 @@ class MyApp extends ConsumerWidget {
           .copyWith(useMaterial3: true, colorScheme: darkColorScheme),
       theme: theme,
       themeMode: themeMode,
-      home: const UpdateScreen(),
+      home: const SplashScreen(),
       locale: const Locale('pt'),
     );
   }

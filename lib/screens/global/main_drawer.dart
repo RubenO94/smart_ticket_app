@@ -88,10 +88,10 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
         actions: [
           BotaoDialog(
               onPressed: () => Navigator.of(ctx).pop(true),
-              type: ButtonDialogOptions.confirmar),
+              type: ButtonDialogOption.confirmar),
           BotaoDialog(
               onPressed: () => Navigator.of(ctx).pop(false),
-              type: ButtonDialogOptions.cancelar),
+              type: ButtonDialogOption.cancelar),
         ],
       ),
     );

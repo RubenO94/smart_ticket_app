@@ -77,7 +77,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
           actions: [
             BotaoDialog(
               onPressed: () => Navigator.of(context).pop(true),
-              type: ButtonDialogOptions.ok,
+              type: ButtonDialogOption.ok,
             )
           ],
           content: result['mensagem'] != ''

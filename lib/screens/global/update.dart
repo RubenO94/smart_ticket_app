@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/widgets/global/smart_logo.dart';
 
 class UpdateScreen extends StatelessWidget {
   const UpdateScreen({super.key});
@@ -27,18 +28,7 @@ class UpdateScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Theme.of(context).colorScheme.onPrimary)),
-              child: Image.asset(
-                'assets/images/seta-white.png',
-                fit: BoxFit.scaleDown,
-                width: 80,
-              ),
-            ),
+            const SmartLogo(),
             const SizedBox(
               height: 48,
             ),

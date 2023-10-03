@@ -41,13 +41,13 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
                 Navigator.of(context).pop(true);
                 _onSubmitDelete(aula);
               },
-              type: ButtonDialogOptions.confirmar,
+              type: ButtonDialogOption.confirmar,
             ),
             BotaoDialog(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              type: ButtonDialogOptions.cancelar,
+              type: ButtonDialogOption.cancelar,
             ),
           ],
         );

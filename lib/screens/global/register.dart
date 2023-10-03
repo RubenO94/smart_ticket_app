@@ -9,6 +9,7 @@ import 'package:smart_ticket/resources/dialogs.dart';
 import 'package:smart_ticket/resources/utils.dart';
 import 'package:smart_ticket/widgets/global/about_app.dart';
 import 'package:smart_ticket/widgets/global/botao_dialog.dart';
+import 'package:smart_ticket/widgets/global/smart_logo.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -186,14 +187,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 });
                 _saveActivationCode();
               },
-              type: ButtonDialogOptions.confirmar,
+              type: ButtonDialogOption.confirmar,
             ),
             BotaoDialog(
               onPressed: () {
                 FocusScope.of(context).unfocus();
                 Navigator.of(context).pop(false);
               },
-              type: ButtonDialogOptions.cancelar,
+              type: ButtonDialogOption.cancelar,
             ),
           ],
         );
@@ -248,18 +249,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: Theme.of(context).colorScheme.onPrimary)),
-                      child: Image.asset(
-                        'assets/images/seta-white.png',
-                        fit: BoxFit.scaleDown,
-                        width: 80,
-                      ),
-                    ),
+                    const SmartLogo(),
                     const SizedBox(
                       height: 24,
                     ),
@@ -348,64 +338,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               const SizedBox(
                                 height: 16,
                               ),
-                              TextFormField(
-                                cursorColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                decoration: InputDecoration(
-                                  label: const Text('Endereço de Email'),
-                                  labelStyle: Theme.of(context)
-                                      .textTheme
-                                      .labelLarge!
-                                      .copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onPrimary),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  focusColor:
-                                      Theme.of(context).colorScheme.secondary,
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary),
-                                  ),
-                                  prefixIconColor:
-                                      Theme.of(context).colorScheme.onPrimary,
-                                  prefixIcon: const Icon(Icons.email),
-                                ),
-                                keyboardType: TextInputType.emailAddress,
-                                textCapitalization: TextCapitalization.none,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Este campo é obrigatório';
-                                  }
-                                  if (!isValidEmail(value)) {
-                                    return 'O endereço de email inserido é inválido';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (newValue) {
-                                  _enteredEmail = newValue!;
-                                },
-                              ),
+                              //FORM FIELD
                               const SizedBox(
                                 height: 24,
                               ),

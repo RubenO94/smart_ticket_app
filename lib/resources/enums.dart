@@ -1,3 +1,5 @@
-enum ButtonDialogOptions{
-  enivar, cancelar, ok, confirmar, guardar, sair
-}
+enum ButtonDialogOption { enivar, cancelar, ok, confirmar, guardar, sair }
+
+enum ValidatorType { email, nif }
+
+enum ToastType { success, warning, error }
