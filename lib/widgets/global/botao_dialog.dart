@@ -4,7 +4,7 @@ import 'package:smart_ticket/resources/enums.dart';
 class BotaoDialog extends StatelessWidget {
   const BotaoDialog({super.key, required this.onPressed, required this.type});
   final void Function()? onPressed;
-  final ButtonDialogOptions type;
+  final ButtonDialogOption type;
   @override
   Widget build(BuildContext context) {
     Icon icon;
@@ -13,37 +13,37 @@ class BotaoDialog extends StatelessWidget {
     Color foregroundColor;
 
     switch (type) {
-      case ButtonDialogOptions.enivar:
+      case ButtonDialogOption.enivar:
         icon = const Icon(Icons.send);
         label = "Enviar";
         backgroundColor = Theme.of(context).colorScheme.primary;
         foregroundColor = Theme.of(context).colorScheme.onPrimary;
         break;
-      case ButtonDialogOptions.cancelar:
+      case ButtonDialogOption.cancelar:
         icon = const Icon(Icons.cancel);
         label = "Cancelar";
         backgroundColor = Theme.of(context).colorScheme.secondary;
         foregroundColor = Theme.of(context).colorScheme.onSecondary;
         break;
-        case ButtonDialogOptions.sair:
+        case ButtonDialogOption.sair:
         icon = const Icon(Icons.cancel);
         label = "Sair";
         backgroundColor = Theme.of(context).colorScheme.secondary;
         foregroundColor = Theme.of(context).colorScheme.onSecondary;
         break;
-      case ButtonDialogOptions.ok:
+      case ButtonDialogOption.ok:
         icon = const Icon(Icons.done);
         label = "Ok";
         backgroundColor = Theme.of(context).colorScheme.primary;
         foregroundColor = Theme.of(context).colorScheme.onPrimary;
         break;
-      case ButtonDialogOptions.confirmar:
+      case ButtonDialogOption.confirmar:
         icon = const Icon(Icons.done);
         label = "Confirmar";
         backgroundColor = Theme.of(context).colorScheme.primary;
         foregroundColor = Theme.of(context).colorScheme.onPrimary;
         break;
-        case ButtonDialogOptions.guardar:
+        case ButtonDialogOption.guardar:
         icon = const Icon(Icons.save);
         label = "Guardar";
         backgroundColor = Theme.of(context).colorScheme.primary;

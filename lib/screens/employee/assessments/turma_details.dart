@@ -20,19 +20,20 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   bool _isOffline = false;
   final _searchController = TextEditingController();
 
-  void _loadAlunos() async {
+  Future<bool> _loadAlunos() async {
     final apiService = ref.read(apiServiceProvider);
     final hasAlunos = await apiService.getAlunos(widget.idAula.toString(), '');
     if (hasAlunos) {
       setState(() {
         _isLoading = false;
       });
-      return;
+      return true;
     }
     setState(() {
       _isLoading = false;
       _isOffline = true;
     });
+    return false;
   }
 
   @override

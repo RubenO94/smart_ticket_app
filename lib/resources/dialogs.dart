@@ -75,7 +75,7 @@ AlertDialog showMensagemDialog(
     title: Text(titulo),
     content: Text(mensagem),
     actions: [
-      BotaoDialog(onPressed: () => Navigator.of(context).pop(), type: ButtonDialogOptions.sair)
+      BotaoDialog(onPressed: () => Navigator.of(context).pop(), type: ButtonDialogOption.sair)
     ],
   );
 }

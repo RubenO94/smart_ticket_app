@@ -153,7 +153,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                               onPressed: fileName.isEmpty
                                   ? null
                                   : () => Navigator.of(context).pop(true),
-                              type: ButtonDialogOptions.enivar,
+                              type: ButtonDialogOption.enivar,
                             ),
                             BotaoDialog(
                               onPressed: () {
@@ -165,7 +165,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
 
                                 Navigator.of(context).pop(false);
                               },
-                              type: ButtonDialogOptions.cancelar,
+                              type: ButtonDialogOption.cancelar,
                             ),
                           ],
                   );

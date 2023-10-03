@@ -5,6 +5,7 @@ import 'package:smart_ticket/main.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 
 import 'package:smart_ticket/providers/global/services_provider.dart';
+import 'package:smart_ticket/resources/theme.dart';
 import 'package:smart_ticket/screens/global/home.dart';
 import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/screens/global/register.dart';
@@ -63,7 +64,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
   }
 
-  void _checkConnectivity() async {
+  Future<bool> _checkConnectivity() async {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
@@ -71,11 +72,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       setState(() {
         _isOffline = false;
       });
-      return;
+      return true;
     }
     setState(() {
       _isOffline = true;
     });
+    return false;
   }
 
   @override
@@ -86,26 +88,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     return _isOffline
         ? OfflineScreen(
             refresh: _checkConnectivity,
           )
         : Container(
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 1, 1, 1),
-                  Color.fromARGB(255, 23, 29, 6),
-                  Color.fromARGB(255, 67, 85, 18),
-                  Color(0xFF95BD20),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomRight,
-              ),
+              gradient: smartGradient,
             ),
             child: Center(
               child: Column(

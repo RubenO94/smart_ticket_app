@@ -63,10 +63,10 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
           actions: [
             BotaoDialog(
                 onPressed: () => Navigator.of(context).pop(true),
-                type: ButtonDialogOptions.confirmar),
+                type: ButtonDialogOption.confirmar),
             BotaoDialog(
                 onPressed: () => Navigator.of(context).pop(false),
-                type: ButtonDialogOptions.cancelar),
+                type: ButtonDialogOption.cancelar),
           ],
         ),
       ));
@@ -113,14 +113,14 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                     _enviarAvaliacao();
                   });
                 },
-                type: ButtonDialogOptions.enivar,
+                type: ButtonDialogOption.enivar,
               ),
             if (!_isSending)
               BotaoDialog(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                type: ButtonDialogOptions.cancelar,
+                type: ButtonDialogOption.cancelar,
               ),
             if (_isSending) const CircularProgressIndicator()
           ],
