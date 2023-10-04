@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/constants/enums.dart';
 import 'package:smart_ticket/constants/theme.dart';
@@ -55,67 +54,69 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
   }
 
+  void _checkPerfil() async {
+    final apiService = ref.read(apiServiceProvider);
+
+    final hasPerfil = await apiService.getPerfil();
+    if (hasPerfil) {
+      final hasDataLoaded = await ref.read(apiDataProvider.future);
+      if (hasDataLoaded.success && mounted) {
+        setState(() {
+          _isSending = false;
+        });
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ));
+        setState(() {
+          _isSending = false;
+        });
+        return;
+      } else if (mounted) {
+        showToast(context, hasDataLoaded.message!, ToastType.error);
+      }
+    }
+  }
+
+  void _registerDevice() async {
+    final apiService = ref.read(apiServiceProvider);
+    final hasRegistered =
+        await apiService.registerDevice(_enteredNIF, _enteredEmail);
+
+    if (hasRegistered.success && mounted) {
+      final confirmationDialogResult = await _showConfirmationDialog();
+      if (confirmationDialogResult && mounted) {
+        showToast(context, 'Sucesso! O seu dispositivo foi registado.',
+            ToastType.success);
+        _checkPerfil();
+      }
+    } else {
+      showToast(context, hasRegistered.message!, ToastType.error);
+    }
+  }
+
   void _authenticate() async {
     final apiService = ref.read(apiServiceProvider);
     try {
-      final apiResponse= await apiService.getWSApp(_enteredNIF);
-      if (apiResponse.success) {
-        final isDeviceActivated = await apiService.isDeviceActivated();
-        if (isDeviceActivated > 0 && mounted) {
-          final hasPerfil = await apiService.getPerfil();
-          if (hasPerfil) {
-            final perfil = ref.read(perfilProvider);
-            final isDataloaded = await ref.read(apiDataProvider.future);
-            if (isDataloaded && mounted) {
-              setState(() {
-                _isSending = false;
-              });
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (context) => HomeScreen(perfil: perfil),
-              ));
-              setState(() {
-                _isSending = false;
-              });
-              return;
-            } else if(mounted) {
-              showToast(
-                  context, 'Ocorreu um erro ao carregar o seu perfil', ToastType.error);
-            }
-          }
-        } else {
-          final apiResponse =
-              await apiService.registerDevice(_enteredNIF, _enteredEmail);
-
-          if (apiResponse.success && mounted) {
-            final confirmationDialog = await _showConfirmationDialog();
-            if (confirmationDialog && mounted) {
-              showToast(context, 'Sucesso! O seu dispositivo foi registado.',
-                  ToastType.success);
-              final hasPerfil = await apiService.getPerfil();
-              if (hasPerfil) {
-                final perfil = ref.read(perfilProvider);
-                final isDataloaded = await ref.read(apiDataProvider.future);
-                if (isDataloaded && mounted) {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => HomeScreen(perfil: perfil),
-                  ));
-                }
-              }
-            }
+      final hasWSApp = await apiService.getWSApp(_enteredNIF);
+      if (hasWSApp.success) {
+        final hasToken = await apiService.getToken();
+        if (hasToken.success) {
+          final isDeviceActivated = await apiService.isDeviceActivated();
+          if (isDeviceActivated > 0 && mounted) {
+            _checkPerfil(); // Verifica se o getPerfil teve sucesso e carrega os dados da aplicação
           } else {
-            showToast(context, apiResponse.message!, ToastType.error);
+            _registerDevice();
           }
         }
-      } else if (!apiResponse.success && mounted) {
-        showToast(context, 'Este NIF/Utilizador não está registado.', ToastType.error);
-      } else {
-        showToast(context, 'Houve um erro ao registar o dispositivo', ToastType.error);
+      } else if (!hasWSApp.success && mounted) {
+        showToast(context, hasWSApp.message!, ToastType.error);
       }
-      setState(() {
-        _isSending = false;
-      });
     } catch (e) {
-      print(e.toString());
+      showDialog(
+        context: context,
+        builder: (ctx) => smartMessageDialog(
+            ctx, 'Erro!', 'Ocorreu o seguinte erro: \n ${e.toString()}'),
+      );
     } finally {
       setState(() {
         _isSending = false;
@@ -125,6 +126,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<bool> _showConfirmationDialog() async {
     final dialog = await showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (ctx) {
         return AlertDialog(

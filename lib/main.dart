@@ -10,8 +10,6 @@ import 'package:smart_ticket/providers/global/theme_provider.dart';
 
 import 'package:smart_ticket/constants/theme.dart';
 
-// Versão atual da aplicação (Tem de ser compativel com a versão recebida da API)
-const serviceVersion = 1;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

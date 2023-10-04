@@ -115,8 +115,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkModeEnabled =
-        ref.watch(themeProvider) == ThemeMode.dark ?? false;
+    final isDarkModeEnabled = ref.watch(themeProvider) == ThemeMode.dark;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,

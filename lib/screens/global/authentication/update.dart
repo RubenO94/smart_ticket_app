@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_ticket/constants/theme.dart';
 import 'package:smart_ticket/widgets/global/smart_logo.dart';
 
 class UpdateScreen extends StatelessWidget {
@@ -10,18 +11,7 @@ class UpdateScreen extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.only(top: 64),
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 1, 1, 1),
-              Color.fromARGB(255, 1, 1, 1),
-              Color.fromARGB(255, 1, 1, 1),
-              Color.fromARGB(255, 23, 29, 6),
-              Color.fromARGB(255, 67, 85, 18),
-              Color(0xFF95BD20),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomRight,
-          ),
+          gradient: smartGradient,
         ),
         height: double.infinity,
         width: double.infinity,
@@ -41,16 +31,15 @@ class UpdateScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
                 const SizedBox(width: 8),
-            Text(
-              'Versão Desatualizada',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-            ),
+                Text(
+                  'Versão Desatualizada',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
               ],
             ),
-            
             const SizedBox(height: 10),
             Text(
               'Por favor, atualize a aplicação para continuar a usar.',

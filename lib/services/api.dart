@@ -182,6 +182,7 @@ class ApiService {
         final Map<String, dynamic> data = json.decode(response.body);
         final String? token = data['strToken'];
         if (token != null) {
+          ref.read(tokenProvider.notifier).setToken(token);
           return const ApiResponseMessage(success: true);
         }
       }

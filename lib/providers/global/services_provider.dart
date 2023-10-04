@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_ticket/models/global/api_response_message.dart';
 
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/services/api.dart';
@@ -15,7 +16,7 @@ final httpClientProvider = Provider<http.Client>((ref) => http.Client());
 final apiServiceProvider = Provider((ref) => ApiService(ref));
 
 /// Provider que verifica e fornece um sinalizador se os dados essenciais da API foram carregados.
-final apiDataProvider = FutureProvider<bool>((ref) async {
+final apiDataProvider = FutureProvider<ApiResponseMessage>((ref) async {
   final apiService = ref.watch(apiServiceProvider);
   final perfil = ref.watch(perfilProvider);
   if (perfil.userType == 0) {
@@ -23,7 +24,7 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
     final hasTurmas = await apiService.getTurmas();
     final hasTiposClassificacao = await apiService.getTiposClassificacao();
     if (hasNiveis && hasTurmas && hasTiposClassificacao) {
-      return true;
+      return const ApiResponseMessage(success: true);
     }
   } else if (perfil.userType == 1) {
     final hasNiveis = await apiService.getNiveis();
@@ -43,35 +44,8 @@ final apiDataProvider = FutureProvider<bool>((ref) async {
         hasPagamentosPendentes &&
         hasPagamentosAgregadosPendentes &&
         hasCalendario) {
-      return true;
+      return const ApiResponseMessage(success: true);
     }
   }
-  return false;
+  return const ApiResponseMessage(success: false, message: 'Ocorreu um erro ao carregar os dados da aplicação');
 });
-
-
-
-// /// Provider que obtém e fornece o token necessário para fazer chamadas à API.
-// final tokenProvider = FutureProvider<String>((ref) async {
-//   const username = 'SmartTicketWSApp';
-//   final password = generatePassword();
-//   final client = ref.read(httpClientProvider);
-//   final baseUrl = await ref.read(secureStorageProvider).readSecureData('WSApp');
-//   final Uri url = Uri.parse(
-//       '$baseUrl/GetToken?strUsername=$username&strPassword=$password');
-
-//   try {
-//     final response = await client.get(url);
-//     if (response.statusCode == 200) {
-//       final Map<String, dynamic> data = json.decode(response.body);
-//       final String? token = data['strToken'];
-//       if (token != null) {
-//         return token;
-//       }
-//       return 'badRequest';
-//     }
-//   } catch (e) {
-//     return 'errorUnknown';
-//   }
-//   return 'errorUnknown';
-// });

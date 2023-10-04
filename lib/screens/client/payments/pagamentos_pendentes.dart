@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/constants/enums.dart';
-import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
-import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/utils/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pendente_item.dart';
 
 
@@ -23,49 +18,12 @@ class PagamentosPendentesScreen extends ConsumerStatefulWidget {
 class _PagamentosPendentesScreenState
     extends ConsumerState<PagamentosPendentesScreen> {
   final List<int> _pagamentosSelecionados = [];
-  double _total = 0;
-  bool _isLoading = false;
-  final bool _isPagos = false;
-
-  void _efetuarPagamento() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final idCliente = ref.watch(perfilProvider.select((value) => value.id));
-    final hasPosted = await ref
-        .read(apiServiceProvider)
-        .postPagamento(int.parse(idCliente), _pagamentosSelecionados);
-    if (hasPosted) {
-      final urlPagamento = ref.watch(pagamentoCallbackProvider);
-
-      if (!await launchUrl(Uri.parse(urlPagamento),
-          mode: LaunchMode.externalApplication,
-          webViewConfiguration:
-              const WebViewConfiguration(enableJavaScript: true),
-          webOnlyWindowName: '_blank')) {
-        if (mounted) {
-          showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
-        }
-      }
-    } else {
-      if (mounted) {
-        showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
-        setState(() {
-          _pagamentosSelecionados.clear();
-          _total = 0;
-        });
-      }
-    }
-    setState(() {
-      _isLoading = false;
-    });
-  }
 
   void refreshPagamentosPendentes() {
     ref.read(apiServiceProvider).getPagamentos();
     setState(() {
       _pagamentosSelecionados.clear();
-      _total = 0;
+
     });
   }
 
@@ -73,13 +31,7 @@ class _PagamentosPendentesScreenState
   Widget build(BuildContext context) {
     final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
 
-    if (_isLoading) {
-      return const SmartMessageCenter(
-        widget: CircularProgressIndicator(),
-        mensagem:
-            'A  processar os detalhes de pagamento. Aguarde um momento, por favor.',
-      );
-    }
+
 
     if (pagamentosPendentes.isEmpty) {
       return const SmartMessageCenter(

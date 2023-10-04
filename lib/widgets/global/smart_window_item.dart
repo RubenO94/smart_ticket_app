@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/global/perfil/janela.dart';
-import 'package:smart_ticket/models/global/perfil/perfil.dart';
+
 
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.dart';

@@ -8,7 +8,6 @@ import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/utils/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamentos_agregado_section.dart';
-import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -43,7 +42,8 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
               const WebViewConfiguration(enableJavaScript: true),
           webOnlyWindowName: '_blank')) {
         if (mounted) {
-          showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
+          showToast(context, 'Serviço insdiponível, tente mais tarde',
+              ToastType.error);
         }
       }
     } else if (mounted) {
@@ -63,13 +63,9 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
   }
 
   void refreshPagamentosPendentes() async {
-    final resultado = await ref.read(apiServiceProvider).getPagamentos();
-    final resultado2 =
-        await ref.read(apiServiceProvider).getPagamentosAgregados();
-
-    if (resultado && resultado2) {
-      print('SUCESSO!');
-    }
+    
+    await ref.read(apiServiceProvider).getPagamentos();
+    await ref.read(apiServiceProvider).getPagamentosAgregados();
 
     setState(() {
       ref.read(pagamentosSelecionadosProvider.notifier).clearPagamentos();
@@ -123,116 +119,127 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
       }
     }
 
-    if (_isLoading) {
-      return Container(
+    Widget loadingPaymentPageIndicator = SafeArea(
+      child: Container(
         padding: const EdgeInsets.all(16),
+        width: double.infinity,
+        height: double.infinity,
         color: Theme.of(context).colorScheme.background,
-        child: const SmartMessageCenter(
-            widget: Column(
-              children: [
-                Icon(
-                  Icons.access_time,
-                  size: 48,
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: LinearProgressIndicator(),
-                ),
-              ],
-            ),
-            mensagem:
-                'A Processar os detalhes do pagamento. Aguarde um momento, por favor.'),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const SmartTitleAppBAr(
-            icon: Icons.payments_rounded, title: 'Pagaementos Selecionados'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: pagamentosPorAgregado.length +
-                    (pagamentosUtilizador.isNotEmpty ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == 0 && pagamentosUtilizador.isNotEmpty) {
-                    return PagamentoAgregadoSection(
-                      agregado: nomeUtilizador,
-                      pagamentosDoAgregado: pagamentosUtilizador,
-                    );
-                  } else {
-                    final agregadoIndex =
-                        index - (pagamentosUtilizador.isNotEmpty ? 1 : 0);
-                    final agregado =
-                        pagamentosPorAgregado.keys.toList()[agregadoIndex];
-                    final pagamentos = pagamentosPorAgregado[agregado]!;
-                    return PagamentoAgregadoSection(
-                      agregado: agregado,
-                      pagamentosDoAgregado: pagamentos,
-                    );
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: Text(
-                'TOTAL: ${valorTotal.toStringAsFixed(2)} €',
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'A Processar os detalhes do pagamento.\nAguarde um momento, por favor.',
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onBackground),
               ),
-            ),
-            const SizedBox(
-              height: 80,
-            )
-          ],
+              const SizedBox(
+                height: 16,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: LinearProgressIndicator(),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(left: 32),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FloatingActionButton(
-              heroTag: 'descartar01',
-              shape: const CircleBorder(),
-              foregroundColor: Theme.of(context).colorScheme.onError,
-              backgroundColor: Theme.of(context).colorScheme.error,
-              disabledElevation: 0,
-              onPressed: pagamentosSelecionados.isEmpty
-                  ? null
-                  : () {
-                      ref
-                          .read(pagamentosSelecionadosProvider.notifier)
-                          .clearPagamentos();
-                      Navigator.of(context).pop();
-                    },
-              child: const Icon(Icons.delete),
+    );
+
+    return Scaffold(
+      appBar: _isLoading
+          ? null
+          : AppBar(
+              title: const SmartTitleAppBAr(
+                  icon: Icons.payments_rounded,
+                  title: 'Pagaementos Selecionados'),
             ),
-            const SizedBox(
-              width: 24,
-            ),
-            FloatingActionButton(
-              heroTag: 'carrinho01',
-              shape: const CircleBorder(),
-              onPressed: _efetuarPagamento,
-              child: Text(
-                'Pagar',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+      body: _isLoading
+          ? loadingPaymentPageIndicator
+          : Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: pagamentosPorAgregado.length +
+                          (pagamentosUtilizador.isNotEmpty ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == 0 && pagamentosUtilizador.isNotEmpty) {
+                          return PagamentoAgregadoSection(
+                            agregado: nomeUtilizador,
+                            pagamentosDoAgregado: pagamentosUtilizador,
+                          );
+                        } else {
+                          final agregadoIndex =
+                              index - (pagamentosUtilizador.isNotEmpty ? 1 : 0);
+                          final agregado = pagamentosPorAgregado.keys
+                              .toList()[agregadoIndex];
+                          final pagamentos = pagamentosPorAgregado[agregado]!;
+                          return PagamentoAgregadoSection(
+                            agregado: agregado,
+                            pagamentosDoAgregado: pagamentos,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24, bottom: 24),
+                    child: Text(
+                      'TOTAL: ${valorTotal.toStringAsFixed(2)} €',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.onBackground),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 80,
+                  )
+                ],
               ),
             ),
-          ],
-        ),
-      ),
+      floatingActionButton: _isLoading
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(left: 32, top: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'descartar01',
+                    shape: const CircleBorder(),
+                    foregroundColor: Theme.of(context).colorScheme.onError,
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                    disabledElevation: 0,
+                    onPressed: pagamentosSelecionados.isEmpty
+                        ? null
+                        : () {
+                            ref
+                                .read(pagamentosSelecionadosProvider.notifier)
+                                .clearPagamentos();
+                            Navigator.of(context).pop();
+                          },
+                    child: const Icon(Icons.delete),
+                  ),
+                  const SizedBox(
+                    width: 24,
+                  ),
+                  FloatingActionButton(
+                    heroTag: 'carrinho01',
+                    shape: const CircleBorder(),
+                    onPressed: _efetuarPagamento,
+                    child: Text(
+                      'Pagar',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }

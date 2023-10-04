@@ -2,15 +2,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/main.dart';
-import 'package:smart_ticket/providers/global/perfil_provider.dart';
+import 'package:smart_ticket/constants/api_conection.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/constants/theme.dart';
 import 'package:smart_ticket/screens/global/authentication/register.dart';
 import 'package:smart_ticket/screens/global/authentication/offline.dart';
 import 'package:smart_ticket/screens/global/authentication/update.dart';
 import 'package:smart_ticket/screens/global/home/home.dart';
-
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -22,46 +20,52 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _isOffline = false;
 
-  void auth() async {
+  void authenticate() async {
     final hasWSApp =
         await ref.read(secureStorageProvider).readSecureData('WSApp');
+
     if (hasWSApp.isEmpty && mounted) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ));
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const RegisterScreen(),
+        ),
+      );
       return;
     }
 
     final apiService = ref.read(apiServiceProvider);
 
-    final isDeviceActivated = await apiService.isDeviceActivated();
-    if (isDeviceActivated > 0 && isDeviceActivated == serviceVersion) {
-      final hasPerfil = await apiService.getPerfil();
-      if (hasPerfil) {
-        final perfil = ref.read(perfilProvider);
-        final isDataloaded = await ref.read(apiDataProvider.future);
-        if (isDataloaded && mounted) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => HomeScreen(perfil: perfil),
-          ));
-          return;
+    final hasToken = await apiService.getToken();
+    if (hasToken.success) {
+      final isDeviceActivated = await apiService.isDeviceActivated();
+      if (isDeviceActivated > 0 && isDeviceActivated == serviceVersion) {
+        final hasPerfil = await apiService.getPerfil();
+        if (hasPerfil) {
+          final hasDataLoaded = await ref.read(apiDataProvider.future);
+          if (hasDataLoaded.success && mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            ));
+            return;
+          }
         }
       }
-    }
 
-    if (isDeviceActivated > 0 &&
-        isDeviceActivated != serviceVersion &&
-        mounted) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const UpdateScreen(),
-      ));
-      return;
-    }
+      //Verifca  se a Versão do Web Service é  diferente da Aplicação - envia para pagina de Update caso se confirme
+      if (isDeviceActivated > 0 &&
+          isDeviceActivated != serviceVersion &&
+          mounted) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const UpdateScreen(),
+        ));
+        return;
+      }
 
-    if (mounted) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const RegisterScreen(),
-      ));
+      if (mounted) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const RegisterScreen(),
+        ));
+      }
     }
   }
 
@@ -69,7 +73,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
-      auth();
+      authenticate();
+
       setState(() {
         _isOffline = false;
       });

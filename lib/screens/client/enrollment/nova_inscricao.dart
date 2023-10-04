@@ -61,7 +61,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
           ToastType.success);
       Navigator.of(context).pop(true);
     } else if (mounted) {
-      final dialogResult = await showDialog(
+      await showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: const Row(

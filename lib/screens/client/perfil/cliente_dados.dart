@@ -29,9 +29,8 @@ class ClienteDadosScreen extends ConsumerStatefulWidget {
 
 class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
   bool _isEditarPerfilFormOpen = false;
-  bool _isAgregadosOpen = false;
   bool _isSending = false;
-  bool _isNifValid = false;
+
   String _enteredNif = '';
   String _base64File = '';
   String _fileName = '';
@@ -39,15 +38,12 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
   final _formKey = GlobalKey<FormState>();
 
   void _showAgregadoDialog() async {
-    setState(() {
-      _isAgregadosOpen = true;
-    });
+
     await showDialog(
         barrierDismissible: true,
         context: context,
         builder: (context) {
           String fileName = _fileName;
-          bool isNifValid = _isNifValid;
           return StatefulBuilder(
             builder: (context, setState) {
               return AlertDialog(
@@ -206,9 +202,6 @@ class _ClienteDadosScreenState extends ConsumerState<ClienteDadosScreen> {
 
   void _submitAgregado() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isNifValid = true;
-      });
 
       _formKey.currentState!.save();
       setState(() {

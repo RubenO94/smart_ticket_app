@@ -4,8 +4,8 @@ import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/utils/strings.dart';
 
 
-class HorarioDiaItem extends ConsumerWidget {
-  const HorarioDiaItem({
+class HorarioDiaWidget extends ConsumerWidget {
+  const HorarioDiaWidget({
     super.key,
     required this.dayOfWeek,
     required this.isPessoal,
@@ -43,7 +43,7 @@ class HorarioDiaItem extends ConsumerWidget {
         ? Center(
             child: Text(
               'Sem aulas neste dia.',
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onBackground),
             ),
           )
         : Column(

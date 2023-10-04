@@ -6,8 +6,8 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:smart_ticket/constants/enums.dart';
 
-import 'package:smart_ticket/models/global/perfil/perfil.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
+import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/screens/global/home/ficha_utilizador.dart';
 import 'package:smart_ticket/screens/global/home/main_drawer.dart';
@@ -16,10 +16,8 @@ import 'package:smart_ticket/screens/global/home/notificacoes.dart';
 import 'package:smart_ticket/utils/dialogs.dart';
 import 'package:smart_ticket/screens/global/home/entidade_info.dart';
 
-
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key, required this.perfil});
-  final Perfil perfil;
+  const HomeScreen({super.key});
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
@@ -31,7 +29,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   late AnimationController _animationController;
   final ZoomDrawerController _zoomController = ZoomDrawerController();
   int _currentPageIndex = 2;
-  bool _isMainScreen = true;
 
   void _setupPushNotifications() async {
 //Permissions to Firebase Messaging
@@ -40,11 +37,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       await fcm.subscribeToTopic('notifcations');
       final token = await fcm.getToken();
-      print(token);
       if (token != null || token!.isNotEmpty) {
-        final tokenHasSet =
-            await ref.read(apiServiceProvider).postFcmToken(token);
-        print('Estado Token: $tokenHasSet');
+        await ref.read(apiServiceProvider).postFcmToken(token);
       }
     } else if (settings.authorizationStatus == AuthorizationStatus.denied &&
         mounted) {
@@ -101,6 +95,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final perfil = ref.watch(perfilProvider);
     final alertasQuantity = ref.watch(alertasQuantityProvider);
     Widget activeScreen = MenuPrincipalScreen(
       onTapPerfil: _changeScreen,
@@ -149,7 +144,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Theme.of(context).colorScheme.background.withOpacity(0.1),
           scrolledUnderElevation: 0.0,
           title: Text(
-            widget.perfil.entidade.nome,
+            perfil.entidade.nome,
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
@@ -160,13 +155,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           child: activeScreen,
           onRefresh: () async {
             final result = await ref.read(apiDataProvider.future);
-            if (!result && mounted) {
+            if (!result.success && mounted) {
               showToast(
                   context,
                   'Não foi possível atualizar os dados. Tente mais tarde.',
                   ToastType.error);
             } else {
-              showToast(context, 'Dados atualizados com sucesso!', ToastType.success);
+              showToast(
+                  context, 'Dados atualizados com sucesso!', ToastType.success);
             }
           },
         ),

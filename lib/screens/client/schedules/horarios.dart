@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/providers/client/horarios_provider.dart';
-import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
+import 'package:smart_ticket/screens/client/schedules/horario_dia_widget.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
 import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 
@@ -148,13 +148,13 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
             Expanded(
               child: TabBarView(
                 children: [
-                  HorarioDiaItem(dayOfWeek: 'Monday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Tuesday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Wednesday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Thursday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Friday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Saturday', isPessoal: isPessoal),
-                  HorarioDiaItem(dayOfWeek: 'Sunday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Monday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Tuesday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Wednesday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Thursday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Friday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Saturday', isPessoal: isPessoal),
+                  HorarioDiaWidget(dayOfWeek: 'Sunday', isPessoal: isPessoal),
                 ],
               ),
             ),
