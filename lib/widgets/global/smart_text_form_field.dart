@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/resources/enums.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/constants/enums.dart';
+import 'package:smart_ticket/utils/validator.dart';
+
 
 class SmartTextFormField extends StatelessWidget {
   const SmartTextFormField(

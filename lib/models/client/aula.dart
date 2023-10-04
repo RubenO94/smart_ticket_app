@@ -1,4 +1,4 @@
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/utils/convert_date.dart';
 
 class Aula {
   final String? atividade;

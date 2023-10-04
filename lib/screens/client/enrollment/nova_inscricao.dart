@@ -7,9 +7,9 @@ import 'package:smart_ticket/providers/client/atividades_letivas_disponiveis_pro
 import 'package:smart_ticket/providers/client/aulas_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/resources/enums.dart';
-import 'package:smart_ticket/widgets/global/botao_dialog.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
+import 'package:smart_ticket/constants/enums.dart';
+import 'package:smart_ticket/widgets/global/smart_button_dialog.dart';
 
 class NovaInscricao extends ConsumerStatefulWidget {
   const NovaInscricao({super.key});
@@ -58,7 +58,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
       showToast(
           context,
           'O seu pedido foi adicionado á lista de pendentes com sucesso.',
-          'success');
+          ToastType.success);
       Navigator.of(context).pop(true);
     } else if (mounted) {
       final dialogResult = await showDialog(
@@ -75,7 +75,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
           ),
           elevation: 3,
           actions: [
-            BotaoDialog(
+            SmartButtonDialog(
               onPressed: () => Navigator.of(context).pop(true),
               type: ButtonDialogOption.ok,
             )

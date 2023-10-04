@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/tipo_classificacao.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
@@ -11,8 +14,7 @@ import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
 import 'package:smart_ticket/widgets/employee/aluno_badge.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
 class VerAvaliacaoScreen extends ConsumerWidget {
   const VerAvaliacaoScreen(
@@ -25,7 +27,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
     final alunoProvide = ref.watch(alunosProvider).firstWhere((element) => element.idCliente == aluno.idCliente);
     final bool temAvaliacao = alunoProvide.dataAvalicao != "1900-01-01";
     final int idAtividadeLetiva = ref.watch(atividadeLetivaIDProvider);
-    final List<Classificacao> tiposClassificacao =
+    final List<TipoClassificacao> tiposClassificacao =
         ref.watch(tiposClassificacaoProvider);
     final List<Nivel> niveis = ref.watch(niveisProvider);
     final nivel = niveis.firstWhere(
@@ -261,7 +263,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                         const SizedBox(
                           height: 12,
                         ),
-                        for (Classificacao classificacao in tiposClassificacao)
+                        for (TipoClassificacao classificacao in tiposClassificacao)
                           AvaliacaoLegendaItem(
                             texto:
                                 '${classificacao.valor} - ${classificacao.descricao}',
@@ -271,7 +273,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                   ),
                 ],
               )
-            : const MenssagemCentro(
+            : const SmartMessageCenter(
                 widget: Icon(Icons.edit_document),
                 mensagem:
                     "Sem avaliação para exibir, por favor faça uma nova avaliação"),

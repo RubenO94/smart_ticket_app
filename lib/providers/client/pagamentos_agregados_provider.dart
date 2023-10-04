@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/client/agregado_pagamento.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 
 class PagamentosAgregadosNotifier

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+
+import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/resposta.dart';
 
 class AvaliacaoCategoriaCard extends StatelessWidget {
   const AvaliacaoCategoriaCard(

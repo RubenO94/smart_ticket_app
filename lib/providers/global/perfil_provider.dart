@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/models/global/perfil/entidade.dart';
+import 'package:smart_ticket/models/global/perfil/perfil.dart';
 
 /// Notificador de estado responsável por gerir as informações do perfil.
 class PerfilNotifier extends StateNotifier<Perfil> {

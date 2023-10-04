@@ -7,6 +7,9 @@ class Alerta {
 
   Alerta({required this.message, required this.type, required this.quantity});
 
+  /// Obtém o ícone associado ao tipo de alerta.
+  ///
+  /// Retorna um [IconData] que representa o ícone associado ao tipo de alerta.
   IconData getIconDataForType() {
     switch (type) {
       case 'Agregados':

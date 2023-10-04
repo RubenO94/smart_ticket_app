@@ -7,8 +7,8 @@ import 'package:smart_ticket/providers/client/pagamentos_selecionados_provider.d
 import 'package:smart_ticket/screens/client/payments/carrinho_checkout.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos_toggle.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 
 class PagamentosScreen extends ConsumerStatefulWidget {
   const PagamentosScreen({super.key});
@@ -47,7 +47,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const TitleAppBAr(
+          title: const SmartTitleAppBAr(
               icon: Icons.payment_rounded, title: 'Pagamentos'),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(125),

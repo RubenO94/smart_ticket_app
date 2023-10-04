@@ -1,5 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:smart_ticket/screens/global/update.dart';
+import 'package:smart_ticket/screens/global/authentication/splash.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:smart_ticket/providers/global/theme_provider.dart';
-import 'package:smart_ticket/screens/global/splash.dart';
-import 'package:smart_ticket/resources/theme.dart';
+
+import 'package:smart_ticket/constants/theme.dart';
 
 // Versão atual da aplicação (Tem de ser compativel com a versão recebida da API)
 const serviceVersion = 1;

@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:smart_ticket/constants/api_conection.dart';
+import 'package:smart_ticket/models/client/agregado_pagamento.dart';
 
 import 'package:smart_ticket/models/global/alerta.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
@@ -11,16 +13,28 @@ import 'package:smart_ticket/models/client/atividade.dart';
 import 'package:smart_ticket/models/client/atividade_letiva.dart';
 import 'package:smart_ticket/models/client/aula.dart';
 import 'package:smart_ticket/models/global/api_response_message.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
-import 'package:smart_ticket/models/global/perfil.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/resposta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/tipo_classificacao.dart';
+import 'package:smart_ticket/models/global/perfil/agregado.dart';
+import 'package:smart_ticket/models/global/perfil/cliente.dart';
+import 'package:smart_ticket/models/global/perfil/cliente_alteracao.dart';
+import 'package:smart_ticket/models/global/perfil/entidade.dart';
+import 'package:smart_ticket/models/global/perfil/funcionario.dart';
+import 'package:smart_ticket/models/global/perfil/janela.dart';
+import 'package:smart_ticket/models/global/perfil/novo_agregado.dart';
+import 'package:smart_ticket/models/global/perfil/perfil.dart';
 import 'package:smart_ticket/models/employee/turma.dart';
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/providers/global/alertas_provider.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
+import 'package:smart_ticket/providers/global/token_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
 import 'package:smart_ticket/providers/client/atividades_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/client/atividades_letivas_disponiveis_provider.dart';
@@ -36,7 +50,8 @@ import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/employee/turmas_provider.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/utils/generate_token_password.dart';
+import 'package:smart_ticket/utils/get_icon_janela.dart';
 
 class ApiService {
   ApiService(this.ref);
@@ -64,18 +79,18 @@ class ApiService {
     final baseUrl = await storage.readSecureData('WSApp');
 
     if (baseUrl.isEmpty) {
-      const licenseUrl = 'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc';
+      const licenseUrl = apiBaseUrl;
       return requestFunction(client, licenseUrl, {});
     }
 
-    final token = await ref.read(tokenProvider.future);
+    final token = ref.read(tokenProvider);
     final deviceId = await ref.read(deviceIdProvider.future);
 
     final headers = {
       'Content-Type': 'application/json',
       'DeviceId': deviceId,
       'Token': token,
-      'Idioma': 'pt-PT',
+      'Idioma': apiIdioma,
     };
 
     if (token.isEmpty) {
@@ -119,16 +134,10 @@ class ApiService {
   Future<ApiResponseMessage> getWSApp(String nif) async {
     if (nif.isNotEmpty) {
       final endPoint = '/GetWSApp?strNIF=$nif&strSoftware=08';
-
+      final client = ref.read(httpClientProvider);
+      final Uri url = Uri.parse(apiBaseUrl + endPoint);
       try {
-        final response =
-            await executeRequest((client, baseUrl, headers) => client.get(
-                  Uri.parse(
-                    'https://lic.smartstep.pt:9003/ws/WebLicencasREST.svc$endPoint',
-                  ),
-                  headers: headers,
-                ));
-
+        final response = await client.get(url);
         if (response.statusCode != 200) {
           return const ApiResponseMessage(
               success: false,
@@ -151,6 +160,35 @@ class ApiService {
             success: false, message: 'Ocorreu um erro');
       }
     }
+    return const ApiResponseMessage(success: false, message: 'Ocorreu um erro');
+  }
+
+  Future<ApiResponseMessage> getToken() async {
+    const username = tokenUsername;
+    final password = generateTokenPassword();
+    final client = ref.read(httpClientProvider);
+    final baseUrl =
+        await ref.read(secureStorageProvider).readSecureData('WSApp');
+    if (baseUrl.isEmpty) {
+      return const ApiResponseMessage(
+          success: false, message: 'Web Service não está registado');
+    }
+    final Uri url = Uri.parse(
+        '$baseUrl/GetToken?strUsername=$username&strPassword=$password');
+
+    try {
+      final response = await client.get(url);
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final String? token = data['strToken'];
+        if (token != null) {
+          return const ApiResponseMessage(success: true);
+        }
+      }
+    } catch (e) {
+      return ApiResponseMessage(success: false, message: e.toString());
+    }
+
     return const ApiResponseMessage(success: false, message: 'Ocorreu um erro');
   }
 
@@ -1437,8 +1475,8 @@ class ApiService {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         if (data.isNotEmpty) {
-          List<Classificacao> classificacoes = data.map((e) {
-            return Classificacao(
+          List<TipoClassificacao> classificacoes = data.map((e) {
+            return TipoClassificacao(
                 valor: e["nValor"],
                 descricao: e["strDescricao"],
                 sigla: e["strSigla"]);

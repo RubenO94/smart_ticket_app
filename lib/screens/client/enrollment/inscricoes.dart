@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/aula.dart';
 import 'package:smart_ticket/providers/client/aulas_inscritas_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/resources/enums.dart';
-import 'package:smart_ticket/widgets/client/aula_item.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
+import 'package:smart_ticket/constants/enums.dart';
+import 'package:smart_ticket/screens/client/enrollment/aula_item.dart';
 import 'package:smart_ticket/screens/client/enrollment/nova_inscricao.dart';
-import 'package:smart_ticket/widgets/global/botao_dialog.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_button_dialog.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 
 class InscricoesScreen extends ConsumerStatefulWidget {
   const InscricoesScreen({super.key});
@@ -36,14 +36,14 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           actions: [
-            BotaoDialog(
+           SmartButtonDialog(
               onPressed: () {
                 Navigator.of(context).pop(true);
                 _onSubmitDelete(aula);
               },
               type: ButtonDialogOption.confirmar,
             ),
-            BotaoDialog(
+            SmartButtonDialog(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -65,12 +65,12 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
     final response = await apiService.deleteInscricao(aula.idAulaInscricao!);
     if (response['resultado'] == 1 && response['mensagem'] == '' && mounted) {
       ref.read(inscricoesProvider.notifier).removeAula(aula);
-      showToast(context, 'Pedido descartado com sucesso!', 'success');
+      showToast(context, 'Pedido descartado com sucesso!', ToastType.success);
       return;
     } else if (mounted) {
       await showDialog(
         context: context,
-        builder: (ctx) => showMensagemDialog(ctx, 'Erro', response['mensagem']),
+        builder: (ctx) => smartMessageDialog(ctx, 'Erro', response['mensagem']),
       );
     }
   }
@@ -152,7 +152,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const TitleAppBAr(
+        title: const SmartTitleAppBAr(
           icon: Icons.app_registration_rounded,
           title: 'Inscrições',
         ),

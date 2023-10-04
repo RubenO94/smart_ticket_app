@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pago_item.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
 class PagamentosPagosScreen extends ConsumerWidget {
   const PagamentosPagosScreen({super.key});
@@ -12,7 +12,7 @@ class PagamentosPagosScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final List<Pagamento> pagamentosPagos = ref.watch(pagamentosPagosProvider);
     if (pagamentosPagos.isEmpty) {
-      return const MenssagemCentro(
+      return const SmartMessageCenter(
         widget: Icon(
           Icons.search_off_outlined,
           size: 64,

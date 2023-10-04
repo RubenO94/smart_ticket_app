@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/client/pagamento.dart';
+
+import 'package:smart_ticket/models/client/agregado_pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pendente_item.dart';
 import 'package:smart_ticket/widgets/client/selecionar_agregado_dropdown.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
 class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
   const PagamentosPendentesAgregadoScreen({super.key});
@@ -19,7 +20,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
     }));
 
     if (agregados.isEmpty) {
-      return const MenssagemCentro(
+      return const SmartMessageCenter(
           widget: Icon(
             Icons.search_off_rounded,
             size: 64,
@@ -37,7 +38,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
 
     if (pagamentos.isEmpty && agregadoSelecionado.nome.isNotEmpty) {
       content = const Expanded(
-        child: MenssagemCentro(
+        child: SmartMessageCenter(
             widget: Icon(
               Icons.check_circle_outline_rounded,
               size: 64,
@@ -48,7 +49,7 @@ class PagamentosPendentesAgregadoScreen extends ConsumerWidget {
 
     if (agregadoSelecionado.nome.isEmpty) {
       content = const Expanded(
-        child: MenssagemCentro(
+        child: SmartMessageCenter(
             widget: Icon(
               Icons.report_gmailerrorred_rounded,
               size: 64,

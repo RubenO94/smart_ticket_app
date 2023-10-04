@@ -1,7 +1,7 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/resposta.dart';
 
 class AlunosProvider extends StateNotifier<List<Aluno>> {
   AlunosProvider() : super([]);

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
 
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
 import 'package:smart_ticket/providers/client/avaliacoes_disponiveis_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/screens/client/assessments/minha_avaliacao.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
+
 
 class AvaliacoesDisponiveisScreen extends ConsumerWidget {
   const AvaliacoesDisponiveisScreen({super.key});
@@ -18,7 +20,7 @@ class AvaliacoesDisponiveisScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const TitleAppBAr(icon: Icons.assignment, title: 'Avaliações'),
+        title: const SmartTitleAppBAr(icon: Icons.assignment, title: 'Avaliações'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

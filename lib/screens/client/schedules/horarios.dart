@@ -4,7 +4,7 @@ import 'package:smart_ticket/models/client/horario.dart';
 import 'package:smart_ticket/providers/client/horarios_provider.dart';
 import 'package:smart_ticket/widgets/client/horario_dia_item.dart';
 import 'package:smart_ticket/widgets/global/menu_toggle_button.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 
 class HorariosScreen extends ConsumerStatefulWidget {
   const HorariosScreen({super.key});
@@ -67,7 +67,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
       length: 7,
       child: Scaffold(
         appBar: AppBar(
-          title: const TitleAppBAr(icon: Icons.access_time, title: 'Horários'),
+          title: const SmartTitleAppBAr(icon: Icons.access_time, title: 'Horários'),
           bottom: TabBar(
             isScrollable: true,
             tabs: [

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+
+import 'package:smart_ticket/models/global/ficha_avaliacao/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/tipo_classificacao.dart';
 import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
+
 
 class MinhaAvaliacaoScreen extends ConsumerWidget {
   const MinhaAvaliacaoScreen(
@@ -34,7 +39,7 @@ class MinhaAvaliacaoScreen extends ConsumerWidget {
       length: categoriasUnicas.length,
       child: Scaffold(
         appBar: AppBar(
-          title: const TitleAppBAr(
+          title: const SmartTitleAppBAr(
               icon: Icons.assignment_turned_in,
               title: 'Resultados da Avaliação'),
           bottom: PreferredSize(
@@ -181,7 +186,7 @@ class MinhaAvaliacaoScreen extends ConsumerWidget {
                   const SizedBox(
                     height: 12,
                   ),
-                  for (Classificacao classificacao in tiposClassificacao)
+                  for (TipoClassificacao classificacao in tiposClassificacao)
                     AvaliacaoLegendaItem(
                       texto:
                           '${classificacao.valor} - ${classificacao.descricao}',

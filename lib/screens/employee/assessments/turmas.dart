@@ -1,13 +1,11 @@
 import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/models/employee/turma.dart';
+
 import 'package:smart_ticket/providers/employee/turmas_provider.dart';
-
-import 'package:smart_ticket/screens/global/offline.dart';
 import 'package:smart_ticket/widgets/employee/turma_item.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
-
-import '../../../models/employee/turma.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
 class TurmasScreen extends ConsumerStatefulWidget {
   const TurmasScreen({super.key});
@@ -80,7 +78,7 @@ class _TurmasScreenState extends ConsumerState<TurmasScreen> {
         title: const Text('Turmas'),
       ),
       body: _isEmpty
-          ? const MenssagemCentro(
+          ? const SmartMessageCenter(
               widget: Icon(Icons.group_off),
               mensagem: 'Ainda não tem turmas associadas')
           : Column(

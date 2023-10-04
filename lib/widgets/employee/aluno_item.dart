@@ -52,7 +52,7 @@ class AlunoItem extends StatelessWidget {
                 ),
         ),
         title: Text(
-          aluno.nameToTitleCase,
+          aluno.toTitleCase(),
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: Theme.of(context).colorScheme.onBackground,
               ),

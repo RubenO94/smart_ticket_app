@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:smart_ticket/models/client/pagamento.dart';
+
+import 'package:smart_ticket/models/client/agregado_pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamentos_agregados_provider.dart';
 
 class SelecionarAgregadoDropdown extends ConsumerWidget {

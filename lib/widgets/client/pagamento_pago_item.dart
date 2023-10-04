@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smart_ticket/constants/enums.dart';
 
 
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/utils/convert_date.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
+import 'package:smart_ticket/utils/strings.dart';
 import 'package:smart_ticket/widgets/client/download_fatura_button.dart';
 import 'package:smart_ticket/widgets/client/fatura_indisponivel_container.dart';
 
@@ -53,7 +55,7 @@ class _PagamentoPagoItemState extends ConsumerState<PagamentoPagoItem> {
           });
         }
       } else if (mounted) {
-        showToast(context, 'Ocorreu um erro. Tente mais tarde', 'error');
+        showToast(context, 'Ocorreu um erro. Tente mais tarde', ToastType.error);
       }
       setState(() {
         _isDownLoading = false;

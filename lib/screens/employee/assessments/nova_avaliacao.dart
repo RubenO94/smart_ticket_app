@@ -1,21 +1,23 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/models/global/ficha_avaliacao.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/resposta.dart';
+import 'package:smart_ticket/models/global/ficha_avaliacao/tipo_classificacao.dart';
+
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
-import 'package:smart_ticket/resources/enums.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/utils/convert_date.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
+import 'package:smart_ticket/constants/enums.dart';
 import 'package:smart_ticket/widgets/employee/aluno_badge.dart';
 import 'package:smart_ticket/widgets/employee/avaliacao_radio_list_tile.dart';
-import 'package:smart_ticket/widgets/global/botao_dialog.dart';
+import 'package:smart_ticket/widgets/global/smart_button_dialog.dart';
 
 class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
   const NovaAvaliacaoScreen({
@@ -61,10 +63,10 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
               ? 'Voltar para a página anterior fará com que as alterações feitas sejam descartadas.'
               : 'Voltar para a pagina anterior fará com esta avaliação seja descartada.'),
           actions: [
-            BotaoDialog(
+            SmartButtonDialog(
                 onPressed: () => Navigator.of(context).pop(true),
                 type: ButtonDialogOption.confirmar),
-            BotaoDialog(
+            SmartButtonDialog(
                 onPressed: () => Navigator.of(context).pop(false),
                 type: ButtonDialogOption.cancelar),
           ],
@@ -92,7 +94,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
     if (!_todasPerguntasRespondidas()) {
       showDialog(
         context: context,
-        builder: (ctx) => showMensagemDialog(ctx, 'Atenção!',
+        builder: (ctx) => smartMessageDialog(ctx, 'Atenção!',
             'Existe perguntas obrigatorias por responder e/ou o nível de transição não foi selecionado.'),
       );
       return;
@@ -105,7 +107,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
           content: const Text('Deseja realmente enviar a avaliação?'),
           actions: [
             if (!_isSending)
-              BotaoDialog(
+              SmartButtonDialog(
                 onPressed: () {
                   Navigator.of(context).pop();
                   // Agendar a chamada do método após o fechamento do AlertDialog
@@ -116,7 +118,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                 type: ButtonDialogOption.enivar,
               ),
             if (!_isSending)
-              BotaoDialog(
+              SmartButtonDialog(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -156,17 +158,17 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
             widget.isEditMode
                 ? 'A avaliação foi editada com sucesso!'
                 : 'A avaliação foi enviada com sucesso!',
-            'success');
+            ToastType.success);
       } else {
         showToast(
             context,
             'Ocorreu um erro ao tentar  enviar os dados para o servidor',
-            'error');
+            ToastType.error);
       }
     } else {
       showDialog(
         context: context,
-        builder: (ctx) => showMensagemDialog(ctx, 'Atenção!',
+        builder: (ctx) => smartMessageDialog(ctx, 'Atenção!',
             'Existe campos obrigatórios que ainda não foram avaliados. Reveja a ficha de avaliação antes de submeter'),
       );
     }
@@ -368,7 +370,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
                                   : null,
                             ),
                           ),
-                          for (Classificacao classificacao
+                          for (TipoClassificacao classificacao
                               in tiposClassificacao)
                             AvaliacaoRadioListTile(
                               title: classificacao.descricao,

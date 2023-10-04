@@ -27,10 +27,3 @@ class Pagamento {
     required this.pessoaRelacionada,
   });
 }
-
-class AgregadoPagamento {
-  final String nome;
-  final List<Pagamento> pagamentos;
-
-  AgregadoPagamento({required this.nome, required this.pagamentos});
-}

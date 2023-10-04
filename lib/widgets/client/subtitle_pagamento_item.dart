@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:smart_ticket/models/client/pagamento.dart';
-import 'package:smart_ticket/resources/utils.dart';
+import 'package:smart_ticket/utils/convert_date.dart';
 
 class SubtitlePagamentoItem extends StatelessWidget {
   const SubtitlePagamentoItem({

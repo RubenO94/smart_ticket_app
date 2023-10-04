@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/constants/enums.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/client/pagamentos_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamento_pendente_item.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 
 class PagamentosPendentesScreen extends ConsumerStatefulWidget {
   const PagamentosPendentesScreen({super.key});
@@ -41,12 +44,12 @@ class _PagamentosPendentesScreenState
               const WebViewConfiguration(enableJavaScript: true),
           webOnlyWindowName: '_blank')) {
         if (mounted) {
-          showToast(context, 'Serviço insdiponível, tente mais tarde', 'error');
+          showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
         }
       }
     } else {
       if (mounted) {
-        showToast(context, 'Serviço insdiponível, tente mais tarde', 'error');
+        showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
         setState(() {
           _pagamentosSelecionados.clear();
           _total = 0;
@@ -71,7 +74,7 @@ class _PagamentosPendentesScreenState
     final pagamentosPendentes = ref.watch(pagamentosPendentesProvider);
 
     if (_isLoading) {
-      return const MenssagemCentro(
+      return const SmartMessageCenter(
         widget: CircularProgressIndicator(),
         mensagem:
             'A  processar os detalhes de pagamento. Aguarde um momento, por favor.',
@@ -79,7 +82,7 @@ class _PagamentosPendentesScreenState
     }
 
     if (pagamentosPendentes.isEmpty) {
-      return const MenssagemCentro(
+      return const SmartMessageCenter(
         widget: Icon(
           Icons.check_circle_outline_outlined,
           size: 64,

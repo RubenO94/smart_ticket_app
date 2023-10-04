@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_ticket/constants/enums.dart';
 import 'package:smart_ticket/models/client/pagamento.dart';
 import 'package:smart_ticket/providers/client/pagamento_callback_provider.dart';
 import 'package:smart_ticket/providers/client/pagamentos_selecionados_provider.dart';
 import 'package:smart_ticket/providers/global/perfil_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
-import 'package:smart_ticket/resources/dialogs.dart';
+import 'package:smart_ticket/utils/dialogs.dart';
 import 'package:smart_ticket/widgets/client/pagamentos_agregado_section.dart';
-import 'package:smart_ticket/widgets/global/mensagem_centro.dart';
-import 'package:smart_ticket/widgets/global/title_appbar.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
+import 'package:smart_ticket/widgets/global/smart_title_appbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CarrinhoCheckoutScreen extends ConsumerStatefulWidget {
@@ -42,7 +43,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
               const WebViewConfiguration(enableJavaScript: true),
           webOnlyWindowName: '_blank')) {
         if (mounted) {
-          showToast(context, 'Serviço insdiponível, tente mais tarde', 'error');
+          showToast(context, 'Serviço insdiponível, tente mais tarde', ToastType.error);
         }
       }
     } else if (mounted) {
@@ -51,7 +52,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
       });
       await showDialog(
         context: context,
-        builder: (ctx) => showMensagemDialog(ctx, 'Erro!',
+        builder: (ctx) => smartMessageDialog(ctx, 'Erro!',
             'Ocorreu um erro ao tentar processar os detalhes de pagamento. Por favor tente mais tarde.'),
       );
       return;
@@ -126,7 +127,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
       return Container(
         padding: const EdgeInsets.all(16),
         color: Theme.of(context).colorScheme.background,
-        child: const MenssagemCentro(
+        child: const SmartMessageCenter(
             widget: Column(
               children: [
                 Icon(
@@ -149,7 +150,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
 
     return Scaffold(
       appBar: AppBar(
-        title: const TitleAppBAr(
+        title: const SmartTitleAppBAr(
             icon: Icons.payments_rounded, title: 'Pagaementos Selecionados'),
       ),
       body: Padding(
