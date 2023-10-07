@@ -9,7 +9,7 @@ import 'package:smart_ticket/screens/client/assessments/avaliacoes_disponiveis.d
 import 'package:smart_ticket/screens/client/schedules/horarios.dart';
 import 'package:smart_ticket/screens/client/payments/pagamentos.dart';
 import 'package:smart_ticket/screens/client/enrollment/inscricoes.dart';
-import 'package:smart_ticket/screens/employee/assessments/turmas.dart';
+import 'package:smart_ticket/screens/employee/assessments/turmas_list.dart';
 import 'package:smart_ticket/screens/global/authentication/splash.dart';
 
 
@@ -42,7 +42,7 @@ class _SmartWindowItemState extends ConsumerState<SmartWindowItem> {
     } else {
       switch (widget.janela.id) {
         case 100:
-          return const TurmasScreen();
+          return const TurmasListScreen();
         default:
           return const SplashScreen();
       }

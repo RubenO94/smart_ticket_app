@@ -18,31 +18,34 @@ class AlunoBadge extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          margin: const EdgeInsets.only(right: 16),
-          clipBehavior: Clip.hardEdge,
-          height: 32,
-          width: 32,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            boxShadow: [
-              BoxShadow(
-                  blurStyle: BlurStyle.solid,
-                  blurRadius: 1.0,
-                  color: Theme.of(context).colorScheme.primary,
-                  spreadRadius: 2.5),
-            ],
-            shape: BoxShape.circle,
+        Hero(
+          tag: numeroAluno,
+          child: Container(
+            margin: const EdgeInsets.only(right: 16),
+            clipBehavior: Clip.hardEdge,
+            height: 32,
+            width: 32,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              boxShadow: [
+                BoxShadow(
+                    blurStyle: BlurStyle.solid,
+                    blurRadius: 1.0,
+                    color: Theme.of(context).colorScheme.primary,
+                    spreadRadius: 2.5),
+              ],
+              shape: BoxShape.circle,
+            ),
+            child: base64Foto.isEmpty
+                ? Icon(
+                    Icons.person,
+                    size: 24,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )
+                : Image.memory(
+                    base64Decode(base64Foto),
+                  ),
           ),
-          child: base64Foto.isEmpty
-              ? Icon(
-                  Icons.person,
-                  size: 24,
-                  color: Theme.of(context).colorScheme.secondary,
-                )
-              : Image.memory(
-                  base64Decode(base64Foto),
-                ),
         ),
         const SizedBox(
           width: 2,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/employee/turma.dart';
 
-import 'package:smart_ticket/screens/employee/assessments/turma_details.dart';
+import 'package:smart_ticket/screens/employee/assessments/alunos_list.dart';
 
 class TurmaItem extends StatelessWidget {
   const TurmaItem({super.key, required this.turma});
@@ -20,7 +20,7 @@ class TurmaItem extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: ((context) => TurmaDetails(
+              builder: ((context) => AlunosListScreen(
                     idAula: turma.id,
                   )),
             ),

@@ -4,25 +4,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_ticket/providers/employee/alunos_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
-import 'package:smart_ticket/screens/global/authentication/offline.dart';
 import 'package:smart_ticket/widgets/employee/aluno_item.dart';
+import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
-class TurmaDetails extends ConsumerStatefulWidget {
-  const TurmaDetails({super.key, required this.idAula});
+class AlunosListScreen extends ConsumerStatefulWidget {
+  const AlunosListScreen({super.key, required this.idAula});
   final int idAula;
 
   @override
-  ConsumerState<TurmaDetails> createState() => _TurmaDetailsState();
+  ConsumerState<AlunosListScreen> createState() => _AlunosListScreenState();
 }
 
-class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
+class _AlunosListScreenState extends ConsumerState<AlunosListScreen> {
   bool _isLoading = true;
   bool _isOffline = false;
+  bool _isEmpty = false;
   final _searchController = TextEditingController();
 
   Future<bool> _loadAlunos() async {
     final apiService = ref.read(apiServiceProvider);
-    final hasAlunos = await apiService.getAlunos(widget.idAula.toString(), '');
+    final hasAlunos =
+        await apiService.getAlunos(widget.idAula.toString(), null);
     if (hasAlunos) {
       setState(() {
         _isLoading = false;
@@ -52,13 +54,28 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
   Widget build(BuildContext context) {
     final idAtividadeLetiva = ref.read(atividadeLetivaIDProvider);
     final listaAlunos = ref.watch(alunosProvider);
+
+    if (listaAlunos.isEmpty) {
+      setState(() {
+        _isEmpty = true;
+      });
+    } else {
+      setState(() {
+        _isEmpty = false;
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Alunos'),
       ),
       body: _isOffline
-          ? OfflineScreen(
-              refresh: _loadAlunos,
+          ? const Padding(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: SmartMessageCenter(
+                  widget: Icon(Icons.power_off_outlined, size: 64,),
+                  mensagem:
+                      'Não foi possível carregar a turma.\n Por favor, verifique a sua conexão com a internet ou tente mais tarde.'),
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,22 +95,27 @@ class _TurmaDetailsState extends ConsumerState<TurmaDetails> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Expanded(
-                  child: _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : ListView.builder(
-                          itemCount: listaAlunos.length,
-                          itemBuilder: (context, index) => AlunoItem(
-                              aluno: listaAlunos[index],
-                              idAula: widget.idAula,
-                              idAtividadeLetiva: idAtividadeLetiva),
-                        ),
-                )
+                if (_isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24),
+                    child: SmartMessageCenter(
+                        widget: Icon(Icons.group_off),
+                        mensagem: 'Sem resultados encontrados'),
+                  ),
+                if (!_isEmpty)
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : ListView.builder(
+                            itemCount: listaAlunos.length,
+                            itemBuilder: (context, index) => AlunoItem(
+                                aluno: listaAlunos[index],
+                                idAula: widget.idAula,
+                                idAtividadeLetiva: idAtividadeLetiva),
+                          ),
+                  )
               ],
             ),
     );

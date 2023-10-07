@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:smart_ticket/models/employee/aluno.dart';
-import 'package:smart_ticket/screens/employee/assessments/ver_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/assessments/ver_ficha_avaliacao.dart';
 
 class AlunoItem extends StatelessWidget {
   const AlunoItem(
@@ -17,7 +17,6 @@ class AlunoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool temAvaliacao = aluno.dataAvalicao != "1900-01-01";
     return Card(
       elevation: 0.2,
       color: Theme.of(context).cardColor,
@@ -26,30 +25,33 @@ class AlunoItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
       ),
       child: ListTile(
-        leading: Container(
-          height: 40,
-          width: 40,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            boxShadow: [
-              BoxShadow(
-                  blurStyle: BlurStyle.solid,
-                  blurRadius: 1.0,
-                  color: Theme.of(context).colorScheme.primary,
-                  spreadRadius: 2.5),
-            ],
-            borderRadius: BorderRadius.circular(100),
+        leading: Hero(
+          tag: aluno.numeroAluno,
+          child: Container(
+            height: 40,
+            width: 40,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              boxShadow: [
+                BoxShadow(
+                    blurStyle: BlurStyle.solid,
+                    blurRadius: 1.0,
+                    color: Theme.of(context).colorScheme.primary,
+                    spreadRadius: 2.5),
+              ],
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: aluno.foto!.isEmpty
+                ? Icon(
+                    Icons.person,
+                    size: 32,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )
+                : Image.memory(
+                    base64Decode(aluno.foto!),
+                  ),
           ),
-          child: aluno.foto!.isEmpty
-              ? Icon(
-                  Icons.person,
-                  size: 32,
-                  color: Theme.of(context).colorScheme.secondary,
-                )
-              : Image.memory(
-                  base64Decode(aluno.foto!),
-                ),
         ),
         title: Text(
           aluno.toTitleCase(),
@@ -74,7 +76,7 @@ class AlunoItem extends StatelessWidget {
               const SizedBox(
                 height: 4,
               ),
-              if (temAvaliacao)
+              if (aluno.temAvaliacao)
                 Text(
                   'Data da Avaliação: ${aluno.dataAvalicao}',
                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
@@ -87,7 +89,7 @@ class AlunoItem extends StatelessWidget {
             ],
           ),
         ),
-        trailing: temAvaliacao
+        trailing: aluno.temAvaliacao
             ? Icon(
                 Icons.task,
                 color: Theme.of(context).colorScheme.primary,
@@ -95,7 +97,7 @@ class AlunoItem extends StatelessWidget {
             : const Icon(Icons.edit_document, color: Colors.amber),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => VerAvaliacaoScreen(aluno: aluno, idAula: idAula),
+            builder: (context) => VerFichaAvaliacaoScreen(aluno: aluno, idAula: idAula),
           ),
         ),
       ),

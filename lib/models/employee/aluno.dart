@@ -15,6 +15,7 @@ class Aluno {
     required this.dataAvalicao,
     this.foto,
     required this.respostas,
+    required this.temAvaliacao,
     required this.observacao,
   });
 
@@ -26,6 +27,7 @@ class Aluno {
   final String? foto;
   final String nome;
   final List<Resposta> respostas;
+  final bool temAvaliacao;
   final String observacao;
 
   /// Converte o nome do aluno para o formato de título.
@@ -69,6 +71,7 @@ class Aluno {
       String? dataAvalicao,
       String? foto,
       List<Resposta>? respostas,
+      bool? temAvaliacao,
       String? observacao}) {
     return Aluno(
         idCliente: idCliente ?? this.idCliente,
@@ -79,6 +82,7 @@ class Aluno {
         dataAvalicao: dataAvalicao ?? this.dataAvalicao,
         foto: foto ?? this.foto,
         respostas: respostas ?? this.respostas,
+        temAvaliacao: temAvaliacao ?? this.temAvaliacao,
         observacao: observacao ?? this.observacao);
   }
 }

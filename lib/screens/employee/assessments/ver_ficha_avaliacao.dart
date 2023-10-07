@@ -10,22 +10,23 @@ import 'package:smart_ticket/providers/employee/perguntas_provider.dart';
 import 'package:smart_ticket/providers/global/niveis_provider.dart';
 import 'package:smart_ticket/providers/global/tipos_classificacao_provider.dart';
 import 'package:smart_ticket/providers/others/atividade_letiva_id_provider.dart';
-import 'package:smart_ticket/screens/employee/assessments/nova_avaliacao.dart';
+import 'package:smart_ticket/screens/employee/assessments/ficha_avaliacao.dart';
 import 'package:smart_ticket/widgets/employee/aluno_badge.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_categoria_card.dart';
 import 'package:smart_ticket/widgets/global/avaliacao_legenda_item.dart';
 import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
-class VerAvaliacaoScreen extends ConsumerWidget {
-  const VerAvaliacaoScreen(
+class VerFichaAvaliacaoScreen extends ConsumerWidget {
+  const VerFichaAvaliacaoScreen(
       {super.key, required this.aluno, required this.idAula});
   final Aluno aluno;
   final int idAula;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final alunoProvide = ref.watch(alunosProvider).firstWhere((element) => element.idCliente == aluno.idCliente);
-    final bool temAvaliacao = alunoProvide.dataAvalicao != "1900-01-01";
+    final alunoProvide = ref
+        .watch(alunosProvider)
+        .firstWhere((element) => element.idCliente == aluno.idCliente);
     final int idAtividadeLetiva = ref.watch(atividadeLetivaIDProvider);
     final List<TipoClassificacao> tiposClassificacao =
         ref.watch(tiposClassificacaoProvider);
@@ -54,7 +55,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
           actions: [
             PopupMenuButton(
               itemBuilder: (context) => [
-                if (!temAvaliacao)
+                if (!aluno.temAvaliacao)
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
@@ -66,7 +67,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => NovaAvaliacaoScreen(
+                          builder: (context) => FichaAvaliacaoScreen(
                               isEditMode: false,
                               aluno: alunoProvide,
                               idAula: idAula,
@@ -76,7 +77,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                       icon: const Icon(Icons.assignment_add),
                     ),
                   ),
-                if (temAvaliacao)
+                if (aluno.temAvaliacao)
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
@@ -88,7 +89,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => NovaAvaliacaoScreen(
+                          builder: (context) => FichaAvaliacaoScreen(
                               isEditMode: true,
                               aluno: alunoProvide,
                               idAula: idAula,
@@ -105,7 +106,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
               base64Foto: alunoProvide.foto!,
               nome: alunoProvide.nome,
               numeroAluno: alunoProvide.numeroAluno),
-          bottom: temAvaliacao
+          bottom: aluno.temAvaliacao
               ? PreferredSize(
                   preferredSize: const Size.fromHeight(60),
                   child: Container(
@@ -143,7 +144,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                 )
               : null,
         ),
-        body: temAvaliacao
+        body: aluno.temAvaliacao
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -199,7 +200,7 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                                     categoria: categoria,
                                     perguntas:
                                         perguntasPorCategoria[categoria]!,
-                                    respostas: alunoProvide.respostas)
+                                    respostas: alunoProvide.respostas),
                             ],
                           ),
                         ),
@@ -210,11 +211,19 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 12),
                     child: Row(
                       children: [
-                        const Icon(Icons.note,),
-                        const SizedBox(width: 4,),
+                        const Icon(
+                          Icons.note,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
                         Text(
                           "Observações",
-                          style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -236,12 +245,13 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                         : Text(alunoProvide.observacao),
                   ),
                   Container(
+                    margin:
+                        const EdgeInsets.only(left: 12, bottom: 12, right: 12),
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      border: Border(
-                        top: BorderSide(color: Theme.of(context).dividerColor),
-                      ),
+                      color: Theme.of(context).colorScheme.tertiaryContainer,
+                      border: Border.all(color: Theme.of(context).dividerColor),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     padding:
                         const EdgeInsets.only(bottom: 16, left: 16, top: 16),
@@ -263,7 +273,8 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                         const SizedBox(
                           height: 12,
                         ),
-                        for (TipoClassificacao classificacao in tiposClassificacao)
+                        for (TipoClassificacao classificacao
+                            in tiposClassificacao)
                           AvaliacaoLegendaItem(
                             texto:
                                 '${classificacao.valor} - ${classificacao.descricao}',
@@ -279,13 +290,13 @@ class VerAvaliacaoScreen extends ConsumerWidget {
                     "Sem avaliação para exibir, por favor faça uma nova avaliação"),
         floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => NovaAvaliacaoScreen(
+            builder: (context) => FichaAvaliacaoScreen(
                 aluno: alunoProvide,
                 idAula: idAula,
                 idAtividadeLetiva: idAtividadeLetiva,
-                isEditMode: temAvaliacao),
+                isEditMode: aluno.temAvaliacao),
           )),
-          child: Icon(temAvaliacao ? Icons.edit : Icons.add),
+          child: Icon(aluno.temAvaliacao ? Icons.edit : Icons.add),
         ),
       ),
     );

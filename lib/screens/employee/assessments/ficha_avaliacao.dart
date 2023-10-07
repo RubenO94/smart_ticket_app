@@ -19,8 +19,8 @@ import 'package:smart_ticket/widgets/employee/aluno_badge.dart';
 import 'package:smart_ticket/widgets/employee/avaliacao_radio_list_tile.dart';
 import 'package:smart_ticket/widgets/global/smart_button_dialog.dart';
 
-class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
-  const NovaAvaliacaoScreen({
+class FichaAvaliacaoScreen extends ConsumerStatefulWidget {
+  const FichaAvaliacaoScreen({
     super.key,
     required this.aluno,
     required this.idAula,
@@ -34,11 +34,11 @@ class NovaAvaliacaoScreen extends ConsumerStatefulWidget {
   final bool isEditMode;
 
   @override
-  ConsumerState<NovaAvaliacaoScreen> createState() =>
+  ConsumerState<FichaAvaliacaoScreen> createState() =>
       _NovaAvaliacaoScreenState();
 }
 
-class _NovaAvaliacaoScreenState extends ConsumerState<NovaAvaliacaoScreen> {
+class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
   int _currentPageIndex = 0;
   List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];

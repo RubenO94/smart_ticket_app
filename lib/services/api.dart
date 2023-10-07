@@ -563,6 +563,8 @@ class ApiService {
             pontuacaoTotal: element['nPontuacaoAvaliacao'],
             nome: element['strNome'],
             dataAvalicao: element['strDataAvaliacao'],
+            temAvaliacao:
+                element['strDataAvaliacao'] == '1900-01-01' ? false : true,
             respostas: listaRespostas,
             foto: element['strFotoBase64'] ?? '',
             observacao: element['strObservacao'] ?? '',
