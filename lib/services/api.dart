@@ -84,7 +84,7 @@ class ApiService {
     }
 
     final token = ref.read(tokenProvider);
-    final deviceId = await ref.read(deviceIdProvider.future);
+    final deviceId = ref.read(deviceIdProvider);
 
     final headers = {
       'Content-Type': 'application/json',

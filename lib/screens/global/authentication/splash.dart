@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:smart_ticket/constants/api_conection.dart';
+import 'package:smart_ticket/providers/global/device_id_provider.dart';
 import 'package:smart_ticket/providers/global/services_provider.dart';
 import 'package:smart_ticket/constants/theme.dart';
 import 'package:smart_ticket/screens/global/authentication/register.dart';
 import 'package:smart_ticket/screens/global/authentication/offline.dart';
 import 'package:smart_ticket/screens/global/authentication/update.dart';
 import 'package:smart_ticket/screens/global/home/home.dart';
+import 'package:smart_ticket/utils/get_device_id.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +22,12 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _isOffline = false;
 
-  void authenticate() async {
+  void _getDeviceID() async {
+    final deviceID = await getDiviceID();
+    ref.read(deviceIdProvider.notifier).setDeviceID(deviceID);
+  }
+
+  void _authenticate() async {
     final hasWSApp =
         await ref.read(secureStorageProvider).readSecureData('WSApp');
 
@@ -73,7 +80,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final result = await Connectivity().checkConnectivity();
     if (result == ConnectivityResult.mobile ||
         result == ConnectivityResult.wifi) {
-      authenticate();
+      _authenticate();
 
       setState(() {
         _isOffline = false;
@@ -89,6 +96,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _getDeviceID();
     _checkConnectivity();
   }
 

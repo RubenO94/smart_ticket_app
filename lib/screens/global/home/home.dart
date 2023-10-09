@@ -53,10 +53,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     }
   }
 
+  void _openDrawer() {
+    setState(() {
+      _zoomController.open?.call();
+    });
+  }
+
   void _closeDrawer() {
     setState(() {
       _zoomController.close?.call();
-      _currentPageIndex = 2;
+      setState(() {
+        _currentPageIndex = 2;
+      });
     });
   }
 
@@ -84,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void _changeScreen(int index) {
     if (index == 4) {
       _zoomController.open?.call();
-      _currentPageIndex = 2;
+      _currentPageIndex = index;
     } else {
       setState(() {
         _zoomController.close?.call();
@@ -160,7 +168,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   context,
                   'Não foi possível atualizar os dados. Tente mais tarde.',
                   ToastType.error);
-            } else {
+            } else if (mounted) {
               showToast(
                   context, 'Dados atualizados com sucesso!', ToastType.success);
             }
@@ -171,7 +179,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           color: Theme.of(context).colorScheme.primary,
           animationDuration: const Duration(milliseconds: 300),
           index: _currentPageIndex,
-          letIndexChange: (value) => true,
+          letIndexChange: (value) {
+            if (value == 4) {
+              return false;
+            }
+            return true;
+          },
           onTap: (index) {
             _changeScreen(index);
           },
@@ -202,8 +215,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               Icons.contact_support_rounded,
               color: Colors.white,
             ),
-            const Icon(
-              Icons.more_horiz_rounded,
+            IconButton(
+              onPressed: _openDrawer,
+              icon: const Icon(
+                Icons.more_horiz_rounded,
+              ),
               color: Colors.white,
             ),
           ],

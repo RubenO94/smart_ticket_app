@@ -19,7 +19,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
   bool _isLoading = true;
   final TextEditingController _controller = TextEditingController();
   void _loadData() async {
-    final id = await ref.read(deviceIdProvider.future);
+    final id = ref.read(deviceIdProvider);
     final urlService =
         await ref.read(secureStorageProvider).readSecureData('WSApp');
     setState(() {

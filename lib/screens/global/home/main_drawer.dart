@@ -107,11 +107,6 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     }
   }
 
-  @override
-  void dispose() {
-    widget.closeDrawer();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +115,9 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         leading: BackButton(
-          onPressed: widget.closeDrawer,
+          onPressed: (){
+            widget.closeDrawer();
+          },
         ),
       ),
       body: SafeArea(
