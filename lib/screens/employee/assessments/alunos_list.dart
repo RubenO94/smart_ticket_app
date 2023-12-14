@@ -73,7 +73,10 @@ class _AlunosListScreenState extends ConsumerState<AlunosListScreen> {
           ? const Padding(
               padding: EdgeInsets.symmetric(vertical: 24),
               child: SmartMessageCenter(
-                  widget: Icon(Icons.power_off_outlined, size: 64,),
+                  widget: Icon(
+                    Icons.power_off_outlined,
+                    size: 64,
+                  ),
                   mensagem:
                       'Não foi possível carregar a turma.\n Por favor, verifique a sua conexão com a internet ou tente mais tarde.'),
             )
@@ -95,26 +98,29 @@ class _AlunosListScreenState extends ConsumerState<AlunosListScreen> {
                     ),
                   ),
                 ),
-                if (_isEmpty)
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                if (!_isLoading && _isEmpty)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: SmartMessageCenter(
                         widget: Icon(Icons.group_off),
                         mensagem: 'Sem resultados encontrados'),
                   ),
-                if (!_isEmpty)
+                if (!_isLoading && !_isEmpty)
                   Expanded(
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListView.builder(
-                            itemCount: listaAlunos.length,
-                            itemBuilder: (context, index) => AlunoItem(
-                                aluno: listaAlunos[index],
-                                idAula: widget.idAula,
-                                idAtividadeLetiva: idAtividadeLetiva),
-                          ),
+                    child: ListView.builder(
+                      itemCount: listaAlunos.length,
+                      itemBuilder: (context, index) => AlunoItem(
+                          aluno: listaAlunos[index],
+                          idAula: widget.idAula,
+                          idAtividadeLetiva: idAtividadeLetiva),
+                    ),
                   )
               ],
             ),
