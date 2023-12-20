@@ -97,7 +97,7 @@ class AlunoItem extends StatelessWidget {
             : const Icon(Icons.edit_document, color: Colors.amber),
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => VerFichaAvaliacaoScreen(aluno: aluno, idAula: idAula),
+            builder: (context) => VerFichaAvaliacaoScreen(numeroAluno: aluno.numeroAluno, idAula: idAula),
           ),
         ),
       ),
