@@ -145,15 +145,15 @@ class ApiService {
         }
 
         final Map<String, dynamic> data = json.decode(response.body);
-        final String? baseUrl = data['strDescricao'];
+        final String? baseUrl = data['strDescricao'] ?? '';
 
-        if (baseUrl != null || baseUrl!.startsWith('http')) {
+        if (baseUrl != '' || baseUrl!.startsWith('http')) {
           final storage = ref.read(secureStorageProvider);
-          await storage.writeSecureData('WSApp', baseUrl);
+          await storage.writeSecureData('WSApp', baseUrl!);
           return const ApiResponseMessage(success: true);
         } else {
           return const ApiResponseMessage(
-              success: false, message: 'NIF / Utilizador desconhecido');
+              success: false, message: 'Entidade desconhecida');
         }
       } catch (error) {
         return const ApiResponseMessage(
@@ -245,7 +245,7 @@ class ApiService {
   /// Esta função regista um dispositivo associado a um NIF (Número de Identificação
   /// Fiscal) e a um email. O registo é efetuado através da comunicação com o servidor.
   ///
-  /// - [nif]: O número de identificação fiscal associado ao dispositivo.
+  /// - [entity]: O número de identificação fiscal associado ao dispositivo.
   /// - [email]: O email associado ao dispositivo.
   ///
   /// Retorna uma [Future<ApiResponseMessage>] com o resultado do registo:
@@ -267,8 +267,8 @@ class ApiService {
   ///
   /// Exceções possíveis:
   /// - [ApiResponseMessage] com `success: false` e uma mensagem explicativa em caso de erro.
-  Future<ApiResponseMessage> registerDevice(String nif, String email) async {
-    final endPoint = '/RegisterDevice?strNif=$nif&strEmail=$email';
+  Future<ApiResponseMessage> registerDevice(String entity, String user, String email) async {
+    final endPoint = '/RegisterDevice?strNif=$entity&strEmail=$email&strNifCliente=$user';
 
     try {
       final response = await executeRequest((client, baseUrl, headers) =>

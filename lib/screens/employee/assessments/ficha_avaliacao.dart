@@ -113,10 +113,11 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
                 onPressed: () {
                   int count = 0;
                   print(count);
-                  Future.delayed(Duration.zero, () {
+                  Future.delayed(const Duration(seconds: 1), () {
                     _enviarAvaliacao();
+                    Navigator.of(context).popUntil((route) => count++ >= 2);
                   });
-                  Navigator.of(context).popUntil((route) => count++ >= 2);
+                  
                 },
                 type: ButtonDialogOption.enivar,
               ),
@@ -139,6 +140,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
       setState(() {
         _isSending = true;
       });
+
       final hasPosted = await ref.read(apiServiceProvider).postAvaliacao(
           aluno.idCliente,
           _respostas,
@@ -155,14 +157,11 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
               convertDateToString(DateTime.now()),
               _observacao,
             );
-        await ref.read(apiServiceProvider).getAlunos(widget.idAula.toString(), null);
-        Navigator.of(context).pop();
-        showToast(
-            context,
-            widget.isEditMode
-                ? 'A avaliação foi editada com sucesso!'
-                : 'A avaliação foi enviada com sucesso!',
-            ToastType.success);
+
+        await ref
+            .read(apiServiceProvider)
+            .getAlunos(widget.idAula.toString(), null);
+
       } else if (mounted) {
         showToast(
             context,
@@ -179,6 +178,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
     setState(() {
       _isSending = false;
     });
+    return Navigator.of(context).pop();
   }
 
   bool _todasPerguntasRespondidas() {
