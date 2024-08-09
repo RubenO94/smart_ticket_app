@@ -59,7 +59,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
-                          foregroundColor: MaterialStatePropertyAll(
+                          foregroundColor: WidgetStatePropertyAll(
                               Theme.of(context)
                                   .colorScheme
                                   .onPrimaryContainer)),
@@ -81,7 +81,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
-                          foregroundColor: MaterialStatePropertyAll(
+                          foregroundColor: WidgetStatePropertyAll(
                               Theme.of(context)
                                   .colorScheme
                                   .onPrimaryContainer)),
@@ -174,7 +174,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onBackground),
+                                            .onSurface),
                               ),
                               const SizedBox(
                                 width: 48,
@@ -187,7 +187,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                                     .copyWith(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onBackground),
+                                            .onSurface),
                               ),
                             ],
                           ),

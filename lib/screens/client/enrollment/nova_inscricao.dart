@@ -149,7 +149,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                                 .copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onBackground),
+                                        .onSurface),
                           ),
                         ),
                     ],
@@ -188,7 +188,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                                 .copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onBackground),
+                                        .onSurface),
                           ),
                         ),
                     ],
@@ -202,7 +202,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                       'Aulas Disponíveis:',
                       textAlign: TextAlign.start,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
                   Expanded(
@@ -299,7 +299,7 @@ class _NovaInscricaoState extends ConsumerState<NovaInscricao> {
                   ? Theme.of(context).disabledColor
                   : null,
               backgroundColor: aulaSelecionada == null
-                  ? Theme.of(context).colorScheme.surfaceVariant
+                  ? Theme.of(context).colorScheme.surfaceContainerHighest
                   : null,
               disabledElevation: 0,
               onPressed: aulaSelecionada == null

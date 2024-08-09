@@ -97,7 +97,7 @@ class MinhaAvaliacaoScreen extends ConsumerWidget {
                               .copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground),
+                                      .onSurface),
                         ),
                         const SizedBox(
                           width: 48,
@@ -109,7 +109,7 @@ class MinhaAvaliacaoScreen extends ConsumerWidget {
                                 .copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .onBackground)),
+                                        .onSurface)),
                       ],
                     ),
                   ),

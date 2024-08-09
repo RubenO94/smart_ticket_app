@@ -26,7 +26,7 @@ class AlunoBadge extends StatelessWidget {
             height: 32,
             width: 32,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
                     blurStyle: BlurStyle.solid,

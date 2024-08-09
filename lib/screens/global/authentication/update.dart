@@ -64,7 +64,7 @@ class UpdateScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.onBackground,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 shape: RoundedRectangleBorder(
@@ -87,7 +87,7 @@ class UpdateScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.onBackground,
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 shape: RoundedRectangleBorder(

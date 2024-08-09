@@ -97,7 +97,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                     child: Container(
                       color: isPessoal
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.surfaceVariant,
+                          : Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: MenuToggleButton(
                           context: context,
                           icon: Icons.calendar_today,
@@ -117,7 +117,7 @@ class _HorariosScreenState extends ConsumerState<HorariosScreen> {
                     child: Container(
                       color: !isPessoal
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.surfaceVariant,
+                          : Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: MenuToggleButton(
                           context: context,
                           icon: Icons.calendar_month_rounded,

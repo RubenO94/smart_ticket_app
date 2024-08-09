@@ -118,7 +118,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
     final isDarkModeEnabled = ref.watch(themeProvider) == ThemeMode.dark;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         leading: BackButton(
           onPressed: widget.closeDrawer,
         ),
@@ -148,7 +148,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                               .copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground),
+                                      .onSurface),
                         ),
                       ],
                     ),
@@ -163,7 +163,7 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                   Text(
                     'ESQUEMA DE CORES',
                     style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        color: Theme.of(context).colorScheme.onBackground),
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
                   const SizedBox(
                     width: 8,
@@ -173,13 +173,13 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                     materialTapTargetSize: MaterialTapTargetSize.padded,
                     key: ValueKey(isDarkModeEnabled),
                     thumbIcon: isDarkModeEnabled
-                        ? MaterialStatePropertyAll(
+                        ? WidgetStatePropertyAll(
                             Icon(
                               Icons.dark_mode_rounded,
                               color: Colors.grey.shade800,
                             ),
                           )
-                        : const MaterialStatePropertyAll(
+                        : const WidgetStatePropertyAll(
                             Icon(Icons.wb_sunny),
                           ),
                     value: isDarkModeEnabled,
@@ -200,9 +200,9 @@ class _MainDrawerState extends ConsumerState<MainDrawer> {
                 padding: const EdgeInsets.only(left: 48),
                 child: ElevatedButton.icon(
                   style: ButtonStyle(
-                    foregroundColor: MaterialStatePropertyAll(
+                    foregroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.onSecondary),
-                    backgroundColor: MaterialStatePropertyAll(
+                    backgroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.secondary),
                   ),
                   onPressed: _logOutDialog,

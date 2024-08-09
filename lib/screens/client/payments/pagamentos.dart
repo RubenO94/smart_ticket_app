@@ -78,7 +78,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
                         child: Container(
                           color: _isPagos
                               ? Theme.of(context).primaryColor
-                              : Theme.of(context).colorScheme.surfaceVariant,
+                              : Theme.of(context).colorScheme.surfaceContainerHighest,
                           child: MenuToggleButton(
                               context: context,
                               icon: Icons.fact_check_outlined,
@@ -98,7 +98,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
                         child: Container(
                           color: !_isPagos
                               ? Theme.of(context).primaryColor
-                              : Theme.of(context).colorScheme.surfaceVariant,
+                              : Theme.of(context).colorScheme.surfaceContainerHighest,
                           child: MenuToggleButton(
                               context: context,
                               icon: Icons.access_time_filled_rounded,
@@ -167,7 +167,7 @@ class _PagamentosScreenState extends ConsumerState<PagamentosScreen> {
                                 : null,
                         backgroundColor:
                             _isLoading || pagamentosSelecionados.isEmpty
-                                ? Theme.of(context).colorScheme.surfaceVariant
+                                ? Theme.of(context).colorScheme.surfaceContainerHighest
                                 : null,
                         disabledElevation: 0,
                         onPressed: _isLoading || pagamentosSelecionados.isEmpty

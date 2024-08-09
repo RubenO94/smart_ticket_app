@@ -451,7 +451,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
                                         .copyWith(
                                             color: Theme.of(context)
                                                 .colorScheme
-                                                .onBackground),
+                                                .onSurface),
                                   ),
                                   const SizedBox(width: 8),
                                   DropdownButton<Nivel>(

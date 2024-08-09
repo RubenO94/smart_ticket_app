@@ -124,7 +124,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
         padding: const EdgeInsets.all(16),
         width: double.infinity,
         height: double.infinity,
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -132,7 +132,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
               Text(
                 'A Processar os detalhes do pagamento.\nAguarde um momento, por favor.',
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onBackground),
+                    color: Theme.of(context).colorScheme.onSurface),
               ),
               const SizedBox(
                 height: 16,
@@ -191,7 +191,7 @@ class _CarrinhoCheckoutScreenState extends ConsumerState<CarrinhoCheckoutScreen>
                     child: Text(
                       'TOTAL: ${valorTotal.toStringAsFixed(2)} €',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
                   const SizedBox(

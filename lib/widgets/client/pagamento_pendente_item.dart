@@ -72,7 +72,7 @@ class _PagamentoPendenteItemState extends ConsumerState<PagamentoPendenteItem> {
             children: [
               Icon(
                 Icons.calendar_month_rounded,
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               const SizedBox(
                 width: 8,

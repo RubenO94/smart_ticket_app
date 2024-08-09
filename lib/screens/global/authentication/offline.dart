@@ -64,9 +64,9 @@ class OfflineScreen extends StatelessWidget {
             ElevatedButton.icon(
               icon: const Icon(Icons.refresh),
               style: ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(
+                backgroundColor: WidgetStatePropertyAll(
                     Theme.of(context).colorScheme.secondary),
-                foregroundColor: MaterialStatePropertyAll(
+                foregroundColor: WidgetStatePropertyAll(
                     Theme.of(context).colorScheme.onPrimary),
               ),
               onPressed: refresh,

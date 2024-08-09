@@ -119,7 +119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       angle: -2,
       shadowLayer1Color: Theme.of(context).colorScheme.primary,
       shadowLayer2Color: Theme.of(context).colorScheme.secondaryContainer,
-      menuScreenOverlayColor: Theme.of(context).colorScheme.background,
+      menuScreenOverlayColor: Theme.of(context).colorScheme.surface,
       menuBackgroundColor: Theme.of(context).colorScheme.surface,
       menuScreenWidth: double.infinity,
       moveMenuScreen: true,
@@ -141,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
           automaticallyImplyLeading: false,
           centerTitle: true,
           backgroundColor:
-              Theme.of(context).colorScheme.background.withOpacity(0.1),
+              Theme.of(context).colorScheme.surface.withOpacity(0.1),
           scrolledUnderElevation: 0.0,
           title: Text(
             perfil.entidade.nome,

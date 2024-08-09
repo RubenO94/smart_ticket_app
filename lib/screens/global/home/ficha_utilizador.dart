@@ -28,7 +28,7 @@ class FichaUtilizadorScreen extends ConsumerWidget {
                 height: 56,
                 width: 56,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
                         blurStyle: BlurStyle.solid,

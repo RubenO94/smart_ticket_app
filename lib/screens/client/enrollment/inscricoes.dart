@@ -127,7 +127,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                .copyWith(color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
         ),
@@ -143,7 +143,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+                .copyWith(color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
         ),
@@ -173,7 +173,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
                     child: Container(
                       color: _isInscritas
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.surfaceVariant,
+                          : Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: MenuToggleButton(
                           context: context,
                           icon: Icons.fact_check_outlined,
@@ -193,7 +193,7 @@ class _InscricoesScreenState extends ConsumerState<InscricoesScreen> {
                     child: Container(
                       color: !_isInscritas
                           ? Theme.of(context).primaryColor
-                          : Theme.of(context).colorScheme.surfaceVariant,
+                          : Theme.of(context).colorScheme.surfaceContainerHighest,
                       child: MenuToggleButton(
                           context: context,
                           icon: Icons.lock_clock,

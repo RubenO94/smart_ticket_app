@@ -342,7 +342,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                                   .copyWith(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onBackground),
+                                          .onSurface),
                             ));
                       }).toList(),
                       onChanged: (value) {
@@ -461,7 +461,7 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                     child: Text(
                       '${pais['codigo']} - ${pais['nome']}',
                       style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ));
               }).toList(),
               validator: (value) {
@@ -541,11 +541,11 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
               children: [
                 ElevatedButton.icon(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
+                    backgroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.primary),
-                    foregroundColor: MaterialStatePropertyAll(
+                    foregroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.onPrimary),
-                    shape: MaterialStatePropertyAll(
+                    shape: WidgetStatePropertyAll(
                       ContinuousRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
@@ -560,11 +560,11 @@ class _EditarPerfilFormState extends ConsumerState<EditarPerfilForm> {
                 ),
                 ElevatedButton.icon(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(
+                    backgroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.secondary),
-                    foregroundColor: MaterialStatePropertyAll(
+                    foregroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.onSecondary),
-                    shape: MaterialStatePropertyAll(
+                    shape: WidgetStatePropertyAll(
                       ContinuousRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),

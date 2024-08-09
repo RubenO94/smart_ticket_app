@@ -39,7 +39,7 @@ class AvaliacoesDisponiveisScreen extends ConsumerWidget {
                     Text(
                       'Não há avaliações para apresentar',
                       style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.onBackground),
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ],
                 ),

@@ -61,7 +61,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                               .copyWith(
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .onBackground),
+                                      .onSurface),
                         ),
                         TextSpan(
                           text: _deviceId,
@@ -102,7 +102,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                   ElevatedButton.icon(
                     style: const ButtonStyle(
                         shape:
-                            MaterialStatePropertyAll(BeveledRectangleBorder())),
+                            WidgetStatePropertyAll(BeveledRectangleBorder())),
                     onPressed: () async {
                       if (_controller.text.isNotEmpty) {
                         await ref

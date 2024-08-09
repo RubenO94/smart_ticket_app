@@ -1,7 +1,4 @@
-import 'dart:io';
 
-import 'package:android_id/android_id.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Provider que fornece o ID do dispositivo.

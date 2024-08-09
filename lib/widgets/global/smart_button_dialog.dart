@@ -56,9 +56,9 @@ class SmartButtonDialog extends StatelessWidget {
       icon: icon,
       label: Text(label, style: TextStyle(color: foregroundColor)),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll(backgroundColor),
-        foregroundColor: MaterialStatePropertyAll(foregroundColor),
-        iconColor: MaterialStatePropertyAll(foregroundColor),
+        backgroundColor: WidgetStatePropertyAll(backgroundColor),
+        foregroundColor: WidgetStatePropertyAll(foregroundColor),
+        iconColor: WidgetStatePropertyAll(foregroundColor),
       ),
     );
   }

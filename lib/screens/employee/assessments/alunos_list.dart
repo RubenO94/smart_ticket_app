@@ -86,7 +86,7 @@ class _AlunosListScreenState extends ConsumerState<AlunosListScreen> {
                 Container(
                   padding: const EdgeInsets.only(
                       left: 12, right: 12, top: 16, bottom: 16),
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).colorScheme.surface,
                   child: TextField(
                     controller: _searchController,
                     onChanged: (value) =>

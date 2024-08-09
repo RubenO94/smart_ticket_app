@@ -9,11 +9,11 @@ class SmartRegisterButton extends StatelessWidget {
     return TextButton.icon(
       style: ButtonStyle(
         foregroundColor:
-            MaterialStatePropertyAll(Theme.of(context).colorScheme.onPrimary),
-        backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
-        padding: const MaterialStatePropertyAll(
+            WidgetStatePropertyAll(Theme.of(context).colorScheme.onPrimary),
+        backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+        padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 24, vertical: 16)),
-        shape: MaterialStatePropertyAll(
+        shape: WidgetStatePropertyAll(
           ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(6),
               side: BorderSide(

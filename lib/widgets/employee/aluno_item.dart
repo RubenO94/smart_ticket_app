@@ -32,7 +32,7 @@ class AlunoItem extends StatelessWidget {
             width: 40,
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               boxShadow: [
                 BoxShadow(
                     blurStyle: BlurStyle.solid,
@@ -56,7 +56,7 @@ class AlunoItem extends StatelessWidget {
         title: Text(
           aluno.toTitleCase(),
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
         ),
         subtitle: Padding(
@@ -69,7 +69,7 @@ class AlunoItem extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                       color: Theme.of(context)
                           .colorScheme
-                          .onBackground
+                          .onSurface
                           .withOpacity(0.7),
                     ),
               ),
@@ -82,7 +82,7 @@ class AlunoItem extends StatelessWidget {
                   style: Theme.of(context).textTheme.labelSmall!.copyWith(
                         color: Theme.of(context)
                             .colorScheme
-                            .onBackground
+                            .onSurface
                             .withOpacity(0.8),
                       ),
                 ),

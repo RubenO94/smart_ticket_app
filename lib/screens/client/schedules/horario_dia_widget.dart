@@ -43,7 +43,7 @@ class HorarioDiaWidget extends ConsumerWidget {
         ? Center(
             child: Text(
               'Sem aulas neste dia.',
-              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onBackground),
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
           )
         : Column(

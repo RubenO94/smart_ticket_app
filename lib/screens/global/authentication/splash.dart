@@ -119,7 +119,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       backgroundColor: const Color.fromARGB(255, 23, 29, 6),
                       color: Colors.transparent,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.surface,
                       ),
                     ),
                   ),
