@@ -23,7 +23,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _dialogFormKey = GlobalKey<FormState>();
   var _isCodeValid = false;
-  var _enteredNIF = '';
+  var _enteredEntity = '';
+  var _enteredUser = '';
   var _enteredEmail = '';
   var _activationCode = '';
   var _isSending = false;
@@ -80,7 +81,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _registerDevice() async {
     final apiService = ref.read(apiServiceProvider);
     final hasRegistered =
-        await apiService.registerDevice(_enteredNIF, _enteredEmail);
+        await apiService.registerDevice(_enteredEntity, _enteredUser, _enteredEmail);
 
     if (hasRegistered.success && mounted) {
       final confirmationDialogResult = await _showConfirmationDialog();
@@ -97,7 +98,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _authenticate() async {
     final apiService = ref.read(apiServiceProvider);
     try {
-      final hasWSApp = await apiService.getWSApp(_enteredNIF);
+      final hasWSApp = await apiService.getWSApp(_enteredEntity);
       if (hasWSApp.success) {
         final hasToken = await apiService.getToken();
         if (hasToken.success) {
@@ -261,10 +262,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           child: Column(
                             children: [
                               SmartTextFormField(
-                                  label: 'NIF / Utilizador',
-                                  icon: const Icon(Icons.person),
-                                  onSave: (value) => _enteredNIF = value!),
+                                  label: 'NIF - Entidade',
+                                  icon: const Icon(Icons.business_center_rounded),
+                                  onSave: (value) => _enteredEntity = value!),
                               const SizedBox(
+                                height: 16,
+                              ),
+                              SmartTextFormField(
+                                  label: 'NIF - Utilizador',
+                                  icon: const Icon(Icons.person),
+                                  onSave: (value) => _enteredUser = value!),
+                                  const SizedBox(
                                 height: 16,
                               ),
                               SmartTextFormField(

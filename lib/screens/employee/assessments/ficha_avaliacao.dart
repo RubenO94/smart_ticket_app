@@ -22,13 +22,13 @@ import 'package:smart_ticket/widgets/global/smart_button_dialog.dart';
 class FichaAvaliacaoScreen extends ConsumerStatefulWidget {
   const FichaAvaliacaoScreen({
     super.key,
-    required this.aluno,
+    required this.numeroAluno,
     required this.idAula,
     required this.idAtividadeLetiva,
     required this.isEditMode,
   });
 
-  final Aluno aluno;
+  final int numeroAluno;
   final int idAula;
   final int idAtividadeLetiva;
   final bool isEditMode;
@@ -39,11 +39,13 @@ class FichaAvaliacaoScreen extends ConsumerStatefulWidget {
 }
 
 class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
+  late Aluno aluno;
   int _currentPageIndex = 0;
   List<Resposta> _respostas = [];
   List<Pergunta> _perguntasList = [];
   List<Nivel> _niveisList = [];
   final PageController _pageController = PageController(initialPage: 0);
+  final _observacaoController = TextEditingController();
   bool _avaliacaoCompleted = false;
   bool _isSending = false;
   Nivel? _selectedNivel;
@@ -54,7 +56,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
       return true;
     }
 
-    if (!areRespotasListsEqual(_respostas, widget.aluno.respostas)) {
+    if (!areRespotasListsEqual(_respostas, aluno.respostas)) {
       return (await showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -109,11 +111,13 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
             if (!_isSending)
               SmartButtonDialog(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  // Agendar a chamada do método após o fechamento do AlertDialog
-                  Future.delayed(Duration.zero, () {
+                  int count = 0;
+                  print(count);
+                  Future.delayed(const Duration(seconds: 1), () {
                     _enviarAvaliacao();
+                    Navigator.of(context).popUntil((route) => count++ >= 2);
                   });
+                  
                 },
                 type: ButtonDialogOption.enivar,
               ),
@@ -136,8 +140,9 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
       setState(() {
         _isSending = true;
       });
+
       final hasPosted = await ref.read(apiServiceProvider).postAvaliacao(
-          widget.aluno.idCliente,
+          aluno.idCliente,
           _respostas,
           _selectedNivel!.nIDDesempenhoNivel,
           widget.idAula,
@@ -148,18 +153,16 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
         ref.read(alunosProvider.notifier).editarAluno(
               _respostas,
               _selectedNivel!.nIDDesempenhoNivel,
-              widget.aluno.numeroAluno,
+              aluno.numeroAluno,
               convertDateToString(DateTime.now()),
               _observacao,
             );
-        Navigator.of(context).pop();
-        showToast(
-            context,
-            widget.isEditMode
-                ? 'A avaliação foi editada com sucesso!'
-                : 'A avaliação foi enviada com sucesso!',
-            ToastType.success);
-      } else {
+
+        await ref
+            .read(apiServiceProvider)
+            .getAlunos(widget.idAula.toString(), null);
+
+      } else if (mounted) {
         showToast(
             context,
             'Ocorreu um erro ao tentar  enviar os dados para o servidor',
@@ -175,6 +178,7 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
     setState(() {
       _isSending = false;
     });
+    return Navigator.of(context).pop();
   }
 
   bool _todasPerguntasRespondidas() {
@@ -251,13 +255,12 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
       setState(() {
         _niveisList = ref.read(niveisProvider);
         _selectedNivel = _niveisList.firstWhere(
-          (element) =>
-              element.nIDDesempenhoNivel == widget.aluno.idDesempenhoNivel,
+          (element) => element.nIDDesempenhoNivel == aluno.idDesempenhoNivel,
           orElse: () =>
               Nivel(nIDDesempenhoNivel: -1, strCodigo: '', strDescricao: ''),
         );
         _respostas = List<Resposta>.from(
-          widget.aluno.respostas.map(
+          aluno.respostas.map(
             (resposta) => Resposta(
               idDesempenhoLinha: resposta.idDesempenhoLinha,
               classificacao: resposta.classificacao,
@@ -268,21 +271,33 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
     }
   }
 
+  void _loadAluno() {
+    aluno = ref
+        .read(alunosProvider)
+        .firstWhere((element) => element.numeroAluno == widget.numeroAluno);
+  }
+
   @override
   void initState() {
     super.initState();
+    _loadAluno();
     _loadRespostas();
+    _observacaoController.text = aluno.observacao;
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _observacaoController.dispose();
     _currentPageIndex = 0;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    aluno = ref
+        .watch(alunosProvider)
+        .firstWhere((element) => element.numeroAluno == widget.numeroAluno);
     _perguntasList = ref.watch(perguntasProvider);
     final niveisList = ref.watch(niveisProvider);
     final tiposClassificacao = ref.watch(tiposClassificacaoProvider);
@@ -300,9 +315,9 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
                   children: [
                     const BackButton(),
                     AlunoBadge(
-                        base64Foto: widget.aluno.foto!,
-                        nome: widget.aluno.nome,
-                        numeroAluno: widget.aluno.numeroAluno)
+                        base64Foto: aluno.foto!,
+                        nome: aluno.nome,
+                        numeroAluno: aluno.numeroAluno)
                   ],
                 ),
               ),
@@ -479,13 +494,11 @@ class _NovaAvaliacaoScreenState extends ConsumerState<FichaAvaliacaoScreen> {
                                 height: 12,
                               ),
                               TextField(
+                                controller: _observacaoController,
                                 maxLines: 5,
                                 decoration: InputDecoration(
                                     border: const OutlineInputBorder(),
-                                    labelText: "Observações",
-                                    hintText: widget.aluno.observacao.isEmpty
-                                        ? "Insira aqui as observações"
-                                        : widget.aluno.observacao),
+                                    labelText: "Observações"),
                                 onChanged: (value) => _observacao = value,
                               )
                             ],

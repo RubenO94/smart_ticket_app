@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:smart_ticket/models/employee/aluno.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao/nivel.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao/pergunta.dart';
 import 'package:smart_ticket/models/global/ficha_avaliacao/tipo_classificacao.dart';
@@ -18,15 +17,15 @@ import 'package:smart_ticket/widgets/global/smart_menssage_center.dart';
 
 class VerFichaAvaliacaoScreen extends ConsumerWidget {
   const VerFichaAvaliacaoScreen(
-      {super.key, required this.aluno, required this.idAula});
-  final Aluno aluno;
+      {super.key, required this.numeroAluno, required this.idAula});
+  final int numeroAluno;
   final int idAula;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final alunoProvide = ref
         .watch(alunosProvider)
-        .firstWhere((element) => element.idCliente == aluno.idCliente);
+        .firstWhere((element) => element.numeroAluno == numeroAluno);
     final int idAtividadeLetiva = ref.watch(atividadeLetivaIDProvider);
     final List<TipoClassificacao> tiposClassificacao =
         ref.watch(tiposClassificacaoProvider);
@@ -55,7 +54,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
           actions: [
             PopupMenuButton(
               itemBuilder: (context) => [
-                if (!aluno.temAvaliacao)
+                if (!alunoProvide.temAvaliacao)
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
@@ -69,7 +68,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => FichaAvaliacaoScreen(
                               isEditMode: false,
-                              aluno: alunoProvide,
+                              numeroAluno: alunoProvide.numeroAluno,
                               idAula: idAula,
                               idAtividadeLetiva: idAtividadeLetiva),
                         ));
@@ -77,7 +76,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                       icon: const Icon(Icons.assignment_add),
                     ),
                   ),
-                if (aluno.temAvaliacao)
+                if (alunoProvide.temAvaliacao)
                   PopupMenuItem(
                     child: TextButton.icon(
                       style: ButtonStyle(
@@ -91,7 +90,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => FichaAvaliacaoScreen(
                               isEditMode: true,
-                              aluno: alunoProvide,
+                              numeroAluno: alunoProvide.numeroAluno,
                               idAula: idAula,
                               idAtividadeLetiva: idAtividadeLetiva),
                         ));
@@ -106,7 +105,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
               base64Foto: alunoProvide.foto!,
               nome: alunoProvide.nome,
               numeroAluno: alunoProvide.numeroAluno),
-          bottom: aluno.temAvaliacao
+          bottom: alunoProvide.temAvaliacao
               ? PreferredSize(
                   preferredSize: const Size.fromHeight(60),
                   child: Container(
@@ -144,7 +143,7 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
                 )
               : null,
         ),
-        body: aluno.temAvaliacao
+        body: alunoProvide.temAvaliacao
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -291,12 +290,12 @@ class VerFichaAvaliacaoScreen extends ConsumerWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => FichaAvaliacaoScreen(
-                aluno: alunoProvide,
+                numeroAluno: alunoProvide.numeroAluno,
                 idAula: idAula,
                 idAtividadeLetiva: idAtividadeLetiva,
-                isEditMode: aluno.temAvaliacao),
+                isEditMode: alunoProvide.temAvaliacao),
           )),
-          child: Icon(aluno.temAvaliacao ? Icons.edit : Icons.add),
+          child: Icon(alunoProvide.temAvaliacao ? Icons.edit : Icons.add),
         ),
       ),
     );
