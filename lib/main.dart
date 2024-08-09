@@ -46,9 +46,9 @@ class MyApp extends ConsumerWidget {
         Locale('en'),
       ],
       debugShowCheckedModeBanner: false,
-      title: 'SmartTicket App',
+      title: 'SmartTicket',
       darkTheme: ThemeData.dark()
-          .copyWith(useMaterial3: true, colorScheme: darkColorScheme),
+          .copyWith(colorScheme: darkColorScheme),
       theme: theme,
       themeMode: themeMode,
       home: const SplashScreen(),

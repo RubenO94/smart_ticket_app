@@ -5,7 +5,7 @@
 
 
     <application
-        android:label="SmartTicket App"
+        android:label="SmartTicket"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
